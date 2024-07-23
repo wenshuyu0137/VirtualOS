@@ -29,13 +29,13 @@ at_server_opts_t server_opts = {
 
 static at_server_response_e at_empty_handle(at_server_msg_t *msg, char *out, size_t *out_size)
 {
-	hal_usart_write(&to_at_serial, (uint8_t*)msg->complete, strlen(msg->complete)); //因为只是代发,所以不用处理各种数据
+	hal_usart_write(&to_at_serial, (uint8_t *)msg->complete, strlen(msg->complete)); //因为只是代发,所以不用处理各种数据
 	return AT_SERVER_RESPONSE_NONE;
 }
 
 static at_server_response_e at_CWJAP_handle(at_server_msg_t *msg, char *out, size_t *out_size)
 {
-	hal_usart_write(&to_at_serial, (uint8_t*)msg->complete, strlen(msg->complete)); //因为只是代发,所以不用处理各种数据
+	hal_usart_write(&to_at_serial, (uint8_t *)msg->complete, strlen(msg->complete)); //因为只是代发,所以不用处理各种数据
 	return AT_SERVER_RESPONSE_NONE;
 }
 

@@ -3,7 +3,6 @@
 
 #define APP_WIFI_TASK_PERIOD 10
 
-
 #include <stdint.h>
 #include "hal_usart.h"
 #include "hal_gpio.h"
