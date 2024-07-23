@@ -1,0 +1,9 @@
+#!/bin/sh
+echo "Running pre-commit hook"
+
+# SCRIPT_DIR="$(pwd)/Plugin/clang-format/format.sh" #全部格式化
+SCRIPT_DIR="$(pwd)/Plugin/clang-format/format_incremental.sh" #增量格式化
+
+# 使用 Git Bash 运行脚本
+bash "$SCRIPT_DIR"
+
