@@ -25,6 +25,7 @@ void app_adc_init(void)
 		.channel_info = all_channel,
 		.channel_num = APP_ADC_CHANNEL_TYPE_MAX,
 	};
+	//注入组
 	hal_adc_cfg_t adc_cfg = {
 		.regular_param = &m_regular_param,
 		.insert_param = NULL,
