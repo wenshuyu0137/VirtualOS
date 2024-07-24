@@ -22,3 +22,15 @@ int _getpid_r(struct _reent *r) {
 int _kill_r(struct _reent *r, int pid, int sig) {
     return 0;
 }
+
+int _lseek_r(struct _reent *r, int file, int ptr, int dir) {
+    return 0;
+}
+
+int _read_r(struct _reent *r, int file, char *ptr, int len) {
+    return 0;
+}
+
+int _write_r(struct _reent *r, int file, char *ptr, int len) {
+    return len;
+}
