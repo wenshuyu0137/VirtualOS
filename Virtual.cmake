@@ -45,6 +45,7 @@ set(FRAMEWORK_INCLUDE_DIRS
     ${FRAMEWORK_ROOT_DIR}/Protocol/Protocol_4G/
     ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_client/
     ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_server/
+    ${FRAMEWORK_ROOT_DIR}/Platform/syscall/
 )
 
 # 框架源文件
@@ -74,7 +75,11 @@ file(GLOB_RECURSE BASE_SOURCES
 set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/toolchain.cmake)
 
 # 将所有源文件添加到目标中
-file(GLOB_RECURSE SHARED_SOURCES ${BASE_SOURCES})
+if(USE_ARMGCC)
+    file(GLOB_RECURSE SHARED_SOURCES ${BASE_SOURCES} ${FRAMEWORK_ROOT_DIR}/Platform/syscall/syscall.c)
+else()
+    file(GLOB_RECURSE SHARED_SOURCES ${BASE_SOURCES})
+endif()
 
 # 包含目录
 include_directories(${FRAMEWORK_INCLUDE_DIRS})
