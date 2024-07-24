@@ -118,13 +118,13 @@ if(USE_ARMGCC)
         COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}> ${BIN_FILE} # 生成 BIN 文件
         COMMAND ${CMAKE_SIZE} --format=berkeley $<TARGET_FILE:${PROJECT_NAME}>                       # 打印 ELF 文件大小
         COMMAND ${CMAKE_OBJDUMP} -h $<TARGET_FILE:${PROJECT_NAME}> > ${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.sections # 打印 ELF 文件节信息
-        # COMMAND ${CONVERT_BIN} ${VENDOR_ID} ${HW} ${PID} ${SW} ${BIN_FILE}              # 修改BIN文件名
+	#COMMAND ${CONVERT_BIN} ${VENDOR_ID} ${HW} ${PID} ${SW} ${BIN_FILE}              # 修改BIN文件名
     )
 else()
     add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} --bin --output=${BIN_FILE} $<TARGET_FILE:${PROJECT_NAME}>  # 生成 BIN 文件
         COMMAND ${CMAKE_OBJCOPY} --i32 --output=${HEX_FILE} $<TARGET_FILE:${PROJECT_NAME}>  # 生成 HEX 文件
         COMMAND ${CMAKE_SIZE} --info=sizes $<TARGET_FILE:${PROJECT_NAME}>               # 打印目标文件大小
-        # COMMAND ${CONVERT_BIN} ${VENDOR_ID} ${HW} ${PID} ${SW} ${BIN_FILE}              # 修改BIN文件名
+	#COMMAND ${CONVERT_BIN} ${VENDOR_ID} ${HW} ${PID} ${SW} ${BIN_FILE}              # 修改BIN文件名
     )
 endif()

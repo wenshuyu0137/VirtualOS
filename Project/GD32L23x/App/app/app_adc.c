@@ -1,5 +1,6 @@
 #include "app_adc.h"
 
+
 static hal_adc_channel_t all_channel[APP_ADC_CHANNEL_TYPE_MAX] = {
 	[APP_ADC_CHANNEL_TYPE_MOS_TEMP] = {
 		.adc_io = {
