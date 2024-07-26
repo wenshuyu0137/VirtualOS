@@ -46,7 +46,7 @@ static inline int is_modbus_not_start(void)
 	return (m_slave.start_flag == MODBUS_SPECIAL_VALUE);
 }
 
-int modbus_slave_init(MODBUS_SERIAL_OPT_T *p_serial_opt, rtu_address_validator f_validator)
+int modbus_slave_init(modbus_serial_opt_t *p_serial_opt, rtu_address_validator f_validator)
 {
 	int ret_code = 0;
 

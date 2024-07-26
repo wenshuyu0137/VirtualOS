@@ -72,6 +72,6 @@ typedef struct {
 	modbus_serial_read f_read;
 	modbus_serial_flush f_flush;
 	modbus_serial_dir_ctrl f_dir_ctrl;
-} MODBUS_SERIAL_OPT_T;
+} modbus_serial_opt_t;
 
 #endif /*_VIRTUAL_OS_MODBUS_H*/

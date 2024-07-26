@@ -82,7 +82,7 @@ typedef struct {
 	uint8_t len;
 	uint8_t slave_addr;
 	volatile uint8_t start_flag;
-	MODBUS_SERIAL_OPT_T *p_opts;
+	modbus_serial_opt_t *p_opts;
 	rtu_address_validator f_validator;
 	uint16_t data_in_out[MODBUS_REG_NUM_MAX];
 	msg_state_t msg_state;
@@ -139,7 +139,7 @@ typedef struct {
 	MODBUS_SLAVE_HANDLER_T *table;
 } MODBUS_SLAVE_HANDLER_TABLE_T;
 
-int modbus_slave_init(MODBUS_SERIAL_OPT_T *p_serial_opt, rtu_address_validator f_validator);
+int modbus_slave_init(modbus_serial_opt_t *p_serial_opt, rtu_address_validator f_validator);
 void modbus_slave_set_table(MODBUS_SLAVE_HANDLER_T *p_handler_table, uint16_t num);
 void modbus_slave_poll(void);
 void modbus_delay_reply_trigger(USER_CONFIG_DELAY_REPLY index);
