@@ -72,8 +72,8 @@ file(GLOB_RECURSE BASE_SOURCES
 
 
 # 导入交叉编译工具链
-#set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/toolchain.cmake)
-set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/linux_toolchain.cmake)
+set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/toolchain.cmake)
+# set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/linux_toolchain.cmake)
 
 # 将所有源文件添加到目标中
 if(USE_ARMGCC)

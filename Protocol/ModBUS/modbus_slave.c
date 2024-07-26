@@ -33,10 +33,8 @@
 static uint8_t rx_queue_buff[RX_BUFF_SIZE];
 static uint8_t modbus_frame_buff[MODBUS_FRAME_BYTES_MAX];
 
-MODBUS_SLAVE_DELAY_INFO_T ALL_DELAY_REPLY[USER_CONFIG_DELAY_REPLY_MAX];
-
-static MODBUS_SLAVE_T m_slave = { .start_flag = MODBUS_SPECIAL_VALUE };
-static MODBUS_SLAVE_HANDLER_TABLE_T m_slave_table = { .num = 0 };
+static modbus_slave_t m_slave = { .start_flag = MODBUS_SPECIAL_VALUE };
+static modbus_slave_handler_table_t m_slave_table = { .num = 0 };
 
 static int _recv_parser(msg_state_t *p_msg);
 static uint16_t _dispatch_rtu_msg(const msg_state_t *p_msg, uint8_t *ack_frame);
@@ -71,31 +69,10 @@ int modbus_slave_init(modbus_serial_opt_t *p_serial_opt, rtu_address_validator f
 	return ret_code;
 }
 
-void modbus_slave_set_table(MODBUS_SLAVE_HANDLER_T *p_handler_table, uint16_t num)
+void modbus_slave_set_table(modbus_slave_handler_t *p_handler_table, uint16_t num)
 {
 	m_slave_table.table = p_handler_table;
 	m_slave_table.num = num;
-}
-
-//MODBUS主动回复触发接口,在需要延时回复的地方调用
-void modbus_delay_reply_trigger(USER_CONFIG_DELAY_REPLY index)
-{
-	if (index >= USER_CONFIG_DELAY_REPLY_MAX) {
-		return;
-	}
-
-	ALL_DELAY_REPLY[index].trigger_flag = MODBUS_DELAY_REPLYT_TRUE;
-}
-
-void modbus_delay_reply_handle()
-{
-	for (uint16_t i = 0; i < USER_CONFIG_DELAY_REPLY_MAX; i++) {
-		if (ALL_DELAY_REPLY[i].trigger_flag == MODBUS_DELAY_REPLYT_TRUE) {
-			m_slave.p_opts->f_dir_ctrl(modbus_serial_dir_tx_only);
-			m_slave.p_opts->f_write(ALL_DELAY_REPLY[i].delay_reply_buffer, ALL_DELAY_REPLY[i].size);
-			ALL_DELAY_REPLY[i].trigger_flag = MODBUS_DELAY_REPLYT_FALSE;
-		}
-	}
 }
 
 void modbus_slave_poll(void)
@@ -107,7 +84,6 @@ void modbus_slave_poll(void)
 		return;
 	}
 
-	modbus_delay_reply_handle();
 	ptk_len = m_slave.p_opts->f_read(modbus_frame_buff, MODBUS_FRAME_BYTES_MAX);
 
 	if (ptk_len > 0) {
@@ -301,9 +277,9 @@ static int _recv_parser(msg_state_t *p_msg)
 	return -1;
 }
 
-static int _rtu_handle(uint8_t addr, uint8_t func, uint16_t reg, uint16_t reg_num, int8_t *delay_index)
+static int _rtu_handle(uint8_t addr, uint8_t func, uint16_t reg, uint16_t reg_num)
 {
-	MODBUS_SLAVE_HANDLER_T *p_handle;
+	modbus_slave_handler_t *p_handle;
 	int res = MODBUS_SLAVE_OPT_CODE_ERR_NOT_REPLY;
 
 	for (uint16_t i = 0; i < m_slave_table.num; i++) {
@@ -312,10 +288,6 @@ static int _rtu_handle(uint8_t addr, uint8_t func, uint16_t reg, uint16_t reg_nu
 		if (p_handle && MODBUS_CHECK_REG_RANGE(reg, reg_num, p_handle->start, p_handle->end)) {
 			if (p_handle->handle) {
 				res = p_handle->handle(addr, func, reg, reg_num, m_slave.data_in_out);
-			}
-
-			if (res == MODBUS_SLAVE_OPT_CODE_DELEAY_REPLY && p_handle->delay_flag == MODBUS_NEED_DELAY_REPLYT_TRUE) {
-				*delay_index = p_handle->index;
 			}
 
 			break;
@@ -330,10 +302,9 @@ static uint16_t _packet_ack_read_frame(uint16_t reg, uint16_t reg_num, uint8_t *
 	uint16_t pkt_len = 0;
 	uint16_t crc = 0xffff;
 	uint16_t *p;
-	int8_t delay_index = -1;
 	pdata_out[pkt_len++] = m_slave.slave_addr;
 
-	if (_rtu_handle(m_slave.slave_addr, MODBUS_FUN_RD_REG_MUL, reg, reg_num, &delay_index) == MODBUS_SLAVE_OPT_CODE_SUCCESS) {
+	if (_rtu_handle(m_slave.slave_addr, MODBUS_FUN_RD_REG_MUL, reg, reg_num) == MODBUS_SLAVE_OPT_CODE_SUCCESS) {
 		p = m_slave.data_in_out;
 		pdata_out[pkt_len++] = MODBUS_FUN_RD_REG_MUL;
 		pdata_out[pkt_len++] = (reg_num << 1);
@@ -358,14 +329,13 @@ static uint16_t _packet_ack_write_frame(uint8_t func, uint16_t reg, uint16_t reg
 {
 	uint16_t pkt_len = 0;
 	uint16_t crc = 0xffff;
-	MODBUS_SLAVE_OPT_CODE_E ret_flag = MODBUS_SLAVE_OPT_CODE_ERR;
-	int8_t delay_index = -1;
+	modbus_slave_opt_code_e ret_flag = MODBUS_SLAVE_OPT_CODE_ERR;
 
 	if (func == MODBUS_FUN_WR_REG_MUL) {
 		pdata_out[pkt_len++] = m_slave.slave_addr;
-		ret_flag = _rtu_handle(m_slave.slave_addr, func, reg, reg_num, &delay_index);
+		ret_flag = _rtu_handle(m_slave.slave_addr, func, reg, reg_num);
 
-		if (ret_flag == MODBUS_SLAVE_OPT_CODE_SUCCESS || ret_flag == MODBUS_SLAVE_OPT_CODE_DELEAY_REPLY) {
+		if (ret_flag == MODBUS_SLAVE_OPT_CODE_SUCCESS) {
 			pdata_out[pkt_len++] = MODBUS_FUN_WR_REG_MUL;
 			pdata_out[pkt_len++] = GET_U8_HIGH_FROM_U16(reg);
 			pdata_out[pkt_len++] = GET_U8_LOW_FROM_U16(reg);
@@ -383,16 +353,10 @@ static uint16_t _packet_ack_write_frame(uint8_t func, uint16_t reg, uint16_t reg
 	}
 
 	else if (func == MODBUS_FUN_REG_USER) {
-		_rtu_handle(m_slave.slave_addr, func, reg, reg_num, &delay_index);
+		_rtu_handle(m_slave.slave_addr, func, reg, reg_num);
 	}
 
-	if (ret_flag == MODBUS_SLAVE_OPT_CODE_DELEAY_REPLY && (delay_index >= 0)) {
-		memcpy(ALL_DELAY_REPLY[delay_index].delay_reply_buffer, pdata_out, pkt_len);
-		ALL_DELAY_REPLY[delay_index].size = pkt_len;
-		ALL_DELAY_REPLY[delay_index].trigger_flag = MODBUS_DELAY_REPLYT_STANDBY;
-	}
-
-	return ((ret_flag == MODBUS_SLAVE_OPT_CODE_DELEAY_REPLY || ret_flag == MODBUS_SLAVE_OPT_CODE_ERR_NOT_REPLY) ? 0 : pkt_len);
+	return (ret_flag == MODBUS_SLAVE_OPT_CODE_ERR_NOT_REPLY ? 0 : pkt_len);
 }
 
 static uint16_t _dispatch_rtu_msg(const msg_state_t *p_msg, uint8_t *ack_frame)
