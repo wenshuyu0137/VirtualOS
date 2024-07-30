@@ -31,7 +31,7 @@
 #define _VIRTUAL_OS_HAL_H_
 
 typedef void (*irqn_task_cb)(void);
-typedef enum { HAL_DISABLE = 0, HAL_ENABLE = !HAL_DISABLE } HAL_STATUS_E;
+typedef enum { HAL_DISABLE = 0, HAL_ENABLE = !HAL_DISABLE } bool;
 
 #define COUNTOF(a) (sizeof(a) / sizeof(a[0]))
 #define MILLSECOND(x) (x)
@@ -39,6 +39,6 @@ typedef enum { HAL_DISABLE = 0, HAL_ENABLE = !HAL_DISABLE } HAL_STATUS_E;
 #define MINUTE(x) ((x) * 1000 * 60)
 #define HOUR(x) ((x) * 1000 * 60 * 60)
 
-void hal_platform_clock_init(void);
+void hal_platform_init(void);
 
 #endif /*_VIRTUAL_OS_HAL_H_*/

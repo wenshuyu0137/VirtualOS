@@ -1,14 +1,41 @@
-#ifndef _GPIO_H
-#define _GPIO_H
+/**
+ * @file board_gpio_v1.h
+ * @author wenshuyu (wsy2161826815@163.com)
+ * @brief 
+ * @version 0.1
+ * @date 2024-07-30
+ * 
+ * The MIT License (MIT)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
 
-#include "gd32l23x.h"
+#ifndef _VIRTUAL_OS_BOARD_GPIO_H
+#define _VIRTUAL_OS_BOARD_GPIO_H
+
 #include "hal_gpio.h"
 
-bool board_gpio_deinit(hal_gpio_t *p_io);
-bool board_gpio_init(hal_gpio_t *p_io, hal_gpio_cfg_t *gpio_cfg);
+void board_gpio_v1_init(void);
+hal_gpio_error_e board_gpio_pin_read(const char *const gpio_dev, uint8_t *level);
+hal_gpio_error_e board_gpio_pin_write(const char *const gpio_dev, uint8_t level);
+hal_gpio_error_e board_gpio_pin_toggle(const char *const gpio_dev);
+hal_gpio_error_e board_gpio_config(const char *const gpio_dev, hal_gpio_config_e type, void (*cb)(void));
 
-hal_gpio_pin_level_e board_gpio_pin_read(hal_gpio_t *p_io);
-void board_gpio_pin_toggle(hal_gpio_t *p_io);
-void board_gpio_pin_write(hal_gpio_t *p_io, hal_gpio_pin_level_e level);
-
-#endif
+#endif /*_VIRTUAL_OS_BOARD_GPIO_H*/

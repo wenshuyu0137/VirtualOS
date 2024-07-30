@@ -29,8 +29,9 @@
 
 #include "gd32L23x_board.h"
 
-void board_platform_clock_init(void)
+void board_platform_init(void)
 {
 	SystemInit(); //64M
 	systick_config(); //滴答定时器 1ms
+	board_gpio_v1_init();
 }

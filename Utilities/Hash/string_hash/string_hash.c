@@ -62,7 +62,7 @@ hash_error_t init_hash_table(hash_table_t *hash_table, size_t table_size, void (
 
 hash_error_t hash_insert(hash_table_t *hash_table, const char *key, void *private_data)
 {
-	if (!key || !private_data) {
+	if (!key) {
 		return HASH_POINT_ERROR;
 	}
 

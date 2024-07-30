@@ -36,7 +36,6 @@ OF SUCH DAMAGE.
 #define GD32L23X_IT_H
 #include "gd32l23x_it.h"
 #include "hal_usart.h"
-#include "hal_exti.h"
 #include "gd32l23x.h"
 #include "board_usart.h"
 #include "gd32L23x_board.h"

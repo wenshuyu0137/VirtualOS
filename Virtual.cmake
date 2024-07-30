@@ -33,7 +33,7 @@ set(FRAMEWORK_INCLUDE_DIRS
     ${FRAMEWORK_ROOT_DIR}/Component/RTT/
     ${FRAMEWORK_ROOT_DIR}/HAL/
     ${FRAMEWORK_ROOT_DIR}/Utilities/button/
-    ${FRAMEWORK_ROOT_DIR}/Utilities/Hash/string_hash/
+    ${FRAMEWORK_ROOT_DIR}/Utilities/hash/string_hash/
     ${FRAMEWORK_ROOT_DIR}/Utilities/crc/
     ${FRAMEWORK_ROOT_DIR}/Utilities/list/
     ${FRAMEWORK_ROOT_DIR}/Utilities/qfsm/
@@ -56,7 +56,7 @@ file(GLOB_RECURSE BASE_SOURCES
     ${FRAMEWORK_ROOT_DIR}/Component/RTT/*.c
     ${FRAMEWORK_ROOT_DIR}/HAL/*.c
     ${FRAMEWORK_ROOT_DIR}/Utilities/button/*.c
-    ${FRAMEWORK_ROOT_DIR}/Utilities/Hash/string_hash/*.c
+    ${FRAMEWORK_ROOT_DIR}/Utilities/hash/string_hash/*.c
     ${FRAMEWORK_ROOT_DIR}/Utilities/crc/*.c
     ${FRAMEWORK_ROOT_DIR}/Utilities/list/*.c
     ${FRAMEWORK_ROOT_DIR}/Utilities/qfsm/*.c

@@ -16,7 +16,7 @@ uint8_t hal_spi_send_byte(HAL_SPI_ID_E spix, uint8_t byte)
 	return board_spi_send_byte(spix, byte);
 }
 
-void hal_qspi_en_dis_cfg(HAL_SPI_ID_E spix, HAL_STATUS_E flag)
+void hal_qspi_en_dis_cfg(HAL_SPI_ID_E spix, bool flag)
 {
 	board_qspi_en_dis_cfg(spix, flag);
 }

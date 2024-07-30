@@ -32,11 +32,12 @@
 
 #include "gd32l23x.h"
 #include "systick.h"
+#include "board_gpio.h"
 
 /**
  * @brief 初始化时钟
  *
  */
-void board_platform_clock_init(void);
+void board_platform_init(void);
 
 #endif /*_VIRTUAL_OS_BOARD_H*/

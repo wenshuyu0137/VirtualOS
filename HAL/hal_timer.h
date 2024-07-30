@@ -1,8 +1,8 @@
 #ifndef _VIRTUAL_OS_HAL_TIMER_H
 #define _VIRTUAL_OS_HAL_TIMER_H
 
-#include "hal_exti.h"
 #include <stdint.h>
+#include <stdbool.h>
 
 //GD32中1,2,5,6,8,11,可用
 typedef enum {
@@ -75,7 +75,7 @@ typedef struct {
 	HAL_TIMER_CNT_DIR_E direction;
 	uint32_t period;
 	HAL_TIMER_CLK_DIV_E div_mode;
-	HAL_STATUS_E use_auto_reload_shadow;
+	bool use_auto_reload_shadow;
 } HAL_TIMER_BASE_INFO_T;
 
 typedef enum {
@@ -102,8 +102,8 @@ typedef enum {
 } HAL_TIMER_OC_MODE_E;
 
 typedef struct {
-	HAL_STATUS_E use_channel;
-	HAL_STATUS_E use_oc_shadow;
+	bool use_channel;
+	bool use_oc_shadow;
 
 	HAL_TIMER_OC_POLARITY_E polarity;
 	uint32_t pulse;

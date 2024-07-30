@@ -52,8 +52,6 @@ typedef struct {
 	uint8_t *buf;
 } Q_BLOCK_T;
 
-/*注: 所有接口非线程安全*/
-
 int queue_init(queue_info_t *q, q_size unit_bytes, uint8_t *buf, q_size count);
 q_size queue_add(queue_info_t *q, uint8_t *data, q_size units);
 q_size queue_get(queue_info_t *q, uint8_t *data, q_size units);

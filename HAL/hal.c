@@ -34,7 +34,7 @@
  * @brief 具体平台是时钟初始化(实现SystemInit)
  *
  */
-void hal_platform_clock_init(void)
+void hal_platform_init(void)
 {
-	board_platform_clock_init();
+	board_platform_init();
 }

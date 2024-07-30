@@ -12,6 +12,6 @@ void board_spi_init(HAL_SPI_ID_E spix, HAL_SPI_CFG_T *spi_cfg);
 */
 uint8_t board_spi_send_byte(HAL_SPI_ID_E spix, uint8_t byte);
 
-void board_qspi_en_dis_cfg(HAL_SPI_ID_E spix, HAL_STATUS_E flag);
+void board_qspi_en_dis_cfg(HAL_SPI_ID_E spix, bool flag);
 void board_qspi_wr_rd_enable(HAL_SPI_ID_E spix, HAL_QSPI_DIR_E dir);
 #endif

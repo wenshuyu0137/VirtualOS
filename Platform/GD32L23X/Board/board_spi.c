@@ -167,7 +167,7 @@ uint8_t board_spi_send_byte(HAL_SPI_ID_E spix, uint8_t byte)
 	return (spi_i2s_data_receive(get_spi(spix)));
 }
 
-void board_qspi_en_dis_cfg(HAL_SPI_ID_E spix, HAL_STATUS_E flag)
+void board_qspi_en_dis_cfg(HAL_SPI_ID_E spix, bool flag)
 {
 	if (flag) {
 		spi_quad_enable(get_spi(spix));

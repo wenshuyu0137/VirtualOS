@@ -86,8 +86,8 @@ typedef struct {
 	HAL_SPI_ENDIAN_E endian;
 
 	HAL_SPI_RX_FIFO_ACCESS_SIZE_E rx_fifo_access;
-	HAL_STATUS_E use_crc;
-	HAL_STATUS_E use_qspi;
+	bool use_crc;
+	bool use_qspi;
 } HAL_SPI_CFG_T;
 
 void hal_spi_deinit(HAL_SPI_ID_E spix);
@@ -98,6 +98,6 @@ void hal_spi_init(HAL_SPI_ID_E spix, HAL_SPI_CFG_T *spi_cfg);
 */
 uint8_t hal_spi_send_byte(HAL_SPI_ID_E spix, uint8_t byte);
 
-void hal_qspi_en_dis_cfg(HAL_SPI_ID_E spix, HAL_STATUS_E flag);
+void hal_qspi_en_dis_cfg(HAL_SPI_ID_E spix, bool flag);
 void hal_qspi_wr_rd_enable(HAL_SPI_ID_E spix, HAL_QSPI_DIR_E dir);
 #endif
