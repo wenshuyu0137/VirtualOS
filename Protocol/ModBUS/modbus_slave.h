@@ -82,65 +82,35 @@ typedef struct {
 	uint8_t len;
 	uint8_t slave_addr;
 	volatile uint8_t start_flag;
-	MODBUS_SERIAL_OPT_T *p_opts;
+	modbus_serial_opt_t *p_opts;
 	rtu_address_validator f_validator;
 	uint16_t data_in_out[MODBUS_REG_NUM_MAX];
 	msg_state_t msg_state;
-} MODBUS_SLAVE_T;
+} modbus_slave_t;
 
 typedef enum {
 	MODBUS_SLAVE_OPT_CODE_SUCCESS, //响应回复
-	MODBUS_SLAVE_OPT_CODE_DELEAY_REPLY, //延时回复
 	MODBUS_SLAVE_OPT_CODE_ERR_FUNC,
 	MODBUS_SLAVE_OPT_CODE_ERR_REG,
 	MODBUS_SLAVE_OPT_CODE_ERR_REGNUM,
 	MODBUS_SLAVE_OPT_CODE_ERR_NOT_REPLY, //不回复
 	MODBUS_SLAVE_OPT_CODE_ERR,
-} MODBUS_SLAVE_OPT_CODE_E;
+} modbus_slave_opt_code_e;
 
-typedef enum {
-	MODBUS_DELAY_REPLYT_FALSE,
-	MODBUS_DELAY_REPLYT_STANDBY,
-	MODBUS_DELAY_REPLYT_TRUE,
-} MODBUS_DELAY_REPLYT_CTRL_E;
-
-typedef struct {
-	uint8_t delay_reply_buffer[8];
-	uint16_t size;
-	MODBUS_DELAY_REPLYT_CTRL_E trigger_flag;
-} MODBUS_SLAVE_DELAY_INFO_T;
-
-typedef MODBUS_SLAVE_OPT_CODE_E (*modbus_slave_handler)(uint16_t addr, uint8_t func, uint16_t reg, uint16_t reg_num, uint16_t *p_in_out);
-
-typedef enum {
-	MODBUS_NEED_DELAY_REPLYT_FALSE,
-	MODBUS_NEED_DELAY_REPLYT_TRUE,
-} MODBUS_NEED_DELAY_REPLYT_E;
-
-typedef enum {
-	USER_CONFIG_DELAY_REPLY_V_CALIBTARE, //电芯电压校准
-	USER_CONFIG_DELAY_REPLY_I_CALIBTARE, //电流校准
-
-	/**以上自定义需要延时返回的枚举变量*/
-	USER_CONFIG_DELAY_REPLY_MAX,
-} USER_CONFIG_DELAY_REPLY;
+typedef modbus_slave_opt_code_e (*modbus_slave_handler)(uint16_t addr, uint8_t func, uint16_t reg, uint16_t reg_num, uint16_t *p_in_out);
 
 typedef struct {
 	uint16_t start;
 	uint16_t end;
 	modbus_slave_handler handle;
-
-	MODBUS_NEED_DELAY_REPLYT_E delay_flag;
-	USER_CONFIG_DELAY_REPLY index;
-} MODBUS_SLAVE_HANDLER_T;
+} modbus_slave_handler_t;
 
 typedef struct {
 	uint16_t num;
-	MODBUS_SLAVE_HANDLER_T *table;
-} MODBUS_SLAVE_HANDLER_TABLE_T;
+	modbus_slave_handler_t *table;
+} modbus_slave_handler_table_t;
 
-int modbus_slave_init(MODBUS_SERIAL_OPT_T *p_serial_opt, rtu_address_validator f_validator);
-void modbus_slave_set_table(MODBUS_SLAVE_HANDLER_T *p_handler_table, uint16_t num);
+int modbus_slave_init(modbus_serial_opt_t *p_serial_opt, rtu_address_validator f_validator);
+void modbus_slave_set_table(modbus_slave_handler_t *p_handler_table, uint16_t num);
 void modbus_slave_poll(void);
-void modbus_delay_reply_trigger(USER_CONFIG_DELAY_REPLY index);
 #endif /*_VIRTUAL_OS_MODBUS_SLAVE_H*/
