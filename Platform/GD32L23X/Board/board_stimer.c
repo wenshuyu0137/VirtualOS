@@ -80,7 +80,7 @@ void TIMER1_IRQHandler(void)
 
 void platform_stimer_init(void)
 {
-	static struct timer_port m_tmr = {
+	struct timer_port m_tmr = {
 		.f_init = _stimer_base_init,
 		.f_start = _stimer_base_start,
 	};

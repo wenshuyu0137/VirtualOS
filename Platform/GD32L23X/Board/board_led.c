@@ -71,7 +71,7 @@ void led_red_init(void)
 	gpio_mode_set(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_5);
 	gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
 
-	static dml_char_dev_t led_red_dev = {
+	dml_char_dev_t led_red_dev = {
 		.close = led_close,
 		.ioctrl = led_ioctrl,
 		.name = led_name,
