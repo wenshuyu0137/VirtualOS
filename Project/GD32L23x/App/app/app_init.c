@@ -1,12 +1,6 @@
 #include "app_init.h"
 
-void app_init(void)
-{
-	hal_platform_init(); //平台时钟
-	app_stimer_init(); //调度计时器
-}
-
-static TASK_T m_led_task = STIMER_TASK_CTOR(app_gpio_task, Period_to_Tick(APP_LED_TASK_PERIOD), STIMER_TYPE_PERIODIC);
+static TASK_T m_led_task = STIMER_TASK_CTOR(app_led_task, Period_to_Tick(APP_LED_TASK_PERIOD), STIMER_TYPE_PERIODIC);
 
 void task_dispatch_looper(void)
 {

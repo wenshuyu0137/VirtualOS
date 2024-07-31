@@ -18,6 +18,7 @@ endif()
 
 # 根据构建类型设置编译选项
 string(TOUPPER "${CMAKE_BUILD_TYPE}" BUILD_TYPE_UPPER)
+
 if(BUILD_TYPE_UPPER STREQUAL "DEBUG")
     add_compile_options(-Og -g)
 else()
@@ -31,6 +32,8 @@ set(FRAMEWORK_INCLUDE_DIRS
     ${FRAMEWORK_ROOT_DIR}/Component/FlashDB/
     ${FRAMEWORK_ROOT_DIR}/Component/LittleFs/
     ${FRAMEWORK_ROOT_DIR}/Component/RTT/
+    ${FRAMEWORK_ROOT_DIR}/DAL/
+    ${FRAMEWORK_ROOT_DIR}/DML/
     ${FRAMEWORK_ROOT_DIR}/HAL/
     ${FRAMEWORK_ROOT_DIR}/Utilities/button/
     ${FRAMEWORK_ROOT_DIR}/Utilities/hash/string_hash/
@@ -54,6 +57,8 @@ file(GLOB_RECURSE BASE_SOURCES
     ${FRAMEWORK_ROOT_DIR}/Component/FlashDB/*.c
     ${FRAMEWORK_ROOT_DIR}/Component/LittleFs/*.c
     ${FRAMEWORK_ROOT_DIR}/Component/RTT/*.c
+    ${FRAMEWORK_ROOT_DIR}/DAL/*.c
+    ${FRAMEWORK_ROOT_DIR}/DML/*.c
     ${FRAMEWORK_ROOT_DIR}/HAL/*.c
     ${FRAMEWORK_ROOT_DIR}/Utilities/button/*.c
     ${FRAMEWORK_ROOT_DIR}/Utilities/hash/string_hash/*.c
@@ -70,9 +75,9 @@ file(GLOB_RECURSE BASE_SOURCES
     ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_server/*.c
 )
 
-
 # 导入交叉编译工具链
 set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/toolchain.cmake)
+
 # set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/linux_toolchain.cmake)
 
 # 将所有源文件添加到目标中

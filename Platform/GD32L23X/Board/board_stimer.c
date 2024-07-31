@@ -27,28 +27,73 @@
  *
  */
 
-#include "board_task_timer.h"
+#include "board_stimer.h"
 
-void board_task_timer_init(uint32_t m_ms, hal_irqn_cb_f f_timeout)
+static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout);
+static void _stimer_base_start(void);
+
+stimer_timeout_process stimer_cb = NULL; //定时器中断
+
+//任务调度结构体
+static struct timer_port m_tmr = {
+	.f_init = _stimer_base_init,
+	.f_start = _stimer_base_start,
+};
+
+/**
+ * @brief 实现任务调度定时器的初始化 
+ * 
+ * @param period 周期(ms)
+ * @param f_timeout 中断回调函数,在定时器中断中调用
+ */
+static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout)
 {
 	timer_parameter_struct task_timer;
 	rcu_periph_clock_enable(RCU_TIMER1);
 	timer_deinit(TIMER1);
+
 	//64M
 	//T=（period+1）*（prescaler+1）/TIMxCLK
+
 	task_timer.alignedmode = TIMER_COUNTER_EDGE;
 	task_timer.clockdivision = TIMER_CKDIV_DIV1;
 	task_timer.counterdirection = TIMER_COUNTER_UP;
-	task_timer.period = (m_ms * 10 - 1);
+	task_timer.period = (period * 10 - 1);
 	task_timer.prescaler = 6399;
 	timer_init(TIMER1, &task_timer);
 	timer_flag_clear(TIMER1, TIMER_INT_UP);
 	timer_interrupt_enable(TIMER1, TIMER_INT_UP);
 	nvic_irq_enable(TIMER1_IRQn, 0);
-	board_irqn_cb_register(f_timeout, HAL_IRQ_TYPE_TIM1);
+
+	stimer_cb = f_timeout; //保存函数指针
 }
 
-void board_task_timer_start(void)
+/**
+ * @brief 实现定时器的启动函数
+ * 
+ */
+static void _stimer_base_start(void)
 {
 	timer_enable(TIMER1);
+}
+
+//中断处理函数,注意不要 static修饰
+void TIMER1_IRQHandler(void)
+{
+	if (timer_interrupt_flag_get(TIMER1, TIMER_INT_FLAG_UP) != RESET) {
+		if (stimer_cb) {
+			stimer_cb();
+		}
+
+		timer_interrupt_flag_clear(TIMER1, TIMER_INT_FLAG_UP);
+	}
+}
+
+/**
+ * @brief 给任务管理层提供初始化接口
+ * 
+ */
+void platform_stimer_init(void)
+{
+	stimer_init(&m_tmr);
 }

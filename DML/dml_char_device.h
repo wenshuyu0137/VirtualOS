@@ -1,0 +1,105 @@
+/**
+ * @file dml_char_device.h
+ * @author wenshuyu (wsy2161826815@163.com)
+ * @brief 提供设备驱动注册的相关接口
+ * @version 0.1
+ * @date 2024-07-31
+ * 
+ * The MIT License (MIT)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+
+#ifndef _VIRTUAL_OS_DML_CHAR_DEVICE_H
+#define _VIRTUAL_OS_DML_CHAR_DEVICE_H
+
+#include <stdint.h>
+#include <stddef.h>
+#include <stdbool.h>
+
+typedef enum {
+	DML_DEV_ERR_NOT_EXIST = -3, //设备不存在
+	DML_DEV_ERR_OCCUPIED, //设备被占用
+	DML_DEV_ERR_EXCEPTION, //操作异常 例如只读的进行写操作
+
+	// 0
+	DML_DEV_ERR_NONE, //无错误
+} dml_dev_err_e;
+
+typedef struct {
+	const char *name;
+	dml_dev_err_e (*open)(void);
+	dml_dev_err_e (*close)(void);
+	dml_dev_err_e (*ioctrl)(void *arg);
+	int (*read)(uint8_t *buf, size_t len);
+	int (*write)(const uint8_t *buf, size_t len);
+} dml_char_dev_t;
+
+/**
+ * @brief 设备注册表初始化,上电/复位时调用
+ * 
+ */
+void dev_table_init(void);
+
+/**
+ * @brief 注册设备驱动到设备表
+ * 
+ * @param device 
+ * @return true 
+ * @return false 
+ */
+bool dml_register_device(dml_char_dev_t *device);
+
+/**
+ * @brief 取消注册设备驱动
+ * 
+ * @param name 设备名
+ * @return true 
+ * @return false 
+ */
+bool dml_unregister_device(const char *name);
+
+/**
+ * @brief 根据设备名查找设备
+ * 
+ * @param name 设备名
+ * @return dml_char_dev_t* 具体的设备类型,没有返回NULL
+ */
+dml_char_dev_t *dml_find_device(const char *name);
+
+/**
+ * @brief 列出所有已经注册的设备,返回后一定要释放device_names的内存，一定要注意,可以调用下面的free_device_names来释放
+ * 
+ * @param device_names 存放所有字符串数组的指针
+ * @param num_devices 所有的设备格式
+ * @return true 
+ * @return false 
+ */
+bool dml_list_all_devices(char ***device_names, size_t *num_devices);
+
+/**
+ * @brief 辅助函数，释放获取设备名的数组
+ * 
+ * @param device_names 获取的数组名
+ * @param num_devices 设备数量
+ */
+void free_device_names(char **device_names, size_t num_devices);
+
+#endif /*_VIRTUAL_OS_DML_CHAR_DEVICE_H*/

@@ -34,7 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "gd32l23x_it.h"
 #include "systick.h"
-#include "hal_irqn_cb.h"
+
 
 /*!
     \brief      this function handles NMI exception
@@ -109,57 +109,27 @@ void EXTI10_15_IRQHandler(void)
 
 void USART1_IRQHandler(void)
 {
-	if (usart_interrupt_flag_get(USART1, USART_INT_FLAG_IDLE) != RESET) {
-		if (hal_irqn_accquire(HAL_IRQ_TYPE_USART1)) {
-			hal_irqn_accquire(HAL_IRQ_TYPE_USART1)();
-		}
-
-		usart_interrupt_flag_clear(USART1, USART_INT_FLAG_IDLE);
-	}
+	
 }
 
 void UART3_IRQHandler(void)
 {
-	if (usart_interrupt_flag_get(UART3, USART_INT_FLAG_IDLE) != RESET) {
-		if (hal_irqn_accquire(HAL_IRQ_TYPE_USART3)) {
-			hal_irqn_accquire(HAL_IRQ_TYPE_USART3)();
-		}
-
-		usart_interrupt_flag_clear(UART3, USART_INT_FLAG_IDLE);
-	}
+	
 }
 
 void UART4_IRQHandler(void)
 {
-	if (usart_interrupt_flag_get(UART4, USART_INT_FLAG_IDLE) != RESET) {
-		if (hal_irqn_accquire(HAL_IRQ_TYPE_USART4)) {
-			hal_irqn_accquire(HAL_IRQ_TYPE_USART4)();
-		}
-
-		usart_interrupt_flag_clear(UART4, USART_INT_FLAG_IDLE);
-	}
+	
 }
 
 void RTC_WKUP_IRQHandler(void)
 {
-	if (rtc_flag_get(RTC_FLAG_WT) != RESET) {
-		if (hal_irqn_accquire(HAL_IRQ_TYPE_RTC)) {
-			hal_irqn_accquire(HAL_IRQ_TYPE_RTC)();
-		}
-
-		rtc_flag_clear(RTC_FLAG_WT);
-	}
+	
 }
 
 void DMA_Channel0_IRQHandler(void)
 {
-	if (RESET != dma_interrupt_flag_get(DMA_CH0, DMA_INT_FLAG_FTF)) {
-		if (hal_irqn_accquire(HAL_IRQ_TYPE_DMA1_Channel0)) {
-			hal_irqn_accquire(HAL_IRQ_TYPE_DMA1_Channel0)();
-		}
-
-		dma_interrupt_flag_clear(DMA_CH0, DMA_INT_FLAG_FTF);
-	}
+	
 }
 
 void DMA_Channel2_IRQHandler(void)
@@ -172,24 +142,7 @@ void DMA_Channel4_IRQHandler(void)
 
 void DMA_Channel6_IRQHandler(void)
 {
-	if (RESET != dma_interrupt_flag_get(DMA_CH6, DMA_INT_FLAG_FTF)) {
-		if (hal_irqn_accquire(HAL_IRQ_TYPE_DMA1_Channel6)) {
-			hal_irqn_accquire(HAL_IRQ_TYPE_DMA1_Channel6)();
-		}
-
-		dma_interrupt_flag_clear(DMA_CH6, DMA_INT_FLAG_FTF);
-	}
-}
-
-void TIMER1_IRQHandler(void)
-{
-	if (timer_interrupt_flag_get(TIMER1, TIMER_INT_FLAG_UP) != RESET) {
-		if (hal_irqn_accquire(HAL_IRQ_TYPE_TIM1)) {
-			hal_irqn_accquire(HAL_IRQ_TYPE_TIM1)();
-		}
-
-		timer_interrupt_flag_clear(TIMER1, TIMER_INT_FLAG_UP);
-	}
+	
 }
 
 void TIMER2_IRQHandler(void)

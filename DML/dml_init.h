@@ -1,53 +1,42 @@
 /**
- * @file app_stimer.c
+ * @file dml_init.h
  * @author wenshuyu (wsy2161826815@163.com)
- * @brief
+ * @brief 设备管理层的初始化,在main函数启动之前进行调用
  * @version 0.1
- * @date 2024-07-06
- *
- * @copyright Copyright (c) 2024
- *
+ * @date 2024-07-31
+ * 
+ * The MIT License (MIT)
+ * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- *
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
  */
 
-#include "app_stimer.h"
+#ifndef _VIRTUAL_OS_DAL_INIT_H
+#define _VIRTUAL_OS_DAL_INIT_H
 
-static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout);
-static void _stimer_base_start(void);
+#include "dml_char_device.h"
+#include "stimer.h"
 
-static struct timer_port m_tmr = {
-	.f_init = _stimer_base_init,
-	.f_start = _stimer_base_start,
-};
+/**
+ * @brief 设备管理层初始化函数
+ * 
+ */
+void dml_init(void);
 
-static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout)
-{
-	hal_task_timer_init(period, f_timeout);
-}
-
-static void _stimer_base_start(void)
-{
-	hal_task_timer_start();
-}
-
-void app_stimer_init(void)
-{
-	stimer_init(&m_tmr);
-}
+#endif

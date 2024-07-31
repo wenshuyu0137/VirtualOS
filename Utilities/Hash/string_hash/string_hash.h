@@ -92,6 +92,17 @@ void *hash_find(hash_table_t *hash_table, const char *key, hash_error_t *error);
 hash_error_t hash_delete(hash_table_t *hash_table, const char *key);
 
 /**
+ * @brief 获取哈希表中所有的键
+ *
+ * @param hash_table 表实例
+ * @param keys 输出参数，用于存储所有的键
+ * @param num_keys 输出参数，用于返回键的数量
+ * @return hash_error_t 错误码
+ */
+hash_error_t hash_get_all_keys(hash_table_t *hash_table, char ***keys, size_t *num_keys);
+
+
+/**
  * @brief 删除表
  *
  * @param hash_table

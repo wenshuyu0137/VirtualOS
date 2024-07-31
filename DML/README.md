@@ -1,0 +1,2 @@
+- **设备管理层(Device Management Layer)**
+  - **提供各种设备注册的接口,由Board层实现相关设备的注册**

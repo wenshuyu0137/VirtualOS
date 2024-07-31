@@ -1,5 +1,5 @@
 /**
- * @file board_wwdt.h
+ * @file board_task_timer.h
  * @author wenshuyu (wsy2161826815@163.com)
  * @brief
  * @version 0.1
@@ -27,13 +27,12 @@
  *
  */
 
-#ifndef _VIRTUAL_OS_BOARD_WWDT_H
-#define _VIRTUAL_OS_BOARD_WWDT_H
+#ifndef _VIRTUAL_OS_B_TIMER_H
+#define _VIRTUAL_OS_B_TIMER_H
 
-#include "hal_wwdt.h"
+#include "stimer.h"
 #include "gd32l23x.h"
 
-void board_wwdt_init(void);
-void board_wwdt_ctrl(HAL_WWDT_CTRL_E ctrl);
+void platform_stimer_init(void);
 
-#endif /*_VIRTUAL_OS_BOARD_WWDT_H*/
+#endif /*_VIRTUAL_OS_B_TIMER_H*/

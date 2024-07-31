@@ -1,9 +1,9 @@
 /**
- * @file hal_gpio.h
+ * @file board_led_1.c
  * @author wenshuyu (wsy2161826815@163.com)
  * @brief 
  * @version 0.1
- * @date 2024-07-30
+ * @date 2024-07-31
  * 
  * The MIT License (MIT)
  * 
@@ -27,29 +27,58 @@
  * 
  */
 
-#ifndef _VIRTUAL_OS_HAL_GPIO_H
-#define _VIRTUAL_OS_HAL_GPIO_H
+#include "board_led_1.h"
+#include "gd32l23x.h"
 
-#include <stdint.h>
-#include <stdbool.h>
+const char led_name[] = "LED_RED";
+dml_dev_err_e led_open(void);
+dml_dev_err_e led_close(void);
+dml_dev_err_e led_ioctrl(void *arg);
+int led_read(uint8_t *buf, size_t len);
+int led_write(const uint8_t *buf, size_t len);
 
-typedef enum {
-	HAL_GPIO_ERROR_NONE, //无错误
-	HAL_GPIO_DEV_NOT_EXSIT, //设备不存在
-	HAL_GPIO_DEV_OPT_EXCEPTION, //异常操作,；例如对输出的引脚读取操作
-} hal_gpio_error_e;
+static dml_char_dev_t led_red_dev = {
+	.close = led_close,
+	.ioctrl = led_ioctrl,
+	.name = led_name,
+	.open = led_open,
+	.read = led_read,
+	.write = led_write,
+};
 
-typedef enum {
-	HAL_GPIO_CONFIG_DEINIT, //复位
-	HAL_GPIO_CONFIG_LP_MODE, //低功耗
-	HAL_GPIO_CONFIG_CALLBACK_SET, //设置中断回调
+dml_dev_err_e led_open(void)
+{
+	return DML_DEV_ERR_NONE;
+}
 
-} hal_gpio_config_e;
+dml_dev_err_e led_close(void)
+{
+	return DML_DEV_ERR_NONE;
+}
 
-/**********************************************************USER API**********************************************************/
-hal_gpio_error_e hal_gpio_pin_read(const char *const gpio_dev, uint8_t *level);
-hal_gpio_error_e hal_gpio_pin_write(const char *const gpio_dev, uint8_t level);
-hal_gpio_error_e hal_gpio_pin_toggle(const char *const gpio_dev);
-hal_gpio_error_e hal_gpio_config(const char *const gpio_dev, hal_gpio_config_e type, void (*cb)(void));
+dml_dev_err_e led_ioctrl(void *arg)
+{
+	return DML_DEV_ERR_NONE;
+}
 
-#endif
+int led_read(uint8_t *buf, size_t len)
+{
+	gpio_input_bit_get(GPIOB, GPIO_PIN_5);
+    return 1;
+}
+
+int led_write(const uint8_t *buf, size_t len)
+{
+	gpio_bit_write(GPIOB, GPIO_PIN_5, (*buf ? SET : RESET));
+    return 1;
+}
+
+//注册LED设备
+void led_red_init(void)
+{
+	gpio_deinit(GPIOB);
+	rcu_periph_clock_enable(RCU_GPIOB);
+	gpio_mode_set(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_5);
+	gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
+	dml_register_device(&led_red_dev);
+}

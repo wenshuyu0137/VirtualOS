@@ -1,0 +1,2 @@
+- **设备抽象层(Device Abstractiopn Layer)**
+  - **由应用层直接调用相关的读写等接口**

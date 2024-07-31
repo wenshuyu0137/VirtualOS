@@ -35,10 +35,7 @@ OF SUCH DAMAGE.
 #ifndef GD32L23X_IT_H
 #define GD32L23X_IT_H
 #include "gd32l23x_it.h"
-#include "hal_usart.h"
 #include "gd32l23x.h"
-#include "board_usart.h"
-#include "gd32L23x_board.h"
 
 /* function declarations */
 /* this function handles NMI exception */

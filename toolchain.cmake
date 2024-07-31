@@ -13,7 +13,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 option(USE_ARMGCC "Use ARM GCC toolchain" ON)
 
 if(USE_ARMGCC)
-    set(COMPILER_ROOT_PATH "C:/compile_environment/arm-gnu-toolchain-13.3.rel1-mingw-w64-i686-arm-none-eabi/bin")
+    set(COMPILER_ROOT_PATH "D:/Tool/compile_environment/gcc-arm-none-eabi-10.3-2021.10/bin")
     set(CMAKE_C_COMPILER "${COMPILER_ROOT_PATH}/arm-none-eabi-gcc.exe")
     set(CMAKE_CXX_COMPILER "${COMPILER_ROOT_PATH}/arm-none-eabi-g++.exe")
     set(CMAKE_ASM_COMPILER "${COMPILER_ROOT_PATH}/arm-none-eabi-gcc.exe")
