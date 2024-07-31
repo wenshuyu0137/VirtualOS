@@ -46,8 +46,8 @@ typedef void (*stimer_base_start)(void);
 typedef void (*stimer_entry)(void);
 
 struct timer_port {
-	stimer_base_init f_init;
-	stimer_base_start f_start;
+	volatile stimer_base_init f_init;
+	volatile stimer_base_start f_start;
 };
 
 typedef enum {

@@ -53,8 +53,8 @@ set(FRAMEWORK_INCLUDE_DIRS
 
 # 框架源文件
 file(GLOB_RECURSE BASE_SOURCES
-    ${FRAMEWORK_ROOT_DIR}/Component/FAL/*.c
-    ${FRAMEWORK_ROOT_DIR}/Component/FlashDB/*.c
+    # ${FRAMEWORK_ROOT_DIR}/Component/FAL/*.c
+    # ${FRAMEWORK_ROOT_DIR}/Component/FlashDB/*.c
     ${FRAMEWORK_ROOT_DIR}/Component/LittleFs/*.c
     ${FRAMEWORK_ROOT_DIR}/Component/RTT/*.c
     ${FRAMEWORK_ROOT_DIR}/DAL/*.c
@@ -77,8 +77,6 @@ file(GLOB_RECURSE BASE_SOURCES
 
 # 导入交叉编译工具链
 set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/toolchain.cmake)
-
-# set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/linux_toolchain.cmake)
 
 # 将所有源文件添加到目标中
 if(USE_ARMGCC)

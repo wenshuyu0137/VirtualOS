@@ -32,6 +32,7 @@
 #include "SEGGER_RTT.h"
 #include "stimer.h"
 #include "systick.h"
+#include "board_stimer.h"
 /**
  * @brief 设备管理层初始化函数
  * 
@@ -43,6 +44,7 @@ void dml_init(void)
     dev_table_init(); //初始化设备表
     systick_config(); //滴答定时器 1ms
     platform_stimer_init(); //框架调度定时器
+    
     
     led_red_init(); //LED设备注册
     RTT_PRINT("hello world\n");

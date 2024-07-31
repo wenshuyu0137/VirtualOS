@@ -110,5 +110,5 @@ int dal_write(const char *dev_name, uint8_t *buf, size_t len)
  */
 dal_dev_err_e dal_ioctrl(const char *dev_name, uint8_t cmd, void *argc)
 {
-	//TODO
+	return DAL_DEV_ERR_NONE;
 }

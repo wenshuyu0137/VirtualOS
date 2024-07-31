@@ -29,16 +29,7 @@
 
 #include "board_stimer.h"
 
-static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout);
-static void _stimer_base_start(void);
-
 stimer_timeout_process stimer_cb = NULL; //定时器中断
-
-//任务调度结构体
-static struct timer_port m_tmr = {
-	.f_init = _stimer_base_init,
-	.f_start = _stimer_base_start,
-};
 
 /**
  * @brief 实现任务调度定时器的初始化 
@@ -65,11 +56,11 @@ static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout)
 	timer_interrupt_enable(TIMER1, TIMER_INT_UP);
 	nvic_irq_enable(TIMER1_IRQn, 0);
 
-	stimer_cb = f_timeout; //保存函数指针
+	stimer_cb = f_timeout; //中断回调
 }
 
 /**
- * @brief 实现定时器的启动函数
+ * @brief 启动调度定时器
  * 
  */
 static void _stimer_base_start(void)
@@ -77,23 +68,22 @@ static void _stimer_base_start(void)
 	timer_enable(TIMER1);
 }
 
-//中断处理函数,注意不要 static修饰
 void TIMER1_IRQHandler(void)
 {
 	if (timer_interrupt_flag_get(TIMER1, TIMER_INT_FLAG_UP) != RESET) {
 		if (stimer_cb) {
 			stimer_cb();
 		}
-
 		timer_interrupt_flag_clear(TIMER1, TIMER_INT_FLAG_UP);
 	}
 }
 
-/**
- * @brief 给任务管理层提供初始化接口
- * 
- */
 void platform_stimer_init(void)
 {
+	static struct timer_port m_tmr = {
+		.f_init = _stimer_base_init,
+		.f_start = _stimer_base_start,
+	};
+
 	stimer_init(&m_tmr);
 }

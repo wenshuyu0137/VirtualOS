@@ -31,7 +31,6 @@
 #define _VIRTUAL_OS_DAL_INIT_H
 
 #include "dml_char_device.h"
-#include "stimer.h"
 
 /**
  * @brief 设备管理层初始化函数
