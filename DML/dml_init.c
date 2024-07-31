@@ -28,24 +28,17 @@
  */
 
 #include "dml_init.h"
-#include "board_led_1.h"
-#include "SEGGER_RTT.h"
-#include "stimer.h"
-#include "systick.h"
+#include "board_led.h"
 #include "board_stimer.h"
-/**
- * @brief 设备管理层初始化函数
- * 
- */
-void dml_init(void) __attribute__((constructor)); //main函数启动之前调用
 
-void dml_init(void)
+void dml_init(void) __attribute__((constructor));
+void dml_init(void) 
 {
     dev_table_init(); //初始化设备表
-    systick_config(); //滴答定时器 1ms
-    platform_stimer_init(); //框架调度定时器
+
+    platform_stimer_init();
+
+    led_red_init();
     
-    
-    led_red_init(); //LED设备注册
     RTT_PRINT("hello world\n");
 }

@@ -53,9 +53,9 @@ typedef struct {
 } dml_char_dev_t;
 
 void dev_table_init(void);
+dml_char_dev_t *dml_find_device(const char *name);
 bool dml_register_device(dml_char_dev_t *device);
 bool dml_unregister_device(const char *name);
-dml_char_dev_t *dml_find_device(const char *name);
 bool dml_list_all_devices(char ***device_names, size_t *num_devices);
 void free_device_names(char **device_names, size_t num_devices);
 

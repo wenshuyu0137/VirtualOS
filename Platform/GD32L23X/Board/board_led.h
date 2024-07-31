@@ -1,5 +1,5 @@
 /**
- * @file board_led_1.h
+ * @file board_led.h
  * @author wenshuyu (wsy2161826815@163.com)
  * @brief 
  * @version 0.1
@@ -27,10 +27,12 @@
  * 
  */
 
-#ifndef _BOARD_LED_1_H
-#define _BOARD_LED_1_H
+#ifndef VIRTUAL_OS_BOARD_LED_H
+#define VIRTUAL_OS_BOARD_LED_H
 
 #include "dml_char_device.h"
+#include "dml_init.h"
+#include "gd32l23x.h"
 
 void led_red_init(void);
 

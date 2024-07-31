@@ -31,11 +31,6 @@
 #define _VIRTUAL_OS_DAL_INIT_H
 
 #include "dml_char_device.h"
-
-/**
- * @brief 设备管理层初始化函数
- * 
- */
-void dml_init(void);
+#include "SEGGER_RTT.h"
 
 #endif

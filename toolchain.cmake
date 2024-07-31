@@ -10,7 +10,7 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
 
-option(USE_ARMGCC "Use ARM GCC toolchain" ON)
+option(USE_ARMGCC "Use ARM GCC toolchain" OFF)
 
 if(USE_ARMGCC)
     set(COMPILER_ROOT_PATH "D:/Tool/compile_environment/gcc-arm-none-eabi-10.3-2021.10/bin")

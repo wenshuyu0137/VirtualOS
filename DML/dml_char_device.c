@@ -46,8 +46,23 @@ void dev_table_init(void)
 
 	if (init_hash_table(&dev_table, DEVICE_TABLE_SIZE * 3, NULL, NULL) == HASH_SUCCESS) {
 		is_dev_table_initialized = true;
-	} else {
 	}
+}
+
+/**
+ * @brief 根据设备名查找设备
+ * 
+ * @param name 设备名
+ * @return dml_char_dev_t* 具体的设备类型,没有返回NULL
+ */
+dml_char_dev_t *dml_find_device(const char *name)
+{
+	if (!is_dev_table_initialized || !name)
+		return NULL;
+
+	hash_error_t err;
+	void *priv = hash_find(&dev_table, name, &err);
+	return (err == HASH_SUCCESS) ? (dml_char_dev_t *)priv : NULL;
 }
 
 /**
@@ -63,7 +78,7 @@ bool dml_register_device(dml_char_dev_t *device)
 		return false;
 
 	// 设备已存在
-	if (dml_find_device(device->name) != NULL)
+	if (dml_find_device(device->name))
 		return false;
 
 	return hash_insert(&dev_table, device->name, (void *)device) == HASH_SUCCESS;
@@ -83,22 +98,6 @@ bool dml_unregister_device(const char *name)
 
 	hash_error_t err = hash_delete(&dev_table, name);
 	return (err == HASH_SUCCESS);
-}
-
-/**
- * @brief 根据设备名查找设备
- * 
- * @param name 设备名
- * @return dml_char_dev_t* 具体的设备类型,没有返回NULL
- */
-dml_char_dev_t *dml_find_device(const char *name)
-{
-	if (!is_dev_table_initialized || !name)
-		return NULL;
-
-	hash_error_t err;
-	void *priv = hash_find(&dev_table, name, &err);
-	return (err == HASH_SUCCESS) ? (dml_char_dev_t *)priv : NULL;
 }
 
 /**

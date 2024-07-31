@@ -27,8 +27,7 @@
  * 
  */
 
-#include "board_led_1.h"
-#include "gd32l23x.h"
+#include "board_led.h"
 
 const char led_name[] = "LED_RED";
 dml_dev_err_e led_open(void);
@@ -36,15 +35,6 @@ dml_dev_err_e led_close(void);
 dml_dev_err_e led_ioctrl(void *arg);
 int led_read(uint8_t *buf, size_t len);
 int led_write(const uint8_t *buf, size_t len);
-
-static dml_char_dev_t led_red_dev = {
-	.close = led_close,
-	.ioctrl = led_ioctrl,
-	.name = led_name,
-	.open = led_open,
-	.read = led_read,
-	.write = led_write,
-};
 
 dml_dev_err_e led_open(void)
 {
@@ -80,5 +70,15 @@ void led_red_init(void)
 	rcu_periph_clock_enable(RCU_GPIOB);
 	gpio_mode_set(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_5);
 	gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
+
+	static dml_char_dev_t led_red_dev = {
+		.close = led_close,
+		.ioctrl = led_ioctrl,
+		.name = led_name,
+		.open = led_open,
+		.read = led_read,
+		.write = led_write,
+	};
+
 	dml_register_device(&led_red_dev);
 }
