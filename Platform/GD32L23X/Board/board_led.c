@@ -28,8 +28,9 @@
  */
 
 #include "board_led.h"
+#include "dml_init.h"
 
-const char led_name[] = "LED_RED";
+const char led_name[] = "/dev/led_green";
 dml_dev_err_e led_open(void);
 dml_dev_err_e led_close(void);
 dml_dev_err_e led_ioctrl(void *arg);
@@ -63,15 +64,7 @@ int led_write(const uint8_t *buf, size_t len)
     return 1;
 }
 
-//注册LED设备
-void led_red_init(void)
-{
-	gpio_deinit(GPIOB);
-	rcu_periph_clock_enable(RCU_GPIOB);
-	gpio_mode_set(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_5);
-	gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
-
-	dml_char_dev_t led_red_dev = {
+static dml_file_opts_t led_red_dev = {
 		.close = led_close,
 		.ioctrl = led_ioctrl,
 		.name = led_name,
@@ -80,5 +73,14 @@ void led_red_init(void)
 		.write = led_write,
 	};
 
+void led_red_init(void)
+{
+	gpio_deinit(GPIOB);
+	rcu_periph_clock_enable(RCU_GPIOB);
+	gpio_mode_set(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_5);
+	gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
+
 	dml_register_device(&led_red_dev);
 }
+
+EXPORT_DIRVER(led_red_init)

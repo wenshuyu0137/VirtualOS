@@ -28,6 +28,7 @@
  */
 
 #include "board_stimer.h"
+#include "dml_init.h"
 
 stimer_timeout_process stimer_cb = NULL; //定时器中断
 
@@ -37,6 +38,13 @@ stimer_timeout_process stimer_cb = NULL; //定时器中断
  * @param period 周期(ms)
  * @param f_timeout 中断回调函数,在定时器中断中调用
  */
+static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout);
+static void _stimer_base_start(void);
+static struct timer_port m_tmr = {
+		.f_init = _stimer_base_init,
+		.f_start = _stimer_base_start,
+	};
+
 static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout)
 {
 	timer_parameter_struct task_timer;
@@ -80,10 +88,7 @@ void TIMER1_IRQHandler(void)
 
 void platform_stimer_init(void)
 {
-	struct timer_port m_tmr = {
-		.f_init = _stimer_base_init,
-		.f_start = _stimer_base_start,
-	};
-
 	stimer_init(&m_tmr);
 }
+
+EXPORT_DIRVER(platform_stimer_init);

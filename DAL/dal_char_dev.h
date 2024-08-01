@@ -33,9 +33,10 @@
 #include "dml_char_device.h"
 
 typedef enum {
-	DAL_DEV_ERR_NOT_EXIST = -3, //设备不存在
+	DAL_DEV_ERR_NOT_EXIST = -4, //设备不存在
 	DAL_DEV_ERR_OCCUPIED, //设备被占用
 	DAL_DEV_ERR_EXCEPTION, //操作异常 例如只读的进行写操作
+	DAL_DEV_ERR_UNAVALIABLE, //不可使用(例如没打开)
 
 	// 0
 	DAL_DEV_ERR_NONE, //无错误

@@ -7,6 +7,7 @@ void task_dispatch_looper(void)
 	static uint32_t pre_tick;
 	uint32_t cur_tick;
 	uint32_t i;
+
 	stimer_task_add(&m_led_task);
 
 	stimer_start();

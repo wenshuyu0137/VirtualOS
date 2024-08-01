@@ -39,7 +39,7 @@ static hash_table_t dev_table;
  * @brief 设备注册表初始化,上电/复位时调用
  * 
  */
-void dev_table_init(void)
+void dml_dev_table_init(void)
 {
 	if (is_dev_table_initialized)
 		return;
@@ -53,16 +53,16 @@ void dev_table_init(void)
  * @brief 根据设备名查找设备
  * 
  * @param name 设备名
- * @return dml_char_dev_t* 具体的设备类型,没有返回NULL
+ * @return dml_dev_t* 具体的设备类型,没有返回NULL
  */
-dml_char_dev_t *dml_find_device(const char *name)
+dml_dev_t *dml_find_device(const char *name)
 {
 	if (!is_dev_table_initialized || !name)
 		return NULL;
 
 	hash_error_t err;
 	void *priv = hash_find(&dev_table, name, &err);
-	return (err == HASH_SUCCESS) ? (dml_char_dev_t *)priv : NULL;
+	return (err == HASH_SUCCESS) ? (dml_dev_t *)priv : NULL;
 }
 
 /**
@@ -72,16 +72,20 @@ dml_char_dev_t *dml_find_device(const char *name)
  * @return true 
  * @return false 
  */
-bool dml_register_device(dml_char_dev_t *device)
+bool dml_register_device(dml_file_opts_t *opts)
 {
-	if (!is_dev_table_initialized || !device || !device->name)
+	if (!is_dev_table_initialized || !opts || !opts->name)
 		return false;
 
 	// 设备已存在
-	if (dml_find_device(device->name))
+	if (dml_find_device(opts->name))
 		return false;
 
-	return hash_insert(&dev_table, device->name, (void *)device) == HASH_SUCCESS;
+	dml_dev_t *dev = (dml_dev_t*)malloc(sizeof(dml_dev_t));
+	dev->opts = opts;
+	dev->is_open = false;
+
+	return hash_insert(&dev_table, opts->name, (void *)dev) == HASH_SUCCESS;
 }
 
 /**

@@ -30,7 +30,7 @@
 #ifndef _VIRTUAL_OS_DAL_INIT_H
 #define _VIRTUAL_OS_DAL_INIT_H
 
-#include "dml_char_device.h"
-#include "SEGGER_RTT.h"
+#define EXPORT_DIRVER(_func) \
+    void _func(void) __attribute__((constructor));
 
 #endif

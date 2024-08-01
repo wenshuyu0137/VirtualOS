@@ -3,7 +3,7 @@
 
 #include "dal_char_dev.h"
 
-#define APP_LED_TASK_PERIOD 1000
+#define APP_LED_TASK_PERIOD 400
 
 void app_led_task(void);
 

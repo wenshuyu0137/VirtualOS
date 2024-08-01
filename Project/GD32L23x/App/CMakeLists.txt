@@ -89,6 +89,7 @@ else() # ARM CLANG 编译器
         --strict                                            # 严格模式
         --scatter ${LINKER_SCRIPT}                          # 使用散点文件
         --info=sizes,totals,unused,veneers                  # 输出信息
+        --xref --callgraph --symbols
         --map                                               # 生成映射文件
         --list=${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.map # 生成列表文件
     )

@@ -50,11 +50,16 @@ typedef struct {
 	dml_dev_err_e (*ioctrl)(void *arg);
 	int (*read)(uint8_t *buf, size_t len);
 	int (*write)(const uint8_t *buf, size_t len);
-} dml_char_dev_t;
+} dml_file_opts_t;
 
-void dev_table_init(void);
-dml_char_dev_t *dml_find_device(const char *name);
-bool dml_register_device(dml_char_dev_t *device);
+typedef struct {
+	dml_file_opts_t *opts;
+	bool is_open;
+} dml_dev_t;
+
+void dml_dev_table_init(void);
+dml_dev_t *dml_find_device(const char *name);
+bool dml_register_device(dml_file_opts_t *device);
 bool dml_unregister_device(const char *name);
 bool dml_list_all_devices(char ***device_names, size_t *num_devices);
 void free_device_names(char **device_names, size_t num_devices);

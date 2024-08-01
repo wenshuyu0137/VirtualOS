@@ -38,11 +38,14 @@
  */
 dal_dev_err_e dal_open(const char *dev_name)
 {
-	dml_char_dev_t *dev = dml_find_device(dev_name);
+	dml_dev_t *dev = dml_find_device(dev_name);
 	if (!dev)
 		return DAL_DEV_ERR_NOT_EXIST;
 
-	//TODO
+	if(dev->is_open)
+		return DAL_DEV_ERR_OCCUPIED;
+
+	dev->is_open = true;
 	return DAL_DEV_ERR_NONE;
 }
 
@@ -54,11 +57,11 @@ dal_dev_err_e dal_open(const char *dev_name)
  */
 dal_dev_err_e dal_close(const char *dev_name)
 {
-	dml_char_dev_t *dev = dml_find_device(dev_name);
+	dml_dev_t *dev = dml_find_device(dev_name);
 	if (!dev)
 		return DAL_DEV_ERR_NOT_EXIST;
 
-	//TODO
+	dev->is_open = false;
 	return DAL_DEV_ERR_NONE;
 }
 
@@ -72,11 +75,14 @@ dal_dev_err_e dal_close(const char *dev_name)
  */
 int dal_read(const char *dev_name, uint8_t *buf, size_t len)
 {
-	dml_char_dev_t *dev = dml_find_device(dev_name);
+	dml_dev_t *dev = dml_find_device(dev_name);
 	if (!dev)
 		return DAL_DEV_ERR_NOT_EXIST;
 
-	int ret = dev->read(buf, len);
+	if(!dev->is_open)
+		return DAL_DEV_ERR_UNAVALIABLE;
+
+	int ret = dev->opts->read(buf, len);
 
 	return ret;
 }
@@ -91,11 +97,14 @@ int dal_read(const char *dev_name, uint8_t *buf, size_t len)
  */
 int dal_write(const char *dev_name, uint8_t *buf, size_t len)
 {
-	dml_char_dev_t *dev = dml_find_device(dev_name);
+	dml_dev_t *dev = dml_find_device(dev_name);
 	if (!dev)
 		return DAL_DEV_ERR_NOT_EXIST;
 
-	int ret = dev->write(buf, len);
+	if(!dev->is_open)
+		return DAL_DEV_ERR_UNAVALIABLE;
+
+	int ret = dev->opts->write(buf, len);
 
 	return ret;
 }
@@ -110,5 +119,12 @@ int dal_write(const char *dev_name, uint8_t *buf, size_t len)
  */
 dal_dev_err_e dal_ioctrl(const char *dev_name, uint8_t cmd, void *argc)
 {
+	dml_dev_t *dev = dml_find_device(dev_name);
+	if (!dev)
+		return DAL_DEV_ERR_NOT_EXIST;
+
+	if(!dev->is_open)
+		return DAL_DEV_ERR_UNAVALIABLE;
+
 	return DAL_DEV_ERR_NONE;
 }
