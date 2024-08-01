@@ -1,9 +1,9 @@
 /**
- * @file board_led.h
+ * @file driver_stimer.h
  * @author wenshuyu (wsy2161826815@163.com)
  * @brief 
  * @version 0.1
- * @date 2024-07-31
+ * @date 2024-08-01
  * 
  * The MIT License (MIT)
  * 
@@ -27,13 +27,13 @@
  * 
  */
 
-#ifndef VIRTUAL_OS_BOARD_LED_H
-#define VIRTUAL_OS_BOARD_LED_H
+#ifndef _VIRTUAL_OS_DRIVER_STIMER_H
+#define _VIRTUAL_OS_DRIVER_STIMER_H
 
-#include "dml_char_device.h"
 #include "dml_init.h"
+#include "stimer.h"
 #include "gd32l23x.h"
 
-void led_red_init(void);
+void platform_stimer_init(void);
 
-#endif
+#endif /*_VIRTUAL_OS_DRIVER_STIMER_H*/

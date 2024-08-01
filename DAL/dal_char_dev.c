@@ -113,7 +113,7 @@ int dal_write(const char *dev_name, uint8_t *buf, size_t len)
  * @brief 实现除读写之外的设备操作
  * 
  * @param dev_name 设备名
- * @param cmd 指令
+ * @param cmd 指令 参考dal_reserved_cmd_e 保留指令
  * @param argc 通用参数指针
  * @return dal_dev_err_e 参考枚举变量
  */
@@ -124,5 +124,5 @@ dal_dev_err_e dal_ioctrl(const char *dev_name, int cmd, void *argc)
 	if (!dev)
 		return DAL_DEV_ERR_NOT_EXIST;
 
-	return (dal_dev_err_e)dev->opts->ioctrl(DAL_RESERVED_CMD_SET_IRQ_FUNC, argc);
+	return (dal_dev_err_e)dev->opts->ioctrl(cmd, argc);
 }

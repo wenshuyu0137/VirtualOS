@@ -1,9 +1,9 @@
 /**
- * @file dml_init.h
+ * @file driver_485.c
  * @author wenshuyu (wsy2161826815@163.com)
- * @brief 设备管理层的初始化,在main函数启动之前进行调用
+ * @brief 
  * @version 0.1
- * @date 2024-07-31
+ * @date 2024-08-01
  * 
  * The MIT License (MIT)
  * 
@@ -27,14 +27,58 @@
  * 
  */
 
-#ifndef _VIRTUAL_OS_DAL_INIT_H
-#define _VIRTUAL_OS_DAL_INIT_H
+#include "driver_485.h"
+#include "dml_init.h"
+#include "gd32l23x.h"
 
-//导出驱动宏,在main函数之前初始化
-#define EXPORT_DIRVER(_func) \
-    void _func(void) __attribute__((constructor));
+static const char serial_485_name[] = "/dev/serial_485";
+static dml_dev_err_e serial_485_open(void);
+static dml_dev_err_e serial_485_close(void);
+static dml_dev_err_e serial_485_ioctrl(int cmd, void *arg);
+static int serial_485_read(uint8_t *buf, size_t len);
+static int serial_485_write(const uint8_t *buf, size_t len);
 
+static dml_dev_err_e serial_485_open(void)
+{
+	return DML_DEV_ERR_NONE;
+}
 
-void dml_init(void);
+static dml_dev_err_e serial_485_close(void)
+{
+	return DML_DEV_ERR_NONE;
+}
 
-#endif
+static dml_dev_err_e serial_485_ioctrl(int cmd, void *arg)
+{
+	return DML_DEV_ERR_NONE;
+}
+
+static int serial_485_read(uint8_t *buf, size_t len)
+{
+	;
+	return 1;
+}
+
+static int serial_485_write(const uint8_t *buf, size_t len)
+{
+	
+	return 1;
+}
+
+static dml_file_opts_t serial_485_red_dev = {
+	.close = serial_485_close,
+	.ioctrl = serial_485_ioctrl,
+	.name = serial_485_name,
+	.open = serial_485_open,
+	.read = serial_485_read,
+	.write = serial_485_write,
+};
+
+void serial_485_init(void)
+{
+
+	dml_register_device(&serial_485_red_dev);
+}
+
+EXPORT_DIRVER(serial_485_init)
+

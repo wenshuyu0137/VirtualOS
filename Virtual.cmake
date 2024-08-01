@@ -27,7 +27,7 @@ endif()
 
 # 框架头文件路径
 set(FRAMEWORK_INCLUDE_DIRS
-    ${FRAMEWORK_ROOT_DIR}/Platform/ARM_CORE/
+    ${FRAMEWORK_ROOT_DIR}/Driver/ARM_CORE/
     ${FRAMEWORK_ROOT_DIR}/Component/FAL/
     ${FRAMEWORK_ROOT_DIR}/Component/FlashDB/
     ${FRAMEWORK_ROOT_DIR}/Component/LittleFs/
@@ -48,7 +48,7 @@ set(FRAMEWORK_INCLUDE_DIRS
     ${FRAMEWORK_ROOT_DIR}/Protocol/Protocol_4G/
     ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_client/
     ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_server/
-    ${FRAMEWORK_ROOT_DIR}/Platform/syscall/
+    ${FRAMEWORK_ROOT_DIR}/Driver/syscall/
 )
 
 # 框架源文件
@@ -80,7 +80,7 @@ set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/toolchain.cmake)
 
 # 将所有源文件添加到目标中
 if(USE_ARMGCC)
-    file(GLOB_RECURSE SHARED_SOURCES ${BASE_SOURCES} ${FRAMEWORK_ROOT_DIR}/Platform/syscall/syscall.c)
+    file(GLOB_RECURSE SHARED_SOURCES ${BASE_SOURCES} ${FRAMEWORK_ROOT_DIR}/Driver/syscall/syscall.c)
 else()
     file(GLOB_RECURSE SHARED_SOURCES ${BASE_SOURCES})
 endif()

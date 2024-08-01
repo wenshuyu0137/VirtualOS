@@ -1,9 +1,9 @@
 /**
- * @file board_led_1.c
+ * @file driver_led_green.c
  * @author wenshuyu (wsy2161826815@163.com)
  * @brief 
  * @version 0.1
- * @date 2024-07-31
+ * @date 2024-08-01
  * 
  * The MIT License (MIT)
  * 
@@ -27,7 +27,7 @@
  * 
  */
 
-#include "board_led.h"
+#include "driver_led_gree.h"
 #include "dml_init.h"
 
 static const char led_name[] = "/dev/led_green";
@@ -55,26 +55,25 @@ static dml_dev_err_e led_ioctrl(int cmd, void *arg)
 static int led_read(uint8_t *buf, size_t len)
 {
 	gpio_input_bit_get(GPIOB, GPIO_PIN_5);
-    return 1;
+	return 1;
 }
 
 static int led_write(const uint8_t *buf, size_t len)
 {
 	gpio_bit_write(GPIOB, GPIO_PIN_5, (*buf ? SET : RESET));
-    return 1;
+	return 1;
 }
 
 static dml_file_opts_t led_red_dev = {
-		.close = led_close,
-		.ioctrl = led_ioctrl,
-		.name = led_name,
-		.open = led_open,
-		.read = led_read,
-		.write = led_write,
-	};
+	.close = led_close,
+	.ioctrl = led_ioctrl,
+	.name = led_name,
+	.open = led_open,
+	.read = led_read,
+	.write = led_write,
+};
 
-EXPORT_DIRVER(led_red_init)
-void led_red_init(void)
+void led_green_init(void)
 {
 	gpio_deinit(GPIOB);
 	rcu_periph_clock_enable(RCU_GPIOB);
@@ -83,3 +82,5 @@ void led_red_init(void)
 
 	dml_register_device(&led_red_dev);
 }
+
+EXPORT_DIRVER(led_green_init)

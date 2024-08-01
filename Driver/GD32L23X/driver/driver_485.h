@@ -1,9 +1,9 @@
 /**
- * @file dml_init.h
+ * @file driver_485.h
  * @author wenshuyu (wsy2161826815@163.com)
- * @brief 设备管理层的初始化,在main函数启动之前进行调用
+ * @brief 
  * @version 0.1
- * @date 2024-07-31
+ * @date 2024-08-01
  * 
  * The MIT License (MIT)
  * 
@@ -27,14 +27,9 @@
  * 
  */
 
-#ifndef _VIRTUAL_OS_DAL_INIT_H
-#define _VIRTUAL_OS_DAL_INIT_H
+#ifndef _VIRTUAL_OS_DRIVER_485_H
+#define _VIRTUAL_OS_DRIVER_485_H
 
-//导出驱动宏,在main函数之前初始化
-#define EXPORT_DIRVER(_func) \
-    void _func(void) __attribute__((constructor));
+#include "dml_char_device.h"
 
-
-void dml_init(void);
-
-#endif
+#endif /*_VIRTUAL_OS_DRIVER_485_H*/

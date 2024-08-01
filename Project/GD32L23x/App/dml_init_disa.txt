@@ -1,0 +1,37 @@
+        THUMB
+
+        AREA ||.text||, CODE, READONLY, ALIGN=2
+
+
+        AREA ||.text.dml_init||, CODE, READONLY, ALIGN=1
+
+dml_init PROC
+        B.W      dml_dev_table_init
+        ENDP
+
+
+        AREA ||.ARM.exidx.text.dml_init||, LINKORDER=||.text.dml_init||, DATA, READONLY, SECTYPE={SHT_ARM_EXIDX}, ALIGN=2
+
+        DCD      0x00000000
+        RELOC 42, ||.text.dml_init||
+        DCD      0x00000001
+
+        AREA ||.init_array.101||, DATA, INIT_ARRAY, ALIGN=2
+
+        DCD      0x00000000
+        RELOC 38, dml_init
+
+        EXPORT dml_init [CODE]
+
+        IMPORT dml_dev_table_init [DYNAMIC]
+
+        ATTR FILESCOPE
+        ATTR SETVALUE Tag_ABI_PCS_wchar_t,4
+        ATTR SETVALUE Tag_ABI_enum_size,2
+        ATTR SETVALUE Tag_ABI_optimization_goals,1
+        ATTR SETVALUE Tag_ABI_FP_16bit_format,1
+        ATTR SETSTRING Tag_conformance,"2.09"
+        ATTR SETVALUE AV,6,0
+
+        ASSERT {ENDIAN} = "little"
+        END

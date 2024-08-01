@@ -31,9 +31,16 @@
 #include "string_hash.h"
 
 static bool is_dev_table_initialized = false;
-static hash_table_t dev_table;
 
-#define DEVICE_TABLE_SIZE 64 //64个设备
+#define DEVICE_TABLE_SIZE 192 // 32 * 3个设备 Hash表大小建议为3倍
+
+static list_item tables[DEVICE_TABLE_SIZE];
+static hash_table_t dev_table = {
+	.table = tables,
+	.table_size = DEVICE_TABLE_SIZE,
+	.lock_callback = NULL,
+	.unlock_callback = NULL,
+};
 
 /**
  * @brief 设备注册表初始化,上电/复位时调用
@@ -44,9 +51,10 @@ void dml_dev_table_init(void)
 	if (is_dev_table_initialized)
 		return;
 
-	if (init_hash_table(&dev_table, DEVICE_TABLE_SIZE * 3, NULL, NULL) == HASH_SUCCESS) {
-		is_dev_table_initialized = true;
-	}
+	for (size_t i = 0; i < DEVICE_TABLE_SIZE; i++)
+		list_init(&(dev_table.table[i]));
+
+	is_dev_table_initialized = true;
 }
 
 /**
@@ -81,7 +89,7 @@ bool dml_register_device(dml_file_opts_t *opts)
 	if (dml_find_device(opts->name))
 		return false;
 
-	dml_dev_t *dev = (dml_dev_t*)malloc(sizeof(dml_dev_t));
+	dml_dev_t *dev = (dml_dev_t *)malloc(sizeof(dml_dev_t));
 	dev->opts = opts;
 	dev->is_open = false;
 
@@ -131,10 +139,10 @@ bool dml_list_all_devices(char ***device_names, size_t *num_devices)
  */
 void free_device_names(char **device_names, size_t num_devices)
 {
-    if (device_names) {
-        for (size_t i = 0; i < num_devices; ++i) {
-            free(device_names[i]);
-        }
-        free(device_names);
-    }
+	if (device_names) {
+		for (size_t i = 0; i < num_devices; ++i) {
+			free(device_names[i]);
+		}
+		free(device_names);
+	}
 }
