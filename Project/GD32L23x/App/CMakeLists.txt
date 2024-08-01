@@ -24,17 +24,17 @@ set(PROJECT_INCLUDE_DIRS
     ${FRAMEWORK_ROOT_DIR}/Project/GD32L23x/App/sys/
     ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/GD32L23x_standard_peripheral/Include/
     ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/CMSIS/GD32L23x/Include/
-    ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/Driver/
+    ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/driver/
 )
 include_directories(${PROJECT_INCLUDE_DIRS})
 
 # 设置项目源文件路径
 file(GLOB_RECURSE SUBPROJECT_SOURCES
     ${FRAMEWORK_ROOT_DIR}/Project/GD32L23x/App/app/*.c
-    ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/Driver/*.c
     ${FRAMEWORK_ROOT_DIR}/Project/GD32L23x/App/sys/*.c
     ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/GD32L23x_standard_peripheral/Source/*.c
     ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/CMSIS/GD32L23x/Source/*.c
+    ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/driver/*.c
 )
 
 if(USE_ARMGCC) # ARM GCC 编译器

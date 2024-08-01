@@ -1,9 +1,9 @@
 /**
- * @file dml_char_device.h
+ * @file app_485.h
  * @author wenshuyu (wsy2161826815@163.com)
- * @brief 提供设备驱动注册的相关接口
+ * @brief 
  * @version 0.1
- * @date 2024-07-31
+ * @date 2024-08-01
  * 
  * The MIT License (MIT)
  * 
@@ -27,42 +27,14 @@
  * 
  */
 
-#ifndef _VIRTUAL_OS_DML_CHAR_DEVICE_H
-#define _VIRTUAL_OS_DML_CHAR_DEVICE_H
+#ifndef _VIRTUAL_OS_APP_485_H
+#define _VIRTUAL_OS_APP_485_H
 
-#include <stdint.h>
-#include <stddef.h>
-#include <stdbool.h>
+#include "dal_char_dev.h"
 
-typedef enum {
-	DML_DEV_ERR_NOT_EXIST = -4, //设备不存在
-	DML_DEV_ERR_OCCUPIED, //设备被占用
-	DML_DEV_ERR_EXCEPTION, //操作异常 例如只读的进行写操作
-	DML_DEV_ERR_UNAVALIABLE, //不可使用(例如没打开)
-	// 0
-	DML_DEV_ERR_NONE, //无错误
-} dml_dev_err_e;
+#define APP_485_TASK_PERIOD 10
 
-typedef struct {
-	const char *name;
-	dml_dev_err_e (*open)(void);
-	dml_dev_err_e (*close)(void);
-	dml_dev_err_e (*ioctrl)(int cmd, void *arg);
-	int (*read)(uint8_t *buf, size_t len);
-	int (*write)(const uint8_t *buf, size_t len);
-} dml_file_opts_t;
+void app_485_init(void);
+void app_485_task(void);
 
-typedef struct {
-	dml_file_opts_t *opts;
-	
-	//TODO
-} dml_dev_t;
-
-void dml_dev_table_init(void);
-dml_dev_t *dml_find_device(const char *name);
-bool dml_register_device(dml_file_opts_t *device);
-bool dml_unregister_device(const char *name);
-bool dml_list_all_devices(char ***device_names, size_t *num_devices);
-void free_device_names(char **device_names, size_t num_devices);
-
-#endif /*_VIRTUAL_OS_DML_CHAR_DEVICE_H*/
+#endif /*_VIRTUAL_OS_APP_485_H*/
