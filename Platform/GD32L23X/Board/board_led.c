@@ -30,35 +30,35 @@
 #include "board_led.h"
 #include "dml_init.h"
 
-const char led_name[] = "/dev/led_green";
-dml_dev_err_e led_open(void);
-dml_dev_err_e led_close(void);
-dml_dev_err_e led_ioctrl(void *arg);
-int led_read(uint8_t *buf, size_t len);
-int led_write(const uint8_t *buf, size_t len);
+static const char led_name[] = "/dev/led_green";
+static dml_dev_err_e led_open(void);
+static dml_dev_err_e led_close(void);
+static dml_dev_err_e led_ioctrl(int cmd, void *arg);
+static int led_read(uint8_t *buf, size_t len);
+static int led_write(const uint8_t *buf, size_t len);
 
-dml_dev_err_e led_open(void)
+static dml_dev_err_e led_open(void)
 {
 	return DML_DEV_ERR_NONE;
 }
 
-dml_dev_err_e led_close(void)
+static dml_dev_err_e led_close(void)
 {
 	return DML_DEV_ERR_NONE;
 }
 
-dml_dev_err_e led_ioctrl(void *arg)
+static dml_dev_err_e led_ioctrl(int cmd, void *arg)
 {
 	return DML_DEV_ERR_NONE;
 }
 
-int led_read(uint8_t *buf, size_t len)
+static int led_read(uint8_t *buf, size_t len)
 {
 	gpio_input_bit_get(GPIOB, GPIO_PIN_5);
     return 1;
 }
 
-int led_write(const uint8_t *buf, size_t len)
+static int led_write(const uint8_t *buf, size_t len)
 {
 	gpio_bit_write(GPIOB, GPIO_PIN_5, (*buf ? SET : RESET));
     return 1;
@@ -73,6 +73,7 @@ static dml_file_opts_t led_red_dev = {
 		.write = led_write,
 	};
 
+EXPORT_DIRVER(led_red_init)
 void led_red_init(void)
 {
 	gpio_deinit(GPIOB);
@@ -82,5 +83,3 @@ void led_red_init(void)
 
 	dml_register_device(&led_red_dev);
 }
-
-EXPORT_DIRVER(led_red_init)

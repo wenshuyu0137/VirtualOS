@@ -42,7 +42,7 @@ dal_dev_err_e dal_open(const char *dev_name)
 	if (!dev)
 		return DAL_DEV_ERR_NOT_EXIST;
 
-	if(dev->is_open)
+	if (dev->is_open)
 		return DAL_DEV_ERR_OCCUPIED;
 
 	dev->is_open = true;
@@ -79,7 +79,7 @@ int dal_read(const char *dev_name, uint8_t *buf, size_t len)
 	if (!dev)
 		return DAL_DEV_ERR_NOT_EXIST;
 
-	if(!dev->is_open)
+	if (!dev->is_open)
 		return DAL_DEV_ERR_UNAVALIABLE;
 
 	int ret = dev->opts->read(buf, len);
@@ -101,7 +101,7 @@ int dal_write(const char *dev_name, uint8_t *buf, size_t len)
 	if (!dev)
 		return DAL_DEV_ERR_NOT_EXIST;
 
-	if(!dev->is_open)
+	if (!dev->is_open)
 		return DAL_DEV_ERR_UNAVALIABLE;
 
 	int ret = dev->opts->write(buf, len);
@@ -117,14 +117,12 @@ int dal_write(const char *dev_name, uint8_t *buf, size_t len)
  * @param argc 通用参数指针
  * @return dal_dev_err_e 参考枚举变量
  */
-dal_dev_err_e dal_ioctrl(const char *dev_name, uint8_t cmd, void *argc)
+dal_dev_err_e dal_ioctrl(const char *dev_name, int cmd, void *argc)
 {
 	dml_dev_t *dev = dml_find_device(dev_name);
+
 	if (!dev)
 		return DAL_DEV_ERR_NOT_EXIST;
 
-	if(!dev->is_open)
-		return DAL_DEV_ERR_UNAVALIABLE;
-
-	return DAL_DEV_ERR_NONE;
+	return (dal_dev_err_e)dev->opts->ioctrl(DAL_RESERVED_CMD_SET_IRQ_FUNC, argc);
 }

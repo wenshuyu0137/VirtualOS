@@ -86,9 +86,9 @@ void TIMER1_IRQHandler(void)
 	}
 }
 
+EXPORT_DIRVER(platform_stimer_init);
 void platform_stimer_init(void)
 {
 	stimer_init(&m_tmr);
 }
 
-EXPORT_DIRVER(platform_stimer_init);

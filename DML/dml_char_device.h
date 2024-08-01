@@ -35,10 +35,10 @@
 #include <stdbool.h>
 
 typedef enum {
-	DML_DEV_ERR_NOT_EXIST = -3, //设备不存在
+	DML_DEV_ERR_NOT_EXIST = -4, //设备不存在
 	DML_DEV_ERR_OCCUPIED, //设备被占用
 	DML_DEV_ERR_EXCEPTION, //操作异常 例如只读的进行写操作
-
+	DML_DEV_ERR_UNAVALIABLE, //不可使用(例如没打开)
 	// 0
 	DML_DEV_ERR_NONE, //无错误
 } dml_dev_err_e;
@@ -47,7 +47,7 @@ typedef struct {
 	const char *name;
 	dml_dev_err_e (*open)(void);
 	dml_dev_err_e (*close)(void);
-	dml_dev_err_e (*ioctrl)(void *arg);
+	dml_dev_err_e (*ioctrl)(int cmd, void *arg);
 	int (*read)(uint8_t *buf, size_t len);
 	int (*write)(const uint8_t *buf, size_t len);
 } dml_file_opts_t;
