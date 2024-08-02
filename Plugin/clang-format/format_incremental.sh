@@ -11,12 +11,12 @@ CONFIG_PATH="$SCRIPT_DIR/.clang-format"
 ROOT_DIR=$(realpath "$SCRIPT_DIR/../../")
 
 # 设置允许的文件夹，基于根目录
-FOLDERS=("$ROOT_DIR/Component" "$ROOT_DIR/HAL" "$ROOT_DIR/Project" "$ROOT_DIR/Protocol" "$ROOT_DIR/Utilities")
+FOLDERS=("$ROOT_DIR/Component" "$ROOT_DIR/DAL" "$ROOT_DIR/DML" "$ROOT_DIR/Project" "$ROOT_DIR/Protocol" "$ROOT_DIR/Utilities")
 
-# 添加Platform目录下所有包含“Board”的子文件夹
-for d in "$ROOT_DIR/Platform/"*/ ; do
-    if [ -d "$d/Board" ]; then
-        FOLDERS+=("$d/Board")
+# 添加Platform目录下所有包含"driver"的子文件夹
+for d in "$ROOT_DIR/Driver/"*/ ; do
+    if [ -d "$d/driver" ]; then
+        FOLDERS+=("$d/driver")
     fi
 done
 
