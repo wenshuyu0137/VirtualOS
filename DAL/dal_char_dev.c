@@ -30,6 +30,16 @@
 #include <stdbool.h>
 #include "dal_char_dev.h"
 
+/**
+ * 小于0错误码 -6 非法文件描述符
+ * 小于0错误码 -5 设备不存在
+ * 小于0错误码 -4 设备被占用
+ * 小于0错误码 -3 操作异常 例如只读的进行写操作
+ * 小于0错误码 -2 不可使用(例如没打开)
+ * 小于0错误码 -1 打开设备过多
+ * 
+ */
+
 typedef struct {
 	dml_file_opts_t *opts;
 	bool is_used;
@@ -37,11 +47,12 @@ typedef struct {
 } fd_t;
 
 #define FD_SIZE 64
+#define RESERVED_FD_SIZE 3
 static fd_t fds[FD_SIZE] = { 0 };
 
 static int alloc_fd(void)
 {
-	for (uint16_t i = 0; i < FD_SIZE; i++) {
+	for (uint16_t i = RESERVED_FD_SIZE; i < FD_SIZE; i++) {
 		if (!fds[i].is_used) {
 			fds[i].is_used = true;
 			fds[i].opts = NULL;
@@ -202,8 +213,14 @@ int dal_ioctrl(int fd, int cmd, void *argc)
 void fd_init(void) __attribute__((constructor(102))); // 第二优先级构造
 void fd_init(void)
 {
-	for (uint16_t i = 0; i < FD_SIZE; i++) {
-		fds[i].fd = 3 + i; //前三个文件描述符保留
+	for (uint16_t i = 0; i < RESERVED_FD_SIZE; i++) {
+		fds[i].fd = i; //前三个文件描述符保留
+		fds[i].opts = NULL;
+		fds[i].is_used = true;
+	}
+
+	for (uint16_t i = RESERVED_FD_SIZE; i < FD_SIZE; i++) {
+		fds[i].fd = i; //前三个文件描述符保留
 		fds[i].opts = NULL;
 		fds[i].is_used = false;
 	}

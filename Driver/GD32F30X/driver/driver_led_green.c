@@ -27,7 +27,9 @@
  * 
  */
 
-#include "driver_led_gree.h"
+#include "dml_char_device.h"
+#include "dml_init.h"
+#include "gd32f30x.h"
 #include "dml_init.h"
 
 static const char led_name[] = "/dev/led_green";
@@ -46,17 +48,14 @@ static dml_dev_err_e led_open(void)
 
 	is_led_opened = true;
 
-	rcu_periph_clock_enable(RCU_GPIOB);
-	gpio_mode_set(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_5);
-	gpio_output_options_set(GPIOB, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
+	rcu_periph_clock_enable(RCU_GPIOE);
+	gpio_init(GPIOE,GPIO_MODE_OUT_PP,GPIO_OSPEED_50MHZ,GPIO_PIN_5);
 
 	return DML_DEV_ERR_NONE;
 }
 
 static dml_dev_err_e led_close(void)
 {
-	gpio_mode_set(GPIOB, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO_PIN_5); //低功耗设置为输入模式
-
 	is_led_opened = false;
 	return DML_DEV_ERR_NONE;
 }
@@ -71,7 +70,7 @@ static int led_read(uint8_t *buf, size_t len)
 	if(!is_led_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
 
-	gpio_input_bit_get(GPIOB, GPIO_PIN_5);
+	gpio_input_bit_get(GPIOE, GPIO_PIN_5);
 	return 1;
 }
 
@@ -80,7 +79,7 @@ static int led_write(const uint8_t *buf, size_t len)
 	if(!is_led_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
 
-	gpio_bit_write(GPIOB, GPIO_PIN_5, (*buf ? SET : RESET));
+	gpio_bit_write(GPIOE, GPIO_PIN_5, (*buf ? SET : RESET));
 	return 1;
 }
 
@@ -92,6 +91,7 @@ static dml_file_opts_t led_red_dev = {
 	.read = led_read,
 	.write = led_write,
 };
+
 
 void led_green_init(void)
 {

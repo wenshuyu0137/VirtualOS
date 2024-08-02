@@ -27,8 +27,9 @@
  * 
  */
 
-#include "driver_stimer.h"
 #include "dml_init.h"
+#include "stimer.h"
+#include "gd32f30x.h"
 
 stimer_timeout_process stimer_cb = NULL; //定时器中断
 
@@ -58,7 +59,7 @@ static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout)
 	timer_init(TIMER1, &task_timer);
 	timer_flag_clear(TIMER1, TIMER_INT_UP);
 	timer_interrupt_enable(TIMER1, TIMER_INT_UP);
-	nvic_irq_enable(TIMER1_IRQn, 0);
+	nvic_irq_enable(TIMER1_IRQn, 0, 0);
 
 	stimer_cb = f_timeout; //中断回调
 }
