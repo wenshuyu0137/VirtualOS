@@ -32,65 +32,70 @@
 
 #include "dml_char_device.h"
 
-typedef enum {
-	DAL_DEV_ERR_NOT_EXIST = -4, //设备不存在
-	DAL_DEV_ERR_OCCUPIED, //设备被占用
-	DAL_DEV_ERR_EXCEPTION, //操作异常 例如只读的进行写操作
-	DAL_DEV_ERR_UNAVALIABLE, //不可使用(例如没打开)
-
-	// 0
-	DAL_DEV_ERR_NONE, //无错误
-} dal_dev_err_e;
-
-typedef enum {
-	DAL_RESERVED_CMD_SET_IRQ_FUNC = -10, //保留指令,设置中断回调
-	DAL_RESERVED_CMD_INTO_LOWPOWER, //保留指令,进入低功耗
-} dal_reserved_cmd_e;
+/**
+ * 小于0错误码 -6 非法文件描述符
+ * 小于0错误码 -5 设备不存在
+ * 小于0错误码 -4 设备被占用
+ * 小于0错误码 -3 操作异常 例如只读的进行写操作
+ * 小于0错误码 -2 不可使用(例如没打开)
+ * 小于0错误码 -1 打开设备过多
+ * 
+ */
 
 /**
- * @brief 打开一个设备
+ * @brief 打开设备
  * 
- * @param dev_name 
- * @return dal_dev_err_e 参考枚举变量
+ * @param dev_name 设备名
+ * @return int 返回文件描述符或错误码
+ * @return 小于0 参考错误码
+ * @return >=0 成功，返回文件描述符
  */
-dal_dev_err_e dal_open(const char *dev_name);
+int dal_open(const char *dev_name);
 
 /**
- * @brief 关闭一个设备
+ * @brief 关闭设备
  * 
- * @param dev_name 
- * @return dal_dev_err_e 参考枚举变量
+ * @param fd 文件描述符
+ * @return int 返回状态码
+ * @return 小于0 参考错误码
+ * @return 0 成功
  */
-dal_dev_err_e dal_close(const char *dev_name);
+int dal_close(int fd);
 
 /**
  * @brief 读取设备的值
  * 
- * @param dev_name 设备名
+ * @param fd 文件描述符
  * @param buf 存储缓冲区
  * @param len 读取长度
- * @return int 返回读取成功的长度,小于0为错误值
+ * @return int 返回读取成功的长度或错误码
+ * @return 小于0 参考错误码
+ * @return >=0 成功，返回读取的长度
  */
-int dal_read(const char *dev_name, uint8_t *buf, size_t len);
+int dal_read(int fd, uint8_t *buf, size_t len);
 
 /**
- * @brief 写入数据的设备
+ * @brief 写入数据到设备
  * 
- * @param dev_name 设备名
+ * @param fd 文件描述符
  * @param buf 写入缓冲区
  * @param len 写入长度
- * @return int 返回写入成功的长度,小于0为错误值
+ * @return int 返回写入成功的长度或错误码
+ * @return 小于0 参考错误码
+ * @return >=0 成功，返回写入的长度
  */
-int dal_write(const char *dev_name, uint8_t *buf, size_t len);
+int dal_write(int fd, const uint8_t *buf, size_t len);
 
 /**
  * @brief 实现除读写之外的设备操作
  * 
- * @param dev_name 设备名
- * @param cmd 指令 参考dal_reserved_cmd_e
+ * @param fd 文件描述符
+ * @param cmd 指令 参考dal_reserved_cmd_e 保留指令
  * @param argc 通用参数指针
- * @return dal_dev_err_e 参考枚举变量
+ * @return int 参考枚举变量
+ * @return 小于0 参考错误码
+ * @return >=0 成功，返回操作结果
  */
-dal_dev_err_e dal_ioctrl(const char *dev_name, int cmd, void *argc);
+int dal_ioctrl(int fd, int cmd, void *argc);
 
 #endif

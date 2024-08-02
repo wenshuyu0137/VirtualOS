@@ -35,10 +35,11 @@
 #include <stdbool.h>
 
 typedef enum {
-	DML_DEV_ERR_NOT_EXIST = -4, //设备不存在
+	DML_DEV_ERR_NOT_EXIST = -5, //设备不存在
 	DML_DEV_ERR_OCCUPIED, //设备被占用
 	DML_DEV_ERR_EXCEPTION, //操作异常 例如只读的进行写操作
 	DML_DEV_ERR_UNAVALIABLE, //不可使用(例如没打开)
+	DAL_DEV_ERR_OVERFLOW,//已经打开的设备超过最大可用设备
 	// 0
 	DML_DEV_ERR_NONE, //无错误
 } dml_dev_err_e;
