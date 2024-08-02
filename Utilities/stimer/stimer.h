@@ -55,8 +55,6 @@ typedef enum {
 	STIMER_TYPE_PERIODIC,
 } stimer_type_e;
 
-
-
 typedef struct stimer_task {
 	stimer_entry f_entry;
 	uint32_t period;
@@ -70,8 +68,8 @@ typedef struct stimer_task {
 #define STIMER_TASK_CTOR(_entry, _PERIOD, _type)                                                                                                               \
 	(TASK_T)                                                                                                                                               \
 	{                                                                                                                                                      \
-		.f_entry = (_entry), .period = (_PERIOD), .arrive = 0, .item.next = LIST_NULL, .item.pre = LIST_NULL, .reservere = 1,               \
-		.carry_type = (_type), .id = 0,                                                                                                                \
+		.f_entry = (_entry), .period = (_PERIOD), .arrive = 0, .item.next = LIST_NULL, .item.pre = LIST_NULL, .reservere = 1, .carry_type = (_type),   \
+		.id = 0,                                                                                                                                       \
 	}
 
 int stimer_init(struct timer_port *port);
