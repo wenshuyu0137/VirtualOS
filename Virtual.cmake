@@ -27,7 +27,7 @@ endif()
 
 # 框架头文件路径
 set(FRAMEWORK_INCLUDE_DIRS
-    ${FRAMEWORK_ROOT_DIR}/Driver/ARM_CORE/
+    ${FRAMEWORK_ROOT_DIR}/Driver/arm_core/
     ${FRAMEWORK_ROOT_DIR}/Component/FAL/
     ${FRAMEWORK_ROOT_DIR}/Component/FlashDB/
     ${FRAMEWORK_ROOT_DIR}/Component/LittleFs/
