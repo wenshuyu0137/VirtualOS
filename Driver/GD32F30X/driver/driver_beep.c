@@ -50,6 +50,7 @@ static dml_dev_err_e beep_open(void)
 
 	rcu_periph_clock_enable(RCU_GPIOF);
 	gpio_init(GPIOF, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_9);
+	gpio_bit_write(GPIOF, GPIO_PIN_9, SET);
 
 	return DML_DEV_ERR_NONE;
 }
