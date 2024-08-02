@@ -73,8 +73,6 @@ dml_dev_t *dml_find_device(const char *name)
 	return (err == HASH_SUCCESS) ? (dml_dev_t *)priv : NULL;
 }
 
-
-
 /**
  * @brief 注册设备驱动到设备表
  * 

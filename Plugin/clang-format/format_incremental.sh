@@ -11,14 +11,7 @@ CONFIG_PATH="$SCRIPT_DIR/.clang-format"
 ROOT_DIR=$(realpath "$SCRIPT_DIR/../../")
 
 # 设置允许的文件夹，基于根目录
-FOLDERS=("$ROOT_DIR/Component" "$ROOT_DIR/DAL" "$ROOT_DIR/DML" "$ROOT_DIR/Project" "$ROOT_DIR/Protocol" "$ROOT_DIR/Utilities")
-
-# 添加Platform目录下所有包含"driver"的子文件夹
-for d in "$ROOT_DIR/Driver/"*/ ; do
-    if [ -d "$d/driver" ]; then
-        FOLDERS+=("$d/driver")
-    fi
-done
+FOLDERS=("$ROOT_DIR/Component" "$ROOT_DIR/DAL" "$ROOT_DIR/DML" "$ROOT_DIR/Project" "$ROOT_DIR/Driver" "$ROOT_DIR/Protocol" "$ROOT_DIR/Utilities")
 
 # 获取暂存的文件列表
 CHANGED_FILES=($(git diff --name-only --cached --diff-filter=ACM | grep -E "\.(cpp|hpp|c|h)$"))
