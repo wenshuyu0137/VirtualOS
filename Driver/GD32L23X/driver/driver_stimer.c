@@ -86,10 +86,9 @@ struct timer_port m_tmr = {
 	.f_init = _stimer_base_init,
 	.f_start = _stimer_base_start,
 };
-
+EXPORT_DIRVER(platform_stimer_init);
 void platform_stimer_init(void)
 {
 	stimer_init(&m_tmr);
 }
 
-EXPORT_DIRVER(platform_stimer_init);

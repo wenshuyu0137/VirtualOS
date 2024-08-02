@@ -44,8 +44,8 @@ static bool is_serial_opened = false;
 
 #define RX_FIFO_SIZE 512
 #define TX_BUF_SIZE 256
-static uint8_t rx_fifo[RX_FIFO_SIZE];
-static uint8_t tx_buf[TX_BUF_SIZE];
+static uint8_t rx_fifo[RX_FIFO_SIZE] = { 0 };
+static uint8_t tx_buf[TX_BUF_SIZE] = { 0 };
 
 static queue_info_t recv_q;
 
@@ -53,42 +53,26 @@ uint16_t *recv_size = NULL;
 
 static void usart_init(void)
 {
-	dma_deinit(DMA_CH0);
-	dma_deinit(DMA_CH1);
+	rcu_periph_clock_enable(RCU_DMA);
+	usart_deinit(USART1);
 
-	rcu_periph_clock_enable(RCU_GPIOD);
 	rcu_periph_clock_enable(RCU_GPIOC);
-
-	gpio_af_set(GPIOD, GPIO_AF_7, GPIO_PIN_5); //Tx
-	gpio_mode_set(GPIOD, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_5);
-	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
-
-	gpio_af_set(GPIOD, GPIO_AF_7, GPIO_PIN_6); //Rx
-	gpio_mode_set(GPIOD, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_6);
-	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
-
-	gpio_af_set(GPIOC, GPIO_AF_0, GPIO_PIN_11); //Enable
-	gpio_mode_set(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_11);
+	gpio_mode_set(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_PULLDOWN, GPIO_PIN_11); //Enable
 	gpio_output_options_set(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_11);
 	gpio_bit_write(GPIOC, GPIO_PIN_11, RESET); //接收状态
 
 	rcu_periph_clock_enable(RCU_USART1);
 
-	usart_deinit(USART1);
+	usart_word_length_set(USART1, USART_WL_8BIT);
+	usart_parity_config(USART1, USART_PM_NONE);
 	usart_baudrate_set(USART1, 115200);
-	usart_receive_config(USART1, USART_RECEIVE_ENABLE); //RX_DMA
-	usart_dma_receive_config(USART1, USART_RECEIVE_DMA_ENABLE);
-	nvic_irq_enable(USART1_IRQn, 0);
-	usart_interrupt_enable(USART1, USART_INT_IDLE);
 
-	usart_transmit_config(USART1, USART_TRANSMIT_ENABLE); //TX_DMA
-	usart_dma_transmit_config(USART1, USART_TRANSMIT_DMA_ENABLE);
-	usart_enable(USART1);
-
-	queue_init(&recv_q, 1, rx_fifo, RX_FIFO_SIZE);
-
-	rcu_periph_clock_enable(RCU_DMA);
-
+	rcu_periph_clock_enable(RCU_GPIOD);
+	gpio_af_set(GPIOD, GPIO_AF_7, GPIO_PIN_5); //Tx
+	gpio_mode_set(GPIOD, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_5);
+	usart_stop_bit_set(USART1, USART_STB_1BIT);
+	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, GPIO_PIN_5) usart_dma_transmit_config(USART1, USART_TRANSMIT_DMA_ENABLE);
+	dma_deinit(DMA_CH0);
 	dma_parameter_struct tx_dma_param;
 	tx_dma_param.direction = DMA_MEMORY_TO_PERIPHERAL;
 	tx_dma_param.memory_addr = (uint32_t)tx_buf;
@@ -101,10 +85,17 @@ static void usart_init(void)
 	tx_dma_param.priority = DMA_PRIORITY_HIGH;
 	tx_dma_param.request = DMA_REQUEST_USART1_TX;
 	dma_init(DMA_CH0, &tx_dma_param);
-	nvic_irq_enable(DMA_Channel0_IRQn, 1);
+	usart_transmit_config(USART1, USART_TRANSMIT_ENABLE); //TX_DMA
+	nvic_irq_enable(DMA_Channel0_IRQn, 0);
 	dma_interrupt_enable(DMA_CH0, DMA_INT_FTF);
-	dma_channel_enable(DMA_CH0);
 
+	rcu_periph_clock_enable(RCU_GPIOD);
+	gpio_af_set(GPIOD, GPIO_AF_7, GPIO_PIN_6); //Rx
+	gpio_mode_set(GPIOD, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_6);
+	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, GPIO_PIN_6);
+	usart_receive_config(USART1, USART_RECEIVE_ENABLE); //RX_DMA
+	queue_init(&recv_q, 1, rx_fifo, RX_FIFO_SIZE);
+	dma_deinit(DMA_CH1);
 	dma_parameter_struct rx_dma_param;
 	rx_dma_param.direction = DMA_PERIPHERAL_TO_MEMORY;
 	rx_dma_param.memory_addr = (uint32_t)rx_fifo;
@@ -118,7 +109,12 @@ static void usart_init(void)
 	rx_dma_param.request = DMA_REQUEST_USART1_RX;
 	dma_circulation_enable(DMA_CH1);
 	dma_init(DMA_CH1, &rx_dma_param);
+	usart_dma_receive_config(USART1, USART_RECEIVE_DMA_ENABLE);
 	dma_channel_enable(DMA_CH1);
+	nvic_irq_enable(USART1_IRQn, 0);
+	usart_interrupt_enable(USART1, USART_INT_IDLE);
+
+	usart_enable(USART1);
 }
 
 void into_recieve(void)
@@ -131,9 +127,12 @@ void DMA_Channel0_IRQHandler(void)
 {
 	if (RESET != dma_interrupt_flag_get(DMA_CH0, DMA_INT_FLAG_FTF)) {
 		defer_task_add(into_recieve, 1); //延迟1ms拉低引脚,转为接受状态
+		memset(tx_buf, 0, TX_BUF_SIZE);
 		dma_interrupt_flag_clear(DMA_CH0, DMA_INT_FLAG_FTF);
 	}
 }
+
+
 
 //空闲中断
 static uint16_t pre_recv = 0;

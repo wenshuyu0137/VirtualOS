@@ -341,7 +341,7 @@
               <MiscControls></MiscControls>
               <Define></Define>
               <Undefine></Undefine>
-              <IncludePath>.\app;..\..\..\DAL;..\..\..\DML;..\..\..\Driver\GD32L23X\CMSIS\GD32L23x\Include;..\..\..\Driver\GD32L23X\driver;..\..\..\Driver\GD32L23X\GD32L23x_standard_peripheral\Include;..\..\..\Component\RTT;..\..\..\Utilities\hash\string_hash;..\..\..\Utilities\list;..\..\..\Driver\ARM_CORE;.\sys;..\..\..\Utilities\stimer</IncludePath>
+              <IncludePath>.\app;..\..\..\DAL;..\..\..\DML;..\..\..\Driver\GD32L23X\CMSIS\GD32L23x\Include;..\..\..\Driver\GD32L23X\driver;..\..\..\Driver\GD32L23X\GD32L23x_standard_peripheral\Include;..\..\..\Component\RTT;..\..\..\Utilities\hash\string_hash;..\..\..\Utilities\list;..\..\..\Driver\ARM_CORE;.\sys;..\..\..\Utilities\stimer;..\..\..\Utilities\queue</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -399,6 +399,11 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\app\main.c</FilePath>
+            </File>
+            <File>
+              <FileName>app_485.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\app\app_485.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -600,6 +605,11 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\Driver\GD32L23X\driver\driver_stimer.c</FilePath>
             </File>
+            <File>
+              <FileName>driver_485.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Driver\GD32L23X\driver\driver_485.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -634,6 +644,11 @@
               <FileName>stimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Utilities\stimer\stimer.c</FilePath>
+            </File>
+            <File>
+              <FileName>queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Utilities\queue\queue.c</FilePath>
             </File>
           </Files>
         </Group>
