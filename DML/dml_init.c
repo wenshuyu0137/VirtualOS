@@ -31,7 +31,7 @@
 #include "dml_char_device.h"
 
 void dml_init(void) __attribute__((constructor(101))); //前100为保留值,最高优先级构造，先初始化设备表
-void dml_init(void) 
+void dml_init(void)
 {
-    dml_dev_table_init(); //初始化设备表
+	dml_dev_table_init(); //初始化设备表
 }
