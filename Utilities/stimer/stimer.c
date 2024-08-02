@@ -59,15 +59,15 @@ static inline void _timer_uptate(void)
 #define DEFER_INIT_HELPER(_id)                                                                                                                                 \
 	(TASK_T)                                                                                                                                               \
 	{                                                                                                                                                      \
-		.f_entry = LIST_NULL, .period = 0, .arrive = 0, .item.next = LIST_NULL, .item.pre = LIST_NULL, .defer_type = UNUSE_DEFER, .id = _id,           \
+		.f_entry = LIST_NULL, .period = 0, .arrive = 0, .item.next = LIST_NULL, .item.pre = LIST_NULL, .reservere = 1, .id = _id,           \
 	}
 
 static TASK_T *defer_task_allocate(void)
 {
 	for (int i = 0; i < MAX_DEFER_TASK; i++) {
-		if (defer_pool[i].defer_type == UNUSE_DEFER) {
+		if (defer_pool[i].reservere == 1) 
 			return &defer_pool[i];
-		}
+		
 	}
 
 	return NULL;
@@ -77,7 +77,7 @@ static void defer_task_free(TASK_T *task)
 {
 	if (task != NULL) {
 		task->f_entry = NULL;
-		task->defer_type = UNUSE_DEFER;
+		task->reservere = 1;
 		task->arrive = 0;
 		task->period = 0;
 	}
@@ -85,20 +85,20 @@ static void defer_task_free(TASK_T *task)
 
 int defer_task_add(stimer_entry f_entry, uint32_t ms)
 {
-	if (!is_timer_run()) {
+	if (!is_timer_run()) 
 		return -1;
-	}
+	
 
 	TASK_T *p_task = defer_task_allocate();
 
-	if (!p_task) {
+	if (!p_task) 
 		return -1;
-	}
+	
 
 	p_task->f_entry = f_entry;
 	p_task->period = Period_to_Tick(ms);
 	p_task->arrive = 0;
-	p_task->defer_type = USE_DEFER;
+	p_task->reservere = 0;
 	list_add_tail(&(m_timer.defer_task_list), &(p_task->item));
 	return 0;
 }

@@ -51,14 +51,11 @@ struct timer_port {
 };
 
 typedef enum {
-	USE_DEFER,
-	UNUSE_DEFER,
-} use_defer_e;
-
-typedef enum {
 	STIMER_TYPE_ONESHOT,
 	STIMER_TYPE_PERIODIC,
 } stimer_type_e;
+
+
 
 typedef struct stimer_task {
 	stimer_entry f_entry;
@@ -66,14 +63,14 @@ typedef struct stimer_task {
 	uint32_t arrive;
 	list_item item;
 	stimer_type_e carry_type;
-	use_defer_e defer_type;
+	uint8_t reservere;
 	uint8_t id;
 } TASK_T;
 
 #define STIMER_TASK_CTOR(_entry, _PERIOD, _type)                                                                                                               \
 	(TASK_T)                                                                                                                                               \
 	{                                                                                                                                                      \
-		.f_entry = (_entry), .period = (_PERIOD), .arrive = 0, .item.next = LIST_NULL, .item.pre = LIST_NULL, .defer_type = UNUSE_DEFER,               \
+		.f_entry = (_entry), .period = (_PERIOD), .arrive = 0, .item.next = LIST_NULL, .item.pre = LIST_NULL, .reservere = 1,               \
 		.carry_type = (_type), .id = 0,                                                                                                                \
 	}
 
@@ -87,8 +84,8 @@ int stimer_task_add(TASK_T *p_task);
 
 int stimer_task_del(TASK_T *p_task);
 
-int defer_task_add(stimer_entry f_entry, uint32_t ms);
-
 void stimer_task_dispatch(void);
+
+int defer_task_add(stimer_entry f_entry, uint32_t ms);
 
 #endif /*_VIRTUAL_OS_STIMER_H*/
