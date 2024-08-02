@@ -67,11 +67,8 @@ static void usart_init(void)
 	usart_parity_config(USART1, USART_PM_NONE);
 	usart_baudrate_set(USART1, 115200);
 
-
-
-
-	rcu_periph_clock_enable(RCU_GPIOD  );
-	gpio_af_set(GPIOD, 	GPIO_AF_7, GPIO_PIN_5); //Tx
+	rcu_periph_clock_enable(RCU_GPIOD);
+	gpio_af_set(GPIOD, GPIO_AF_7, GPIO_PIN_5); //Tx
 	gpio_mode_set(GPIOD, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_5);
 	usart_stop_bit_set(USART1, USART_STB_1BIT);
 	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, GPIO_PIN_5);
