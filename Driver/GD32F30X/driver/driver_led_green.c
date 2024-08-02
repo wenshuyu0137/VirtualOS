@@ -49,7 +49,7 @@ static dml_dev_err_e led_open(void)
 	is_led_opened = true;
 
 	rcu_periph_clock_enable(RCU_GPIOE);
-	gpio_init(GPIOE,GPIO_MODE_OUT_PP,GPIO_OSPEED_50MHZ,GPIO_PIN_5);
+	gpio_init(GPIOE, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
 
 	return DML_DEV_ERR_NONE;
 }
@@ -67,7 +67,7 @@ static dml_dev_err_e led_ioctrl(int cmd, void *arg)
 
 static int led_read(uint8_t *buf, size_t len)
 {
-	if(!is_led_opened)
+	if (!is_led_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
 
 	gpio_input_bit_get(GPIOE, GPIO_PIN_5);
@@ -76,7 +76,7 @@ static int led_read(uint8_t *buf, size_t len)
 
 static int led_write(const uint8_t *buf, size_t len)
 {
-	if(!is_led_opened)
+	if (!is_led_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
 
 	gpio_bit_write(GPIOE, GPIO_PIN_5, (*buf ? SET : RESET));
@@ -91,7 +91,6 @@ static dml_file_opts_t led_red_dev = {
 	.read = led_read,
 	.write = led_write,
 };
-
 
 void led_green_init(void)
 {

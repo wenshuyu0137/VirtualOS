@@ -35,9 +35,9 @@ OF SUCH DAMAGE.
 #include "gd32f30x_dac.h"
 
 /* DAC register bit offset */
-#define OUT1_REG_OFFSET             ((uint32_t)0x00000010U)
-#define DH_12BIT_OFFSET             ((uint32_t)0x00000010U)
-#define DH_8BIT_OFFSET              ((uint32_t)0x00000008U)
+#define OUT1_REG_OFFSET ((uint32_t)0x00000010U)
+#define DH_12BIT_OFFSET ((uint32_t)0x00000010U)
+#define DH_8BIT_OFFSET ((uint32_t)0x00000008U)
 
 /*!
     \brief      deinitialize DAC
@@ -47,15 +47,15 @@ OF SUCH DAMAGE.
 */
 void dac_deinit(uint32_t dac_periph)
 {
-    switch(dac_periph){
-        case DAC0:
-            /* reset DAC0 */
-            rcu_periph_reset_enable(RCU_DACRST);
-            rcu_periph_reset_disable(RCU_DACRST);
-            break;
-        default:
-            break;
-    }
+	switch (dac_periph) {
+	case DAC0:
+		/* reset DAC0 */
+		rcu_periph_reset_enable(RCU_DACRST);
+		rcu_periph_reset_disable(RCU_DACRST);
+		break;
+	default:
+		break;
+	}
 }
 
 /*!
@@ -67,13 +67,13 @@ void dac_deinit(uint32_t dac_periph)
 */
 void dac_enable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
-        DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DEN0;
-    }else if(DAC_OUT1 == dac_out){
-        DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DEN1;
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DEN0;
+	} else if (DAC_OUT1 == dac_out) {
+		DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DEN1;
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -85,13 +85,13 @@ void dac_enable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_disable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DEN0);
-    }else if(DAC_OUT1 == dac_out){
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DEN1);
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DEN0);
+	} else if (DAC_OUT1 == dac_out) {
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DEN1);
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -103,13 +103,13 @@ void dac_disable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_dma_enable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
-        DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DDMAEN0;
-    }else if(DAC_OUT1 == dac_out){
-        DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DDMAEN1;
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DDMAEN0;
+	} else if (DAC_OUT1 == dac_out) {
+		DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DDMAEN1;
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -121,13 +121,13 @@ void dac_dma_enable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_dma_disable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DDMAEN0);
-    }else if(DAC_OUT1 == dac_out){
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DDMAEN1);
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DDMAEN0);
+	} else if (DAC_OUT1 == dac_out) {
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DDMAEN1);
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -139,13 +139,13 @@ void dac_dma_disable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_output_buffer_enable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DBOFF0);
-    }else if(DAC_OUT1 == dac_out){
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DBOFF1);
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DBOFF0);
+	} else if (DAC_OUT1 == dac_out) {
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DBOFF1);
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -157,13 +157,13 @@ void dac_output_buffer_enable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_output_buffer_disable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
-        DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DBOFF0;
-    }else if(DAC_OUT1 == dac_out){
-        DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DBOFF1;
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DBOFF0;
+	} else if (DAC_OUT1 == dac_out) {
+		DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DBOFF1;
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -175,19 +175,19 @@ void dac_output_buffer_disable(uint32_t dac_periph, uint8_t dac_out)
 */
 uint16_t dac_output_value_get(uint32_t dac_periph, uint8_t dac_out)
 {
-    uint16_t data = 0U;
+	uint16_t data = 0U;
 
-    if(DAC_OUT0 == dac_out){
-        /* store the DACx_OUT0 output value */
-        data = (uint16_t)DAC_OUT0_DO(dac_periph);
-    }else if(DAC_OUT1 == dac_out){
-        /* store the DACx_OUT1 output value */
-        data = (uint16_t)DAC_OUT1_DO(dac_periph);
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		/* store the DACx_OUT0 output value */
+		data = (uint16_t)DAC_OUT0_DO(dac_periph);
+	} else if (DAC_OUT1 == dac_out) {
+		/* store the DACx_OUT1 output value */
+		data = (uint16_t)DAC_OUT1_DO(dac_periph);
+	} else {
+		/* illegal parameters */
+	}
 
-    return data;
+	return data;
 }
 
 /*!
@@ -205,45 +205,45 @@ uint16_t dac_output_value_get(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_data_set(uint32_t dac_periph, uint8_t dac_out, uint32_t dac_align, uint16_t data)
 {
-    /* DAC_OUT0 data alignment */
-    if(DAC_OUT0 == dac_out){
-        switch(dac_align){
-        /* 12-bit right-aligned data */
-        case DAC_ALIGN_12B_R:
-            DAC_OUT0_R12DH(dac_periph) = data;
-            break;
-        /* 12-bit left-aligned data */
-        case DAC_ALIGN_12B_L:
-            DAC_OUT0_L12DH(dac_periph) = data;
-            break;
-        /* 8-bit right-aligned data */
-        case DAC_ALIGN_8B_R:
-            DAC_OUT0_R8DH(dac_periph) = data;
-            break;
-        default:
-            break;
-        }
-    }else if(DAC_OUT1 == dac_out){
-        /* DAC_OUT1 data alignment */
-        switch(dac_align){
-        /* 12-bit right-aligned data */
-        case DAC_ALIGN_12B_R:
-            DAC_OUT1_R12DH(dac_periph) = data;
-            break;
-        /* 12-bit left-aligned data */
-        case DAC_ALIGN_12B_L:
-            DAC_OUT1_L12DH(dac_periph) = data;
-            break;
-        /* 8-bit right-aligned data */
-        case DAC_ALIGN_8B_R:
-            DAC_OUT1_R8DH(dac_periph) = data;
-            break;
-        default:
-            break;
-        }
-    }else{
-        /* illegal parameters */
-    }
+	/* DAC_OUT0 data alignment */
+	if (DAC_OUT0 == dac_out) {
+		switch (dac_align) {
+		/* 12-bit right-aligned data */
+		case DAC_ALIGN_12B_R:
+			DAC_OUT0_R12DH(dac_periph) = data;
+			break;
+		/* 12-bit left-aligned data */
+		case DAC_ALIGN_12B_L:
+			DAC_OUT0_L12DH(dac_periph) = data;
+			break;
+		/* 8-bit right-aligned data */
+		case DAC_ALIGN_8B_R:
+			DAC_OUT0_R8DH(dac_periph) = data;
+			break;
+		default:
+			break;
+		}
+	} else if (DAC_OUT1 == dac_out) {
+		/* DAC_OUT1 data alignment */
+		switch (dac_align) {
+		/* 12-bit right-aligned data */
+		case DAC_ALIGN_12B_R:
+			DAC_OUT1_R12DH(dac_periph) = data;
+			break;
+		/* 12-bit left-aligned data */
+		case DAC_ALIGN_12B_L:
+			DAC_OUT1_L12DH(dac_periph) = data;
+			break;
+		/* 8-bit right-aligned data */
+		case DAC_ALIGN_8B_R:
+			DAC_OUT1_R8DH(dac_periph) = data;
+			break;
+		default:
+			break;
+		}
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -255,13 +255,13 @@ void dac_data_set(uint32_t dac_periph, uint8_t dac_out, uint32_t dac_align, uint
 */
 void dac_trigger_enable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
-        DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DTEN0;
-    }else if(DAC_OUT1 == dac_out){
-        DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DTEN1;
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DTEN0;
+	} else if (DAC_OUT1 == dac_out) {
+		DAC_CTL0(dac_periph) |= (uint32_t)DAC_CTL0_DTEN1;
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -273,13 +273,13 @@ void dac_trigger_enable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_trigger_disable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DTEN0);
-    }else if(DAC_OUT1 == dac_out){
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DTEN1);
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DTEN0);
+	} else if (DAC_OUT1 == dac_out) {
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DTEN1);
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -302,17 +302,17 @@ void dac_trigger_disable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_trigger_source_config(uint32_t dac_periph, uint8_t dac_out, uint32_t triggersource)
 {
-    if(DAC_OUT0 == dac_out){
-        /* configure DACx_OUT0 trigger source */
-        DAC_CTL0(dac_periph) &= (uint32_t)(~(DAC_CTL0_DTSEL0));
-        DAC_CTL0(dac_periph) |= triggersource;
-    }else if(DAC_OUT1 == dac_out){
-        /* configure DACx_OUT1 trigger source */
-        DAC_CTL0(dac_periph) &= (uint32_t)(~(DAC_CTL0_DTSEL1));
-        DAC_CTL0(dac_periph) |= (triggersource << OUT1_REG_OFFSET);
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		/* configure DACx_OUT0 trigger source */
+		DAC_CTL0(dac_periph) &= (uint32_t)(~(DAC_CTL0_DTSEL0));
+		DAC_CTL0(dac_periph) |= triggersource;
+	} else if (DAC_OUT1 == dac_out) {
+		/* configure DACx_OUT1 trigger source */
+		DAC_CTL0(dac_periph) &= (uint32_t)(~(DAC_CTL0_DTSEL1));
+		DAC_CTL0(dac_periph) |= (triggersource << OUT1_REG_OFFSET);
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -323,13 +323,13 @@ void dac_trigger_source_config(uint32_t dac_periph, uint8_t dac_out, uint32_t tr
 */
 void dac_software_trigger_enable(uint32_t dac_periph, uint8_t dac_out)
 {
-    if(DAC_OUT0 == dac_out){
-        DAC_SWT(dac_periph) |= (uint32_t)DAC_SWT_SWTR0;
-    }else if(DAC_OUT1 == dac_out){
-        DAC_SWT(dac_periph) |= (uint32_t)DAC_SWT_SWTR1;
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		DAC_SWT(dac_periph) |= (uint32_t)DAC_SWT_SWTR0;
+	} else if (DAC_OUT1 == dac_out) {
+		DAC_SWT(dac_periph) |= (uint32_t)DAC_SWT_SWTR1;
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -346,17 +346,17 @@ void dac_software_trigger_enable(uint32_t dac_periph, uint8_t dac_out)
 */
 void dac_wave_mode_config(uint32_t dac_periph, uint8_t dac_out, uint32_t wave_mode)
 {
-    if(DAC_OUT0 == dac_out){
-        /* configure DACx_OUT0 wave mode */
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWM0);
-        DAC_CTL0(dac_periph) |= wave_mode;
-    }else if(DAC_OUT1 == dac_out){
-        /* configure DACx_OUT1 wave mode */
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWM1);
-        DAC_CTL0(dac_periph) |= (wave_mode << OUT1_REG_OFFSET);
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		/* configure DACx_OUT0 wave mode */
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWM0);
+		DAC_CTL0(dac_periph) |= wave_mode;
+	} else if (DAC_OUT1 == dac_out) {
+		/* configure DACx_OUT1 wave mode */
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWM1);
+		DAC_CTL0(dac_periph) |= (wave_mode << OUT1_REG_OFFSET);
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -382,17 +382,17 @@ void dac_wave_mode_config(uint32_t dac_periph, uint8_t dac_out, uint32_t wave_mo
 */
 void dac_lfsr_noise_config(uint32_t dac_periph, uint8_t dac_out, uint32_t unmask_bits)
 {
-    if(DAC_OUT0 == dac_out){
-        /* configure DACx_OUT0 LFSR noise mode */
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW0);
-        DAC_CTL0(dac_periph) |= unmask_bits;
-    }else if(DAC_OUT1 == dac_out){
-        /* configure DACx_OUT1 LFSR noise mode */
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW1);
-        DAC_CTL0(dac_periph) |= (unmask_bits << OUT1_REG_OFFSET);
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		/* configure DACx_OUT0 LFSR noise mode */
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW0);
+		DAC_CTL0(dac_periph) |= unmask_bits;
+	} else if (DAC_OUT1 == dac_out) {
+		/* configure DACx_OUT1 LFSR noise mode */
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW1);
+		DAC_CTL0(dac_periph) |= (unmask_bits << OUT1_REG_OFFSET);
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -418,17 +418,17 @@ void dac_lfsr_noise_config(uint32_t dac_periph, uint8_t dac_out, uint32_t unmask
 */
 void dac_triangle_noise_config(uint32_t dac_periph, uint8_t dac_out, uint32_t amplitude)
 {
-    if(DAC_OUT0 == dac_out){
-        /* configure DACx_OUT0 triangle noise mode */
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW0);
-        DAC_CTL0(dac_periph) |= amplitude;
-    }else if(DAC_OUT1 == dac_out){
-        /* configure DACx_OUT1 triangle noise mode */
-        DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW1);
-        DAC_CTL0(dac_periph) |= (amplitude << OUT1_REG_OFFSET);
-    }else{
-        /* illegal parameters */
-    }
+	if (DAC_OUT0 == dac_out) {
+		/* configure DACx_OUT0 triangle noise mode */
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW0);
+		DAC_CTL0(dac_periph) |= amplitude;
+	} else if (DAC_OUT1 == dac_out) {
+		/* configure DACx_OUT1 triangle noise mode */
+		DAC_CTL0(dac_periph) &= (uint32_t)(~DAC_CTL0_DWBW1);
+		DAC_CTL0(dac_periph) |= (amplitude << OUT1_REG_OFFSET);
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -439,10 +439,10 @@ void dac_triangle_noise_config(uint32_t dac_periph, uint8_t dac_out, uint32_t am
 */
 void dac_concurrent_enable(uint32_t dac_periph)
 {
-    uint32_t ctl = 0U;
+	uint32_t ctl = 0U;
 
-    ctl = (uint32_t)(DAC_CTL0_DEN0 | DAC_CTL0_DEN1);
-    DAC_CTL0(dac_periph) |= (uint32_t)ctl;
+	ctl = (uint32_t)(DAC_CTL0_DEN0 | DAC_CTL0_DEN1);
+	DAC_CTL0(dac_periph) |= (uint32_t)ctl;
 }
 
 /*!
@@ -453,10 +453,10 @@ void dac_concurrent_enable(uint32_t dac_periph)
 */
 void dac_concurrent_disable(uint32_t dac_periph)
 {
-    uint32_t ctl = 0U;
+	uint32_t ctl = 0U;
 
-    ctl = (uint32_t)(DAC_CTL0_DEN0 | DAC_CTL0_DEN1);
-    DAC_CTL0(dac_periph) &= (uint32_t)(~ctl);
+	ctl = (uint32_t)(DAC_CTL0_DEN0 | DAC_CTL0_DEN1);
+	DAC_CTL0(dac_periph) &= (uint32_t)(~ctl);
 }
 
 /*!
@@ -467,10 +467,10 @@ void dac_concurrent_disable(uint32_t dac_periph)
 */
 void dac_concurrent_software_trigger_enable(uint32_t dac_periph)
 {
-    uint32_t swt = 0U;
+	uint32_t swt = 0U;
 
-    swt = (uint32_t)(DAC_SWT_SWTR0 | DAC_SWT_SWTR1);
-    DAC_SWT(dac_periph) |= (uint32_t)swt; 
+	swt = (uint32_t)(DAC_SWT_SWTR0 | DAC_SWT_SWTR1);
+	DAC_SWT(dac_periph) |= (uint32_t)swt;
 }
 
 /*!
@@ -481,10 +481,10 @@ void dac_concurrent_software_trigger_enable(uint32_t dac_periph)
 */
 void dac_concurrent_output_buffer_enable(uint32_t dac_periph)
 {
-    uint32_t ctl = 0U;
+	uint32_t ctl = 0U;
 
-    ctl = (uint32_t)(DAC_CTL0_DBOFF0 | DAC_CTL0_DBOFF1);
-    DAC_CTL0(dac_periph) &= (uint32_t)(~ctl);
+	ctl = (uint32_t)(DAC_CTL0_DBOFF0 | DAC_CTL0_DBOFF1);
+	DAC_CTL0(dac_periph) &= (uint32_t)(~ctl);
 }
 
 /*!
@@ -495,10 +495,10 @@ void dac_concurrent_output_buffer_enable(uint32_t dac_periph)
 */
 void dac_concurrent_output_buffer_disable(uint32_t dac_periph)
 {
-    uint32_t ctl = 0U;
+	uint32_t ctl = 0U;
 
-    ctl = (uint32_t)(DAC_CTL0_DBOFF0 | DAC_CTL0_DBOFF1);
-    DAC_CTL0(dac_periph) |= (uint32_t)ctl;
+	ctl = (uint32_t)(DAC_CTL0_DBOFF0 | DAC_CTL0_DBOFF1);
+	DAC_CTL0(dac_periph) |= (uint32_t)ctl;
 }
 
 /*!
@@ -516,25 +516,25 @@ void dac_concurrent_output_buffer_disable(uint32_t dac_periph)
 */
 void dac_concurrent_data_set(uint32_t dac_periph, uint32_t dac_align, uint16_t data0, uint16_t data1)
 {
-    uint32_t data = 0U;
+	uint32_t data = 0U;
 
-    switch(dac_align){
-    /* 12-bit right-aligned data */
-    case DAC_ALIGN_12B_R:
-        data = (uint32_t)(((uint32_t)data1 << DH_12BIT_OFFSET) | data0);
-        DACC_R12DH(dac_periph) = (uint32_t)data;
-        break;
-    /* 12-bit left-aligned data */
-    case DAC_ALIGN_12B_L:
-        data = (uint32_t)(((uint32_t)data1 << DH_12BIT_OFFSET) | data0);
-        DACC_L12DH(dac_periph) = (uint32_t)data;
-        break;
-    /* 8-bit right-aligned data */
-    case DAC_ALIGN_8B_R:
-        data = (uint32_t)(((uint32_t)data1 << DH_8BIT_OFFSET) | data0);
-        DACC_R8DH(dac_periph) = (uint32_t)data;
-        break;
-    default:
-        break;
-    }
+	switch (dac_align) {
+	/* 12-bit right-aligned data */
+	case DAC_ALIGN_12B_R:
+		data = (uint32_t)(((uint32_t)data1 << DH_12BIT_OFFSET) | data0);
+		DACC_R12DH(dac_periph) = (uint32_t)data;
+		break;
+	/* 12-bit left-aligned data */
+	case DAC_ALIGN_12B_L:
+		data = (uint32_t)(((uint32_t)data1 << DH_12BIT_OFFSET) | data0);
+		DACC_L12DH(dac_periph) = (uint32_t)data;
+		break;
+	/* 8-bit right-aligned data */
+	case DAC_ALIGN_8B_R:
+		data = (uint32_t)(((uint32_t)data1 << DH_8BIT_OFFSET) | data0);
+		DACC_R8DH(dac_periph) = (uint32_t)data;
+		break;
+	default:
+		break;
+	}
 }

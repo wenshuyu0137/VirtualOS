@@ -4,8 +4,8 @@
 
 void app_beep_task(void)
 {
-    static uint8_t level = 1;
-	
+	static uint8_t level = 1;
+
 	int fd = dal_open("/dev/beep");
 
 	if (fd) {

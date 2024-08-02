@@ -42,8 +42,8 @@ OF SUCH DAMAGE.
 */
 void wwdgt_deinit(void)
 {
-    rcu_periph_reset_enable(RCU_WWDGTRST);
-    rcu_periph_reset_disable(RCU_WWDGTRST);
+	rcu_periph_reset_enable(RCU_WWDGTRST);
+	rcu_periph_reset_disable(RCU_WWDGTRST);
 }
 
 /*!
@@ -54,7 +54,7 @@ void wwdgt_deinit(void)
 */
 void wwdgt_enable(void)
 {
-    WWDGT_CTL |= WWDGT_CTL_WDGTEN;
+	WWDGT_CTL |= WWDGT_CTL_WDGTEN;
 }
 
 /*!
@@ -65,7 +65,7 @@ void wwdgt_enable(void)
 */
 void wwdgt_counter_update(uint16_t counter_value)
 {
-    WWDGT_CTL = (uint32_t)(CTL_CNT(counter_value));
+	WWDGT_CTL = (uint32_t)(CTL_CNT(counter_value));
 }
 
 /*!
@@ -83,8 +83,8 @@ void wwdgt_counter_update(uint16_t counter_value)
 */
 void wwdgt_config(uint16_t counter, uint16_t window, uint32_t prescaler)
 {
-    WWDGT_CTL = (uint32_t)(CTL_CNT(counter));
-    WWDGT_CFG = (uint32_t)(CFG_WIN(window) | prescaler);
+	WWDGT_CTL = (uint32_t)(CTL_CNT(counter));
+	WWDGT_CFG = (uint32_t)(CFG_WIN(window) | prescaler);
 }
 
 /*!
@@ -95,11 +95,11 @@ void wwdgt_config(uint16_t counter, uint16_t window, uint32_t prescaler)
 */
 FlagStatus wwdgt_flag_get(void)
 {
-    if(WWDGT_STAT & WWDGT_STAT_EWIF) {
-        return SET;
-    }
+	if (WWDGT_STAT & WWDGT_STAT_EWIF) {
+		return SET;
+	}
 
-    return RESET;
+	return RESET;
 }
 
 /*!
@@ -110,7 +110,7 @@ FlagStatus wwdgt_flag_get(void)
 */
 void wwdgt_flag_clear(void)
 {
-    WWDGT_STAT = (uint32_t)(RESET);
+	WWDGT_STAT = (uint32_t)(RESET);
 }
 
 /*!
@@ -121,5 +121,5 @@ void wwdgt_flag_clear(void)
 */
 void wwdgt_interrupt_enable(void)
 {
-    WWDGT_CFG |= WWDGT_CFG_EWIE;
+	WWDGT_CFG |= WWDGT_CFG_EWIE;
 }

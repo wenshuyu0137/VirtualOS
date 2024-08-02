@@ -32,7 +32,6 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSI
 OF SUCH DAMAGE.
 */
 
-
 #include "gd32f30x_pmu.h"
 
 /*!
@@ -43,9 +42,9 @@ OF SUCH DAMAGE.
 */
 void pmu_deinit(void)
 {
-    /* reset PMU */
-    rcu_periph_reset_enable(RCU_PMURST);
-    rcu_periph_reset_disable(RCU_PMURST);
+	/* reset PMU */
+	rcu_periph_reset_enable(RCU_PMURST);
+	rcu_periph_reset_disable(RCU_PMURST);
 }
 
 /*!
@@ -64,14 +63,14 @@ void pmu_deinit(void)
 */
 void pmu_lvd_select(uint32_t lvdt_n)
 {
-    /* disable LVD */
-    PMU_CTL &= ~PMU_CTL_LVDEN;
-    /* clear LVDT bits */
-    PMU_CTL &= ~PMU_CTL_LVDT;
-    /* set LVDT bits according to lvdt_n */
-    PMU_CTL |= lvdt_n;
-    /* enable LVD */
-    PMU_CTL |= PMU_CTL_LVDEN;
+	/* disable LVD */
+	PMU_CTL &= ~PMU_CTL_LVDEN;
+	/* clear LVDT bits */
+	PMU_CTL &= ~PMU_CTL_LVDT;
+	/* set LVDT bits according to lvdt_n */
+	PMU_CTL |= lvdt_n;
+	/* enable LVD */
+	PMU_CTL |= PMU_CTL_LVDEN;
 }
 
 /*!
@@ -86,8 +85,8 @@ void pmu_lvd_select(uint32_t lvdt_n)
 */
 void pmu_ldo_output_select(uint32_t ldo_output)
 {
-    PMU_CTL &= ~PMU_CTL_LDOVS;
-    PMU_CTL |= ldo_output;
+	PMU_CTL &= ~PMU_CTL_LDOVS;
+	PMU_CTL |= ldo_output;
 }
 
 /*!
@@ -98,8 +97,8 @@ void pmu_ldo_output_select(uint32_t ldo_output)
 */
 void pmu_lvd_disable(void)
 {
-    /* disable LVD */
-    PMU_CTL &= ~PMU_CTL_LVDEN;
+	/* disable LVD */
+	PMU_CTL &= ~PMU_CTL_LVDEN;
 }
 
 /*!
@@ -113,11 +112,11 @@ void pmu_lvd_disable(void)
 */
 void pmu_highdriver_switch_select(uint32_t highdr_switch)
 {
-    /* wait for HDRF flag set */
-    while(SET != pmu_flag_get(PMU_FLAG_HDRF)) {
-    }
-    PMU_CTL &= ~PMU_CTL_HDS;
-    PMU_CTL |= highdr_switch;
+	/* wait for HDRF flag set */
+	while (SET != pmu_flag_get(PMU_FLAG_HDRF)) {
+	}
+	PMU_CTL &= ~PMU_CTL_HDS;
+	PMU_CTL |= highdr_switch;
 }
 
 /*!
@@ -129,7 +128,7 @@ void pmu_highdriver_switch_select(uint32_t highdr_switch)
 */
 void pmu_highdriver_mode_enable(void)
 {
-    PMU_CTL |= PMU_CTL_HDEN;
+	PMU_CTL |= PMU_CTL_HDEN;
 }
 
 /*!
@@ -140,7 +139,7 @@ void pmu_highdriver_mode_enable(void)
 */
 void pmu_highdriver_mode_disable(void)
 {
-    PMU_CTL &= ~PMU_CTL_HDEN;
+	PMU_CTL &= ~PMU_CTL_HDEN;
 }
 
 /*!
@@ -151,7 +150,7 @@ void pmu_highdriver_mode_disable(void)
 */
 void pmu_lowdriver_mode_enable(void)
 {
-    PMU_CTL |= PMU_CTL_LDEN;
+	PMU_CTL |= PMU_CTL_LDEN;
 }
 
 /*!
@@ -162,7 +161,7 @@ void pmu_lowdriver_mode_enable(void)
 */
 void pmu_lowdriver_mode_disable(void)
 {
-    PMU_CTL &= ~PMU_CTL_LDEN;
+	PMU_CTL &= ~PMU_CTL_LDEN;
 }
 
 /*!
@@ -175,8 +174,8 @@ void pmu_lowdriver_mode_disable(void)
 */
 void pmu_lowpower_driver_config(uint32_t mode)
 {
-    PMU_CTL &= ~PMU_CTL_LDLP;
-    PMU_CTL |= mode;
+	PMU_CTL &= ~PMU_CTL_LDLP;
+	PMU_CTL |= mode;
 }
 
 /*!
@@ -189,8 +188,8 @@ void pmu_lowpower_driver_config(uint32_t mode)
 */
 void pmu_normalpower_driver_config(uint32_t mode)
 {
-    PMU_CTL &= ~PMU_CTL_LDNP;
-    PMU_CTL |= mode;
+	PMU_CTL &= ~PMU_CTL_LDNP;
+	PMU_CTL |= mode;
 }
 
 /*!
@@ -203,15 +202,15 @@ void pmu_normalpower_driver_config(uint32_t mode)
 */
 void pmu_to_sleepmode(uint8_t sleepmodecmd)
 {
-    /* clear sleepdeep bit of Cortex-M4 system control register */
-    SCB->SCR &= ~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);
+	/* clear sleepdeep bit of Cortex-M4 system control register */
+	SCB->SCR &= ~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);
 
-    /* select WFI or WFE command to enter sleep mode */
-    if(WFI_CMD == sleepmodecmd) {
-        __WFI();
-    } else {
-        __WFE();
-    }
+	/* select WFI or WFE command to enter sleep mode */
+	if (WFI_CMD == sleepmodecmd) {
+		__WFI();
+	} else {
+		__WFE();
+	}
 }
 
 /*!
@@ -233,51 +232,51 @@ void pmu_to_sleepmode(uint8_t sleepmodecmd)
 */
 void pmu_to_deepsleepmode(uint32_t ldo, uint32_t lowdrive, uint8_t deepsleepmodecmd)
 {
-    static uint32_t reg_snap[ 4 ];
-    /* clear stbmod and ldolp bits */
-    PMU_CTL &= ~((uint32_t)(PMU_CTL_STBMOD | PMU_CTL_LDOLP | PMU_CTL_LDEN | PMU_CTL_LDNP | PMU_CTL_LDLP));
+	static uint32_t reg_snap[4];
+	/* clear stbmod and ldolp bits */
+	PMU_CTL &= ~((uint32_t)(PMU_CTL_STBMOD | PMU_CTL_LDOLP | PMU_CTL_LDEN | PMU_CTL_LDNP | PMU_CTL_LDLP));
 
-    /* set ldolp bit according to pmu_ldo */
-    PMU_CTL |= ldo;
+	/* set ldolp bit according to pmu_ldo */
+	PMU_CTL |= ldo;
 
-    /* low drive mode config in deep-sleep mode */
-    if(PMU_LOWDRIVER_ENABLE == lowdrive) {
-        if(PMU_LDO_NORMAL == ldo) {
-            PMU_CTL |= (uint32_t)(PMU_CTL_LDEN | PMU_CTL_LDNP);
-        } else {
-            PMU_CTL |= (uint32_t)(PMU_CTL_LDEN | PMU_CTL_LDLP);
-        }
-    }
+	/* low drive mode config in deep-sleep mode */
+	if (PMU_LOWDRIVER_ENABLE == lowdrive) {
+		if (PMU_LDO_NORMAL == ldo) {
+			PMU_CTL |= (uint32_t)(PMU_CTL_LDEN | PMU_CTL_LDNP);
+		} else {
+			PMU_CTL |= (uint32_t)(PMU_CTL_LDEN | PMU_CTL_LDLP);
+		}
+	}
 
-    /* set sleepdeep bit of Cortex-M4 system control register */
-    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+	/* set sleepdeep bit of Cortex-M4 system control register */
+	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
-    reg_snap[ 0 ] = REG32(0xE000E010U);
-    reg_snap[ 1 ] = REG32(0xE000E100U);
-    reg_snap[ 2 ] = REG32(0xE000E104U);
-    reg_snap[ 3 ] = REG32(0xE000E108U);
+	reg_snap[0] = REG32(0xE000E010U);
+	reg_snap[1] = REG32(0xE000E100U);
+	reg_snap[2] = REG32(0xE000E104U);
+	reg_snap[3] = REG32(0xE000E108U);
 
-    REG32(0xE000E010U) &= 0x00010004U;
-    REG32(0xE000E180U)  = 0XFF7FF83DU;
-    REG32(0xE000E184U)  = 0XFFFFF8FFU;
-    REG32(0xE000E188U)  = 0xFFFFFFFFU;
+	REG32(0xE000E010U) &= 0x00010004U;
+	REG32(0xE000E180U) = 0XFF7FF83DU;
+	REG32(0xE000E184U) = 0XFFFFF8FFU;
+	REG32(0xE000E188U) = 0xFFFFFFFFU;
 
-    /* select WFI or WFE command to enter deepsleep mode */
-    if(WFI_CMD == deepsleepmodecmd) {
-        __WFI();
-    } else {
-        __SEV();
-        __WFE();
-        __WFE();
-    }
+	/* select WFI or WFE command to enter deepsleep mode */
+	if (WFI_CMD == deepsleepmodecmd) {
+		__WFI();
+	} else {
+		__SEV();
+		__WFE();
+		__WFE();
+	}
 
-    REG32(0xE000E010U) = reg_snap[ 0 ] ;
-    REG32(0xE000E100U) = reg_snap[ 1 ] ;
-    REG32(0xE000E104U) = reg_snap[ 2 ] ;
-    REG32(0xE000E108U) = reg_snap[ 3 ] ;
+	REG32(0xE000E010U) = reg_snap[0];
+	REG32(0xE000E100U) = reg_snap[1];
+	REG32(0xE000E104U) = reg_snap[2];
+	REG32(0xE000E108U) = reg_snap[3];
 
-    /* reset sleepdeep bit of Cortex-M4 system control register */
-    SCB->SCR &= ~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);
+	/* reset sleepdeep bit of Cortex-M4 system control register */
+	SCB->SCR &= ~((uint32_t)SCB_SCR_SLEEPDEEP_Msk);
 }
 
 /*!
@@ -288,22 +287,22 @@ void pmu_to_deepsleepmode(uint32_t ldo, uint32_t lowdrive, uint8_t deepsleepmode
 */
 void pmu_to_standbymode(void)
 {
-    /* set stbmod bit */
-    PMU_CTL |= PMU_CTL_STBMOD;
+	/* set stbmod bit */
+	PMU_CTL |= PMU_CTL_STBMOD;
 
-    /* reset wakeup flag */
-    PMU_CTL |= PMU_CTL_WURST;
+	/* reset wakeup flag */
+	PMU_CTL |= PMU_CTL_WURST;
 
-    /* set sleepdeep bit of Cortex-M4 system control register */
-    SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+	/* set sleepdeep bit of Cortex-M4 system control register */
+	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
 
-    REG32(0xE000E010U) &= 0x00010004U;
-    REG32(0xE000E180U)  = 0XFFFFFFF7U;
-    REG32(0xE000E184U)  = 0XFFFFFDFFU;
-    REG32(0xE000E188U)  = 0xFFFFFFFFU;
+	REG32(0xE000E010U) &= 0x00010004U;
+	REG32(0xE000E180U) = 0XFFFFFFF7U;
+	REG32(0xE000E184U) = 0XFFFFFDFFU;
+	REG32(0xE000E188U) = 0xFFFFFFFFU;
 
-    /* select WFI or WFE command to enter standby mode */
-    __WFI();
+	/* select WFI or WFE command to enter standby mode */
+	__WFI();
 }
 
 /*!
@@ -314,7 +313,7 @@ void pmu_to_standbymode(void)
 */
 void pmu_backup_write_enable(void)
 {
-    PMU_CTL |= PMU_CTL_BKPWEN;
+	PMU_CTL |= PMU_CTL_BKPWEN;
 }
 
 /*!
@@ -325,7 +324,7 @@ void pmu_backup_write_enable(void)
 */
 void pmu_backup_write_disable(void)
 {
-    PMU_CTL &= ~PMU_CTL_BKPWEN;
+	PMU_CTL &= ~PMU_CTL_BKPWEN;
 }
 
 /*!
@@ -336,7 +335,7 @@ void pmu_backup_write_disable(void)
 */
 void pmu_wakeup_pin_enable(void)
 {
-    PMU_CS |= PMU_CS_WUPEN;
+	PMU_CS |= PMU_CS_WUPEN;
 }
 
 /*!
@@ -347,7 +346,7 @@ void pmu_wakeup_pin_enable(void)
 */
 void pmu_wakeup_pin_disable(void)
 {
-    PMU_CS &= ~PMU_CS_WUPEN;
+	PMU_CS &= ~PMU_CS_WUPEN;
 }
 
 /*!
@@ -365,11 +364,11 @@ void pmu_wakeup_pin_disable(void)
 */
 FlagStatus pmu_flag_get(uint32_t flag)
 {
-    if(PMU_CS & flag) {
-        return  SET;
-    } else {
-        return  RESET;
-    }
+	if (PMU_CS & flag) {
+		return SET;
+	} else {
+		return RESET;
+	}
 }
 
 /*!
@@ -382,16 +381,16 @@ FlagStatus pmu_flag_get(uint32_t flag)
 */
 void pmu_flag_clear(uint32_t flag)
 {
-    switch(flag) {
-    case PMU_FLAG_RESET_WAKEUP:
-        /* reset wakeup flag */
-        PMU_CTL |= PMU_CTL_WURST;
-        break;
-    case PMU_FLAG_RESET_STANDBY:
-        /* reset standby flag */
-        PMU_CTL |= PMU_CTL_STBRST;
-        break;
-    default :
-        break;
-    }
+	switch (flag) {
+	case PMU_FLAG_RESET_WAKEUP:
+		/* reset wakeup flag */
+		PMU_CTL |= PMU_CTL_WURST;
+		break;
+	case PMU_FLAG_RESET_STANDBY:
+		/* reset standby flag */
+		PMU_CTL |= PMU_CTL_STBRST;
+		break;
+	default:
+		break;
+	}
 }

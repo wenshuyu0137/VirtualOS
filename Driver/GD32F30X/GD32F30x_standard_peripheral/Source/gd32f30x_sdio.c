@@ -44,15 +44,15 @@ OF SUCH DAMAGE.
 */
 void sdio_deinit(void)
 {
-    SDIO_PWRCTL  = DEFAULT_RESET_VALUE;
-    SDIO_CLKCTL  = DEFAULT_RESET_VALUE;
-    SDIO_CMDAGMT = DEFAULT_RESET_VALUE;
-    SDIO_CMDCTL  = DEFAULT_RESET_VALUE;
-    SDIO_DATATO  = DEFAULT_RESET_VALUE;
-    SDIO_DATALEN = DEFAULT_RESET_VALUE;
-    SDIO_DATACTL = DEFAULT_RESET_VALUE;
-    SDIO_INTC    = DEFAULT_RESET_VALUE;
-    SDIO_INTEN   = DEFAULT_RESET_VALUE;
+	SDIO_PWRCTL = DEFAULT_RESET_VALUE;
+	SDIO_CLKCTL = DEFAULT_RESET_VALUE;
+	SDIO_CMDAGMT = DEFAULT_RESET_VALUE;
+	SDIO_CMDCTL = DEFAULT_RESET_VALUE;
+	SDIO_DATATO = DEFAULT_RESET_VALUE;
+	SDIO_DATALEN = DEFAULT_RESET_VALUE;
+	SDIO_DATACTL = DEFAULT_RESET_VALUE;
+	SDIO_INTC = DEFAULT_RESET_VALUE;
+	SDIO_INTEN = DEFAULT_RESET_VALUE;
 }
 
 /*!
@@ -75,18 +75,18 @@ void sdio_deinit(void)
 */
 void sdio_clock_config(uint32_t clock_edge, uint32_t clock_bypass, uint32_t clock_powersave, uint16_t clock_division)
 {
-    uint32_t clock_config = 0U;
-    clock_config = SDIO_CLKCTL;
-    /* reset the CLKEDGE, CLKBYP, CLKPWRSAV, DIV */
-    clock_config &= ~(SDIO_CLKCTL_CLKEDGE | SDIO_CLKCTL_CLKBYP | SDIO_CLKCTL_CLKPWRSAV | SDIO_CLKCTL_DIV8 | SDIO_CLKCTL_DIV);
-    /* if the clock division is greater or equal to 256, set the DIV[8] */
-    if(clock_division >= 256U){
-        clock_config |= SDIO_CLKCTL_DIV8;
-        clock_division -= 256U;
-    }
-    /* configure the SDIO_CLKCTL according to the parameters */
-    clock_config |= (clock_edge | clock_bypass | clock_powersave | clock_division);
-    SDIO_CLKCTL = clock_config;
+	uint32_t clock_config = 0U;
+	clock_config = SDIO_CLKCTL;
+	/* reset the CLKEDGE, CLKBYP, CLKPWRSAV, DIV */
+	clock_config &= ~(SDIO_CLKCTL_CLKEDGE | SDIO_CLKCTL_CLKBYP | SDIO_CLKCTL_CLKPWRSAV | SDIO_CLKCTL_DIV8 | SDIO_CLKCTL_DIV);
+	/* if the clock division is greater or equal to 256, set the DIV[8] */
+	if (clock_division >= 256U) {
+		clock_config |= SDIO_CLKCTL_DIV8;
+		clock_division -= 256U;
+	}
+	/* configure the SDIO_CLKCTL according to the parameters */
+	clock_config |= (clock_edge | clock_bypass | clock_powersave | clock_division);
+	SDIO_CLKCTL = clock_config;
 }
 
 /*!
@@ -97,7 +97,7 @@ void sdio_clock_config(uint32_t clock_edge, uint32_t clock_bypass, uint32_t cloc
 */
 void sdio_hardware_clock_enable(void)
 {
-    SDIO_CLKCTL |= SDIO_CLKCTL_HWCLKEN;
+	SDIO_CLKCTL |= SDIO_CLKCTL_HWCLKEN;
 }
 
 /*!
@@ -108,7 +108,7 @@ void sdio_hardware_clock_enable(void)
 */
 void sdio_hardware_clock_disable(void)
 {
-    SDIO_CLKCTL &= ~SDIO_CLKCTL_HWCLKEN;
+	SDIO_CLKCTL &= ~SDIO_CLKCTL_HWCLKEN;
 }
 
 /*!
@@ -123,9 +123,9 @@ void sdio_hardware_clock_disable(void)
 */
 void sdio_bus_mode_set(uint32_t bus_mode)
 {
-    /* reset the SDIO card bus mode bits and set according to bus_mode */
-    SDIO_CLKCTL &= ~SDIO_CLKCTL_BUSMODE;
-    SDIO_CLKCTL |= bus_mode;
+	/* reset the SDIO card bus mode bits and set according to bus_mode */
+	SDIO_CLKCTL &= ~SDIO_CLKCTL_BUSMODE;
+	SDIO_CLKCTL |= bus_mode;
 }
 
 /*!
@@ -139,7 +139,7 @@ void sdio_bus_mode_set(uint32_t bus_mode)
 */
 void sdio_power_state_set(uint32_t power_state)
 {
-    SDIO_PWRCTL = power_state;
+	SDIO_PWRCTL = power_state;
 }
 
 /*!
@@ -152,7 +152,7 @@ void sdio_power_state_set(uint32_t power_state)
 */
 uint32_t sdio_power_state_get(void)
 {
-    return SDIO_PWRCTL;
+	return SDIO_PWRCTL;
 }
 
 /*!
@@ -163,7 +163,7 @@ uint32_t sdio_power_state_get(void)
 */
 void sdio_clock_enable(void)
 {
-    SDIO_CLKCTL |= SDIO_CLKCTL_CLKEN;
+	SDIO_CLKCTL |= SDIO_CLKCTL_CLKEN;
 }
 
 /*!
@@ -174,7 +174,7 @@ void sdio_clock_enable(void)
 */
 void sdio_clock_disable(void)
 {
-    SDIO_CLKCTL &= ~SDIO_CLKCTL_CLKEN;
+	SDIO_CLKCTL &= ~SDIO_CLKCTL_CLKEN;
 }
 
 /*!
@@ -191,15 +191,15 @@ void sdio_clock_disable(void)
 */
 void sdio_command_response_config(uint32_t cmd_index, uint32_t cmd_argument, uint32_t response_type)
 {
-    uint32_t cmd_config = 0U;
-    /* reset the command index, command argument and response type */
-    SDIO_CMDAGMT &= ~SDIO_CMDAGMT_CMDAGMT;
-    SDIO_CMDAGMT = cmd_argument;
-    cmd_config = SDIO_CMDCTL;
-    cmd_config &= ~(SDIO_CMDCTL_CMDIDX | SDIO_CMDCTL_CMDRESP);
-    /* configure SDIO_CMDCTL and SDIO_CMDAGMT according to the parameters */
-    cmd_config |= (cmd_index | response_type);
-    SDIO_CMDCTL = cmd_config;
+	uint32_t cmd_config = 0U;
+	/* reset the command index, command argument and response type */
+	SDIO_CMDAGMT &= ~SDIO_CMDAGMT_CMDAGMT;
+	SDIO_CMDAGMT = cmd_argument;
+	cmd_config = SDIO_CMDCTL;
+	cmd_config &= ~(SDIO_CMDCTL_CMDIDX | SDIO_CMDCTL_CMDRESP);
+	/* configure SDIO_CMDCTL and SDIO_CMDAGMT according to the parameters */
+	cmd_config |= (cmd_index | response_type);
+	SDIO_CMDCTL = cmd_config;
 }
 
 /*!
@@ -214,10 +214,10 @@ void sdio_command_response_config(uint32_t cmd_index, uint32_t cmd_argument, uin
 */
 void sdio_wait_type_set(uint32_t wait_type)
 {
-    /* reset INTWAIT and WAITDEND */
-    SDIO_CMDCTL &= ~(SDIO_CMDCTL_INTWAIT | SDIO_CMDCTL_WAITDEND);
-    /* set the wait type according to wait_type */
-    SDIO_CMDCTL |= wait_type;
+	/* reset INTWAIT and WAITDEND */
+	SDIO_CMDCTL &= ~(SDIO_CMDCTL_INTWAIT | SDIO_CMDCTL_WAITDEND);
+	/* set the wait type according to wait_type */
+	SDIO_CMDCTL |= wait_type;
 }
 
 /*!
@@ -228,7 +228,7 @@ void sdio_wait_type_set(uint32_t wait_type)
 */
 void sdio_csm_enable(void)
 {
-    SDIO_CMDCTL |= SDIO_CMDCTL_CSMEN;
+	SDIO_CMDCTL |= SDIO_CMDCTL_CSMEN;
 }
 
 /*!
@@ -239,7 +239,7 @@ void sdio_csm_enable(void)
 */
 void sdio_csm_disable(void)
 {
-    SDIO_CMDCTL &= ~SDIO_CMDCTL_CSMEN;
+	SDIO_CMDCTL &= ~SDIO_CMDCTL_CSMEN;
 }
 
 /*!
@@ -250,7 +250,7 @@ void sdio_csm_disable(void)
 */
 uint8_t sdio_command_index_get(void)
 {
-    return (uint8_t)SDIO_RSPCMDIDX;
+	return (uint8_t)SDIO_RSPCMDIDX;
 }
 
 /*!
@@ -266,24 +266,24 @@ uint8_t sdio_command_index_get(void)
 */
 uint32_t sdio_response_get(uint32_t responsex)
 {
-    uint32_t resp_content = 0U;
-    switch(responsex){
-    case SDIO_RESPONSE0:
-        resp_content = SDIO_RESP0;
-        break;
-    case SDIO_RESPONSE1:
-        resp_content = SDIO_RESP1;
-        break;
-    case SDIO_RESPONSE2:
-        resp_content = SDIO_RESP2;
-        break;
-    case SDIO_RESPONSE3:
-        resp_content = SDIO_RESP3;
-        break;
-    default:
-        break;
-    }
-    return resp_content;
+	uint32_t resp_content = 0U;
+	switch (responsex) {
+	case SDIO_RESPONSE0:
+		resp_content = SDIO_RESP0;
+		break;
+	case SDIO_RESPONSE1:
+		resp_content = SDIO_RESP1;
+		break;
+	case SDIO_RESPONSE2:
+		resp_content = SDIO_RESP2;
+		break;
+	case SDIO_RESPONSE3:
+		resp_content = SDIO_RESP3;
+		break;
+	default:
+		break;
+	}
+	return resp_content;
 }
 
 /*!
@@ -312,14 +312,14 @@ uint32_t sdio_response_get(uint32_t responsex)
 */
 void sdio_data_config(uint32_t data_timeout, uint32_t data_length, uint32_t data_blocksize)
 {
-    /* reset data timeout, data length and data block size */
-    SDIO_DATATO &= ~SDIO_DATATO_DATATO;
-    SDIO_DATALEN &= ~SDIO_DATALEN_DATALEN;
-    SDIO_DATACTL &= ~SDIO_DATACTL_BLKSZ;
-    /* configure the related parameters of data */
-    SDIO_DATATO = data_timeout;
-    SDIO_DATALEN = data_length;
-    SDIO_DATACTL |= data_blocksize;
+	/* reset data timeout, data length and data block size */
+	SDIO_DATATO &= ~SDIO_DATATO_DATATO;
+	SDIO_DATALEN &= ~SDIO_DATALEN_DATALEN;
+	SDIO_DATACTL &= ~SDIO_DATACTL_BLKSZ;
+	/* configure the related parameters of data */
+	SDIO_DATATO = data_timeout;
+	SDIO_DATALEN = data_length;
+	SDIO_DATACTL |= data_blocksize;
 }
 
 /*!
@@ -337,12 +337,12 @@ void sdio_data_config(uint32_t data_timeout, uint32_t data_length, uint32_t data
 */
 void sdio_data_transfer_config(uint32_t transfer_mode, uint32_t transfer_direction)
 {
-    uint32_t data_trans = 0U;
-    /* reset the data transfer mode, transfer direction and set according to the parameters */
-    data_trans = SDIO_DATACTL;
-    data_trans &= ~(SDIO_DATACTL_TRANSMOD | SDIO_DATACTL_DATADIR);
-    data_trans |= (transfer_mode | transfer_direction);
-    SDIO_DATACTL = data_trans;
+	uint32_t data_trans = 0U;
+	/* reset the data transfer mode, transfer direction and set according to the parameters */
+	data_trans = SDIO_DATACTL;
+	data_trans &= ~(SDIO_DATACTL_TRANSMOD | SDIO_DATACTL_DATADIR);
+	data_trans |= (transfer_mode | transfer_direction);
+	SDIO_DATACTL = data_trans;
 }
 
 /*!
@@ -353,7 +353,7 @@ void sdio_data_transfer_config(uint32_t transfer_mode, uint32_t transfer_directi
 */
 void sdio_dsm_enable(void)
 {
-    SDIO_DATACTL |= SDIO_DATACTL_DATAEN;
+	SDIO_DATACTL |= SDIO_DATACTL_DATAEN;
 }
 
 /*!
@@ -364,7 +364,7 @@ void sdio_dsm_enable(void)
 */
 void sdio_dsm_disable(void)
 {
-    SDIO_DATACTL &= ~SDIO_DATACTL_DATAEN;
+	SDIO_DATACTL &= ~SDIO_DATACTL_DATAEN;
 }
 
 /*!
@@ -375,7 +375,7 @@ void sdio_dsm_disable(void)
 */
 void sdio_data_write(uint32_t data)
 {
-    SDIO_FIFO = data;
+	SDIO_FIFO = data;
 }
 
 /*!
@@ -386,7 +386,7 @@ void sdio_data_write(uint32_t data)
 */
 uint32_t sdio_data_read(void)
 {
-    return SDIO_FIFO;
+	return SDIO_FIFO;
 }
 
 /*!
@@ -397,7 +397,7 @@ uint32_t sdio_data_read(void)
 */
 uint32_t sdio_data_counter_get(void)
 {
-    return SDIO_DATACNT;
+	return SDIO_DATACNT;
 }
 
 /*!
@@ -408,7 +408,7 @@ uint32_t sdio_data_counter_get(void)
 */
 uint32_t sdio_fifo_counter_get(void)
 {
-    return SDIO_FIFOCNT;
+	return SDIO_FIFOCNT;
 }
 
 /*!
@@ -419,7 +419,7 @@ uint32_t sdio_fifo_counter_get(void)
 */
 void sdio_dma_enable(void)
 {
-    SDIO_DATACTL |= SDIO_DATACTL_DMAEN;
+	SDIO_DATACTL |= SDIO_DATACTL_DMAEN;
 }
 
 /*!
@@ -430,7 +430,7 @@ void sdio_dma_enable(void)
 */
 void sdio_dma_disable(void)
 {
-    SDIO_DATACTL &= ~SDIO_DATACTL_DMAEN;
+	SDIO_DATACTL &= ~SDIO_DATACTL_DMAEN;
 }
 
 /*!
@@ -466,10 +466,10 @@ void sdio_dma_disable(void)
 */
 FlagStatus sdio_flag_get(uint32_t flag)
 {
-    if(RESET != (SDIO_STAT & flag)){
-        return SET;
-    }
-    return RESET;
+	if (RESET != (SDIO_STAT & flag)) {
+		return SET;
+	}
+	return RESET;
 }
 
 /*!
@@ -494,7 +494,7 @@ FlagStatus sdio_flag_get(uint32_t flag)
 */
 void sdio_flag_clear(uint32_t flag)
 {
-    SDIO_INTC = flag;
+	SDIO_INTC = flag;
 }
 
 /*!
@@ -530,7 +530,7 @@ void sdio_flag_clear(uint32_t flag)
 */
 void sdio_interrupt_enable(uint32_t int_flag)
 {
-    SDIO_INTEN |= int_flag;
+	SDIO_INTEN |= int_flag;
 }
 
 /*!
@@ -566,7 +566,7 @@ void sdio_interrupt_enable(uint32_t int_flag)
 */
 void sdio_interrupt_disable(uint32_t int_flag)
 {
-    SDIO_INTEN &= ~int_flag;
+	SDIO_INTEN &= ~int_flag;
 }
 
 /*!
@@ -602,10 +602,10 @@ void sdio_interrupt_disable(uint32_t int_flag)
 */
 FlagStatus sdio_interrupt_flag_get(uint32_t int_flag)
 {
-    if(RESET != (SDIO_STAT & int_flag)){
-        return SET;
-    }
-    return RESET;
+	if (RESET != (SDIO_STAT & int_flag)) {
+		return SET;
+	}
+	return RESET;
 }
 
 /*!
@@ -630,7 +630,7 @@ FlagStatus sdio_interrupt_flag_get(uint32_t int_flag)
 */
 void sdio_interrupt_flag_clear(uint32_t int_flag)
 {
-    SDIO_INTC = int_flag;
+	SDIO_INTC = int_flag;
 }
 
 /*!
@@ -641,7 +641,7 @@ void sdio_interrupt_flag_clear(uint32_t int_flag)
 */
 void sdio_readwait_enable(void)
 {
-    SDIO_DATACTL |= SDIO_DATACTL_RWEN;
+	SDIO_DATACTL |= SDIO_DATACTL_RWEN;
 }
 
 /*!
@@ -652,7 +652,7 @@ void sdio_readwait_enable(void)
 */
 void sdio_readwait_disable(void)
 {
-    SDIO_DATACTL &= ~SDIO_DATACTL_RWEN;
+	SDIO_DATACTL &= ~SDIO_DATACTL_RWEN;
 }
 
 /*!
@@ -663,7 +663,7 @@ void sdio_readwait_disable(void)
 */
 void sdio_stop_readwait_enable(void)
 {
-    SDIO_DATACTL |= SDIO_DATACTL_RWSTOP;
+	SDIO_DATACTL |= SDIO_DATACTL_RWSTOP;
 }
 
 /*!
@@ -674,7 +674,7 @@ void sdio_stop_readwait_enable(void)
 */
 void sdio_stop_readwait_disable(void)
 {
-    SDIO_DATACTL &= ~SDIO_DATACTL_RWSTOP;
+	SDIO_DATACTL &= ~SDIO_DATACTL_RWSTOP;
 }
 
 /*!
@@ -688,11 +688,11 @@ void sdio_stop_readwait_disable(void)
 */
 void sdio_readwait_type_set(uint32_t readwait_type)
 {
-    if(SDIO_READWAITTYPE_CLK == readwait_type){
-        SDIO_DATACTL |= SDIO_DATACTL_RWTYPE;
-    }else{
-        SDIO_DATACTL &= ~SDIO_DATACTL_RWTYPE;
-    }
+	if (SDIO_READWAITTYPE_CLK == readwait_type) {
+		SDIO_DATACTL |= SDIO_DATACTL_RWTYPE;
+	} else {
+		SDIO_DATACTL &= ~SDIO_DATACTL_RWTYPE;
+	}
 }
 
 /*!
@@ -703,7 +703,7 @@ void sdio_readwait_type_set(uint32_t readwait_type)
 */
 void sdio_operation_enable(void)
 {
-    SDIO_DATACTL |= SDIO_DATACTL_IOEN;
+	SDIO_DATACTL |= SDIO_DATACTL_IOEN;
 }
 
 /*!
@@ -714,7 +714,7 @@ void sdio_operation_enable(void)
 */
 void sdio_operation_disable(void)
 {
-    SDIO_DATACTL &= ~SDIO_DATACTL_IOEN;
+	SDIO_DATACTL &= ~SDIO_DATACTL_IOEN;
 }
 
 /*!
@@ -725,7 +725,7 @@ void sdio_operation_disable(void)
 */
 void sdio_suspend_enable(void)
 {
-    SDIO_CMDCTL |= SDIO_CMDCTL_SUSPEND;
+	SDIO_CMDCTL |= SDIO_CMDCTL_SUSPEND;
 }
 
 /*!
@@ -736,7 +736,7 @@ void sdio_suspend_enable(void)
 */
 void sdio_suspend_disable(void)
 {
-    SDIO_CMDCTL &= ~SDIO_CMDCTL_SUSPEND;
+	SDIO_CMDCTL &= ~SDIO_CMDCTL_SUSPEND;
 }
 
 /*!
@@ -747,7 +747,7 @@ void sdio_suspend_disable(void)
 */
 void sdio_ceata_command_enable(void)
 {
-    SDIO_CMDCTL |= SDIO_CMDCTL_ATAEN;
+	SDIO_CMDCTL |= SDIO_CMDCTL_ATAEN;
 }
 
 /*!
@@ -758,7 +758,7 @@ void sdio_ceata_command_enable(void)
 */
 void sdio_ceata_command_disable(void)
 {
-    SDIO_CMDCTL &= ~SDIO_CMDCTL_ATAEN;
+	SDIO_CMDCTL &= ~SDIO_CMDCTL_ATAEN;
 }
 
 /*!
@@ -769,7 +769,7 @@ void sdio_ceata_command_disable(void)
 */
 void sdio_ceata_interrupt_enable(void)
 {
-    SDIO_CMDCTL &= ~SDIO_CMDCTL_NINTEN;
+	SDIO_CMDCTL &= ~SDIO_CMDCTL_NINTEN;
 }
 
 /*!
@@ -780,7 +780,7 @@ void sdio_ceata_interrupt_enable(void)
 */
 void sdio_ceata_interrupt_disable(void)
 {
-    SDIO_CMDCTL |= SDIO_CMDCTL_NINTEN;
+	SDIO_CMDCTL |= SDIO_CMDCTL_NINTEN;
 }
 
 /*!
@@ -791,7 +791,7 @@ void sdio_ceata_interrupt_disable(void)
 */
 void sdio_ceata_command_completion_enable(void)
 {
-    SDIO_CMDCTL |= SDIO_CMDCTL_ENCMDC;
+	SDIO_CMDCTL |= SDIO_CMDCTL_ENCMDC;
 }
 
 /*!
@@ -802,5 +802,5 @@ void sdio_ceata_command_completion_enable(void)
 */
 void sdio_ceata_command_completion_disable(void)
 {
-    SDIO_CMDCTL &= ~SDIO_CMDCTL_ENCMDC;
+	SDIO_CMDCTL &= ~SDIO_CMDCTL_ENCMDC;
 }

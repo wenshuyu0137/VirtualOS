@@ -34,7 +34,7 @@ OF SUCH DAMAGE.
 
 #include "gd32f30x_bkp.h"
 
-#define TAMPER_FLAG_SHIFT          ((uint8_t)8U)
+#define TAMPER_FLAG_SHIFT ((uint8_t)8U)
 
 /*!
     \brief      reset BKP registers
@@ -44,9 +44,9 @@ OF SUCH DAMAGE.
 */
 void bkp_deinit(void)
 {
-    /* reset BKP domain register*/
-    rcu_bkp_reset_enable();
-    rcu_bkp_reset_disable();
+	/* reset BKP domain register*/
+	rcu_bkp_reset_enable();
+	rcu_bkp_reset_disable();
 }
 
 /*!
@@ -59,13 +59,13 @@ void bkp_deinit(void)
 */
 void bkp_write_data(bkp_data_register_enum register_number, uint16_t data)
 {
-    if((register_number >= BKP_DATA_10) && (register_number <= BKP_DATA_41)){
-        BKP_DATA10_41(register_number-1U) = data;
-    }else if((register_number >= BKP_DATA_0) && (register_number <= BKP_DATA_9)){
-        BKP_DATA0_9(register_number-1U) = data;
-    }else{
-        /* illegal parameters */
-    }
+	if ((register_number >= BKP_DATA_10) && (register_number <= BKP_DATA_41)) {
+		BKP_DATA10_41(register_number - 1U) = data;
+	} else if ((register_number >= BKP_DATA_0) && (register_number <= BKP_DATA_9)) {
+		BKP_DATA0_9(register_number - 1U) = data;
+	} else {
+		/* illegal parameters */
+	}
 }
 
 /*!
@@ -77,17 +77,17 @@ void bkp_write_data(bkp_data_register_enum register_number, uint16_t data)
 */
 uint16_t bkp_read_data(bkp_data_register_enum register_number)
 {
-    uint16_t data = 0U;
-    
-    /* get the data from the BKP data register */
-    if((register_number >= BKP_DATA_10) && (register_number <= BKP_DATA_41)){
-        data = BKP_DATA10_41(register_number-1U);
-    }else if((register_number >= BKP_DATA_0) && (register_number <= BKP_DATA_9)){
-        data = BKP_DATA0_9(register_number-1U);
-    }else{
-        /* illegal parameters */
-    }
-    return data;
+	uint16_t data = 0U;
+
+	/* get the data from the BKP data register */
+	if ((register_number >= BKP_DATA_10) && (register_number <= BKP_DATA_41)) {
+		data = BKP_DATA10_41(register_number - 1U);
+	} else if ((register_number >= BKP_DATA_0) && (register_number <= BKP_DATA_9)) {
+		data = BKP_DATA0_9(register_number - 1U);
+	} else {
+		/* illegal parameters */
+	}
+	return data;
 }
 
 /*!
@@ -98,7 +98,7 @@ uint16_t bkp_read_data(bkp_data_register_enum register_number)
 */
 void bkp_rtc_calibration_output_enable(void)
 {
-    BKP_OCTL |= (uint16_t)BKP_OCTL_COEN;
+	BKP_OCTL |= (uint16_t)BKP_OCTL_COEN;
 }
 
 /*!
@@ -109,7 +109,7 @@ void bkp_rtc_calibration_output_enable(void)
 */
 void bkp_rtc_calibration_output_disable(void)
 {
-    BKP_OCTL &= (uint16_t)~BKP_OCTL_COEN;
+	BKP_OCTL &= (uint16_t)~BKP_OCTL_COEN;
 }
 
 /*!
@@ -120,7 +120,7 @@ void bkp_rtc_calibration_output_disable(void)
 */
 void bkp_rtc_signal_output_enable(void)
 {
-    BKP_OCTL |= (uint16_t)BKP_OCTL_ASOEN;
+	BKP_OCTL |= (uint16_t)BKP_OCTL_ASOEN;
 }
 
 /*!
@@ -131,7 +131,7 @@ void bkp_rtc_signal_output_enable(void)
 */
 void bkp_rtc_signal_output_disable(void)
 {
-    BKP_OCTL &= (uint16_t)~BKP_OCTL_ASOEN;
+	BKP_OCTL &= (uint16_t)~BKP_OCTL_ASOEN;
 }
 
 /*!
@@ -144,12 +144,12 @@ void bkp_rtc_signal_output_disable(void)
 */
 void bkp_rtc_output_select(uint16_t outputsel)
 {
-    uint16_t ctl = 0U;
-    
-    ctl = BKP_OCTL;
-    ctl &= (uint16_t)~BKP_OCTL_ROSEL;
-    ctl |= outputsel;
-    BKP_OCTL = ctl;
+	uint16_t ctl = 0U;
+
+	ctl = BKP_OCTL;
+	ctl &= (uint16_t)~BKP_OCTL_ROSEL;
+	ctl |= outputsel;
+	BKP_OCTL = ctl;
 }
 
 /*!
@@ -162,12 +162,12 @@ void bkp_rtc_output_select(uint16_t outputsel)
 */
 void bkp_rtc_clock_output_select(uint16_t clocksel)
 {
-    uint16_t ctl = 0U;
-    
-    ctl = BKP_OCTL;
-    ctl &= (uint16_t)~BKP_OCTL_CCOSEL;
-    ctl |= clocksel;
-    BKP_OCTL = ctl;
+	uint16_t ctl = 0U;
+
+	ctl = BKP_OCTL;
+	ctl &= (uint16_t)~BKP_OCTL_CCOSEL;
+	ctl |= clocksel;
+	BKP_OCTL = ctl;
 }
 
 /*!
@@ -180,12 +180,12 @@ void bkp_rtc_clock_output_select(uint16_t clocksel)
 */
 void bkp_rtc_clock_calibration_direction(uint16_t direction)
 {
-    uint16_t ctl = 0U;
-    
-    ctl = BKP_OCTL;
-    ctl &= (uint16_t)~BKP_OCTL_CALDIR;
-    ctl |= direction;
-    BKP_OCTL = ctl;
+	uint16_t ctl = 0U;
+
+	ctl = BKP_OCTL;
+	ctl &= (uint16_t)~BKP_OCTL_CALDIR;
+	ctl |= direction;
+	BKP_OCTL = ctl;
 }
 
 /*!
@@ -197,12 +197,12 @@ void bkp_rtc_clock_calibration_direction(uint16_t direction)
 */
 void bkp_rtc_calibration_value_set(uint8_t value)
 {
-    uint16_t ctl;
-    
-    ctl = BKP_OCTL;
-    ctl &= ~(uint16_t)BKP_OCTL_RCCV;
-    ctl |= (uint16_t)OCTL_RCCV(value);
-    BKP_OCTL = ctl;
+	uint16_t ctl;
+
+	ctl = BKP_OCTL;
+	ctl &= ~(uint16_t)BKP_OCTL_RCCV;
+	ctl |= (uint16_t)OCTL_RCCV(value);
+	BKP_OCTL = ctl;
 }
 
 /*!
@@ -213,7 +213,7 @@ void bkp_rtc_calibration_value_set(uint8_t value)
 */
 void bkp_tamper_detection_enable(void)
 {
-    BKP_TPCTL |= (uint16_t)BKP_TPCTL_TPEN;
+	BKP_TPCTL |= (uint16_t)BKP_TPCTL_TPEN;
 }
 
 /*!
@@ -224,7 +224,7 @@ void bkp_tamper_detection_enable(void)
 */
 void bkp_tamper_detection_disable(void)
 {
-    BKP_TPCTL &= (uint16_t)~BKP_TPCTL_TPEN;
+	BKP_TPCTL &= (uint16_t)~BKP_TPCTL_TPEN;
 }
 
 /*!
@@ -237,12 +237,12 @@ void bkp_tamper_detection_disable(void)
 */
 void bkp_tamper_active_level_set(uint16_t level)
 {
-    uint16_t ctl = 0U;
-    
-    ctl = BKP_TPCTL;
-    ctl &= (uint16_t)~BKP_TPCTL_TPAL;
-    ctl |= level;
-    BKP_TPCTL = ctl;
+	uint16_t ctl = 0U;
+
+	ctl = BKP_TPCTL;
+	ctl &= (uint16_t)~BKP_TPCTL_TPAL;
+	ctl |= level;
+	BKP_TPCTL = ctl;
 }
 
 /*!
@@ -253,7 +253,7 @@ void bkp_tamper_active_level_set(uint16_t level)
 */
 void bkp_tamper_interrupt_enable(void)
 {
-    BKP_TPCS |= (uint16_t)BKP_TPCS_TPIE;
+	BKP_TPCS |= (uint16_t)BKP_TPCS_TPIE;
 }
 
 /*!
@@ -264,7 +264,7 @@ void bkp_tamper_interrupt_enable(void)
 */
 void bkp_tamper_interrupt_disable(void)
 {
-    BKP_TPCS &= (uint16_t)~BKP_TPCS_TPIE;
+	BKP_TPCS &= (uint16_t)~BKP_TPCS_TPIE;
 }
 
 /*!
@@ -276,11 +276,11 @@ void bkp_tamper_interrupt_disable(void)
 */
 FlagStatus bkp_flag_get(uint16_t flag)
 {
-    if(RESET != (BKP_TPCS & flag)){
-        return SET;
-    }else{
-        return RESET;
-    }
+	if (RESET != (BKP_TPCS & flag)) {
+		return SET;
+	} else {
+		return RESET;
+	}
 }
 
 /*!
@@ -292,7 +292,7 @@ FlagStatus bkp_flag_get(uint16_t flag)
 */
 void bkp_flag_clear(uint16_t flag)
 {
-        BKP_TPCS |= (uint16_t)(flag >> TAMPER_FLAG_SHIFT);
+	BKP_TPCS |= (uint16_t)(flag >> TAMPER_FLAG_SHIFT);
 }
 
 /*!
@@ -304,11 +304,11 @@ void bkp_flag_clear(uint16_t flag)
 */
 FlagStatus bkp_interrupt_flag_get(uint16_t flag)
 {
-    if(RESET != (BKP_TPCS & flag)){
-        return SET;
-    }else{
-        return RESET;
-    }
+	if (RESET != (BKP_TPCS & flag)) {
+		return SET;
+	} else {
+		return RESET;
+	}
 }
 
 /*!
@@ -320,6 +320,5 @@ FlagStatus bkp_interrupt_flag_get(uint16_t flag)
 */
 void bkp_interrupt_flag_clear(uint16_t flag)
 {
-    BKP_TPCS |= (uint16_t)(flag >> TAMPER_FLAG_SHIFT);
+	BKP_TPCS |= (uint16_t)(flag >> TAMPER_FLAG_SHIFT);
 }
-

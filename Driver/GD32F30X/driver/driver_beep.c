@@ -49,7 +49,7 @@ static dml_dev_err_e beep_open(void)
 	is_beep_opened = true;
 
 	rcu_periph_clock_enable(RCU_GPIOF);
-	gpio_init(GPIOF,GPIO_MODE_OUT_PP,GPIO_OSPEED_50MHZ,GPIO_PIN_9);
+	gpio_init(GPIOF, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_9);
 
 	return DML_DEV_ERR_NONE;
 }
@@ -67,7 +67,7 @@ static dml_dev_err_e beep_ioctrl(int cmd, void *arg)
 
 static int beep_read(uint8_t *buf, size_t len)
 {
-	if(!is_beep_opened)
+	if (!is_beep_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
 
 	gpio_input_bit_get(GPIOF, GPIO_PIN_9);
@@ -76,7 +76,7 @@ static int beep_read(uint8_t *buf, size_t len)
 
 static int beep_write(const uint8_t *buf, size_t len)
 {
-	if(!is_beep_opened)
+	if (!is_beep_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
 
 	gpio_bit_write(GPIOF, GPIO_PIN_9, (*buf ? SET : RESET));
@@ -91,7 +91,6 @@ static dml_file_opts_t beep_dev = {
 	.read = beep_read,
 	.write = beep_write,
 };
-
 
 void beep_init(void)
 {

@@ -24,30 +24,29 @@ extern int __io_getchar(void) __attribute__((weak));
 
 caddr_t _sbrk(int incr)
 {
-  extern char _end[];
-  extern char _heap_end[];
-  static char *curbrk = _end;
+	extern char _end[];
+	extern char _heap_end[];
+	static char *curbrk = _end;
 
-  if ((curbrk + incr < _end) || (curbrk + incr > _heap_end))
-    return NULL - 1;
+	if ((curbrk + incr < _end) || (curbrk + incr > _heap_end))
+		return NULL - 1;
 
-  curbrk += incr;
-  return curbrk - incr;
+	curbrk += incr;
+	return curbrk - incr;
 }
 
 /*
  * _gettimeofday primitive (Stub function)
  * */
-int _gettimeofday (struct timeval * tp, struct timezone * tzp)
+int _gettimeofday(struct timeval *tp, struct timezone *tzp)
 {
-  /* Return fixed data for the timezone.  */
-  if (tzp)
-    {
-      tzp->tz_minuteswest = 0;
-      tzp->tz_dsttime = 0;
-    }
+	/* Return fixed data for the timezone.  */
+	if (tzp) {
+		tzp->tz_minuteswest = 0;
+		tzp->tz_dsttime = 0;
+	}
 
-  return 0;
+	return 0;
 }
 void initialise_monitor_handles()
 {
@@ -64,20 +63,20 @@ int _kill(int pid, int sig)
 	return -1;
 }
 
-void _exit (int status)
+void _exit(int status)
 {
 	_kill(status, -1);
-	while (1) {}
+	while (1) {
+	}
 }
 
 int _write(int file, char *ptr, int len)
 {
 	int DataIdx;
 
-		for (DataIdx = 0; DataIdx < len; DataIdx++)
-		{
-		   __io_putchar( *ptr++ );
-		}
+	for (DataIdx = 0; DataIdx < len; DataIdx++) {
+		__io_putchar(*ptr++);
+	}
 	return len;
 }
 
@@ -106,12 +105,11 @@ int _read(int file, char *ptr, int len)
 {
 	int DataIdx;
 
-	for (DataIdx = 0; DataIdx < len; DataIdx++)
-	{
-	  *ptr++ = __io_getchar();
+	for (DataIdx = 0; DataIdx < len; DataIdx++) {
+		*ptr++ = __io_getchar();
 	}
 
-   return len;
+	return len;
 }
 
 int _open(char *path, int flags, ...)

@@ -68,7 +68,7 @@ static dml_dev_err_e led_ioctrl(int cmd, void *arg)
 
 static int led_read(uint8_t *buf, size_t len)
 {
-	if(!is_led_opened)
+	if (!is_led_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
 
 	gpio_input_bit_get(GPIOB, GPIO_PIN_5);
@@ -77,7 +77,7 @@ static int led_read(uint8_t *buf, size_t len)
 
 static int led_write(const uint8_t *buf, size_t len)
 {
-	if(!is_led_opened)
+	if (!is_led_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
 
 	gpio_bit_write(GPIOB, GPIO_PIN_5, (*buf ? SET : RESET));

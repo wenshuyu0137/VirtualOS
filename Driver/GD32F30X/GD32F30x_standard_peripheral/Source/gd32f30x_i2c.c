@@ -34,16 +34,18 @@ OF SUCH DAMAGE.
 
 #include "gd32f30x_i2c.h"
 
-#define I2C_ERROR_HANDLE(s)           do{}while(1)
+#define I2C_ERROR_HANDLE(s)                                                                                                                                    \
+	do {                                                                                                                                                   \
+	} while (1)
 
-#define I2CCLK_MAX                    ((uint32_t)0x0000003CU)             /*!< i2cclk maximum value */
-#define I2CCLK_MIN                    ((uint32_t)0x00000002U)             /*!< i2cclk minimum value */
-#define I2C_FLAG_MASK                 ((uint32_t)0x0000FFFFU)             /*!< i2c flag mask */
-#define I2C_ADDRESS_MASK              ((uint32_t)0x000003FFU)             /*!< i2c address mask */
-#define I2C_ADDRESS2_MASK             ((uint32_t)0x000000FEU)             /*!< the second i2c address mask */
+#define I2CCLK_MAX ((uint32_t)0x0000003CU) /*!< i2cclk maximum value */
+#define I2CCLK_MIN ((uint32_t)0x00000002U) /*!< i2cclk minimum value */
+#define I2C_FLAG_MASK ((uint32_t)0x0000FFFFU) /*!< i2c flag mask */
+#define I2C_ADDRESS_MASK ((uint32_t)0x000003FFU) /*!< i2c address mask */
+#define I2C_ADDRESS2_MASK ((uint32_t)0x000000FEU) /*!< the second i2c address mask */
 
 /* I2C register bit offset */
-#define STAT1_PECV_OFFSET             ((uint32_t)0x00000008U)             /* bit offset of PECV in I2C_STAT1 */
+#define STAT1_PECV_OFFSET ((uint32_t)0x00000008U) /* bit offset of PECV in I2C_STAT1 */
 
 /*!
     \brief      reset I2C
@@ -53,20 +55,20 @@ OF SUCH DAMAGE.
 */
 void i2c_deinit(uint32_t i2c_periph)
 {
-    switch(i2c_periph){
-    case I2C0:
-        /* reset I2C0 */
-        rcu_periph_reset_enable(RCU_I2C0RST);
-        rcu_periph_reset_disable(RCU_I2C0RST);
-        break;
-    case I2C1:
-        /* reset I2C1 */
-        rcu_periph_reset_enable(RCU_I2C1RST);
-        rcu_periph_reset_disable(RCU_I2C1RST);
-        break;
-    default:
-        break;
-    }
+	switch (i2c_periph) {
+	case I2C0:
+		/* reset I2C0 */
+		rcu_periph_reset_enable(RCU_I2C0RST);
+		rcu_periph_reset_disable(RCU_I2C0RST);
+		break;
+	case I2C1:
+		/* reset I2C1 */
+		rcu_periph_reset_enable(RCU_I2C1RST);
+		rcu_periph_reset_disable(RCU_I2C1RST);
+		break;
+	default:
+		break;
+	}
 }
 
 /*!
@@ -83,79 +85,79 @@ void i2c_deinit(uint32_t i2c_periph)
 */
 void i2c_clock_config(uint32_t i2c_periph, uint32_t clkspeed, uint32_t dutycyc)
 {
-    uint32_t pclk1, clkc, freq, risetime;
-    uint32_t temp;
-    
-    /* check the clkspeed value */
-    if(0U == clkspeed){
-        I2C_ERROR_HANDLE("the parameter can not be 0 \r\n");
-    }
-    
-    pclk1 = rcu_clock_freq_get(CK_APB1);
-    /* I2C peripheral clock frequency */
-    freq = (uint32_t)(pclk1/1000000U);
-    if(freq >= I2CCLK_MAX){
-        freq = I2CCLK_MAX;
-    }
-    temp = I2C_CTL1(i2c_periph);
-    temp &= ~I2C_CTL1_I2CCLK;
-    temp |= freq;
-    
-    I2C_CTL1(i2c_periph) = temp;
-    
-    if(100000U >= clkspeed){
-        /* the maximum SCL rise time is 1000ns in standard mode */
-        risetime = (uint32_t)((pclk1/1000000U)+1U);
-        if(risetime >= I2CCLK_MAX){
-            I2C_RT(i2c_periph) = I2CCLK_MAX;
-        }else if(risetime <= I2CCLK_MIN){
-            I2C_RT(i2c_periph) = I2CCLK_MIN;
-        }else{
-            I2C_RT(i2c_periph) = risetime;
-        }
-        clkc = (uint32_t)(pclk1/(clkspeed*2U));
-        if(clkc < 0x04U){
-            /* the CLKC in standard mode minmum value is 4 */
-            clkc = 0x04U;
-        }
-        I2C_CKCFG(i2c_periph) |= (I2C_CKCFG_CLKC & clkc);
+	uint32_t pclk1, clkc, freq, risetime;
+	uint32_t temp;
 
-    }else if(400000U >= clkspeed){
-        /* the maximum SCL rise time is 300ns in fast mode */
-        I2C_RT(i2c_periph) = (uint32_t)(((freq*(uint32_t)300U)/(uint32_t)1000U)+(uint32_t)1U);
-        if(I2C_DTCY_2 == dutycyc){
-            /* I2C duty cycle is 2 */
-            clkc = (uint32_t)(pclk1/(clkspeed*3U));
-            I2C_CKCFG(i2c_periph) &= ~I2C_CKCFG_DTCY;
-        }else{
-            /* I2C duty cycle is 16/9 */
-            clkc = (uint32_t)(pclk1/(clkspeed*25U));
-            I2C_CKCFG(i2c_periph) |= I2C_CKCFG_DTCY;
-        }
-        if(0U == (clkc & I2C_CKCFG_CLKC)){
-            /* the CLKC in fast mode minmum value is 1 */
-            clkc |= 0x0001U;  
-        }
-        I2C_CKCFG(i2c_periph) |= I2C_CKCFG_FAST;
-        I2C_CKCFG(i2c_periph) |= clkc;
-    }else{
-        /* fast mode plus, the maximum SCL rise time is 120ns */
-        I2C_RT(i2c_periph) = (uint32_t)(((freq*(uint32_t)120U)/(uint32_t)1000U)+(uint32_t)1U);
-        if(I2C_DTCY_2 == dutycyc){
-            /* I2C duty cycle is 2 */
-            clkc = (uint32_t)(pclk1/(clkspeed*3U));
-            I2C_CKCFG(i2c_periph) &= ~I2C_CKCFG_DTCY;
-        }else{
-            /* I2C duty cycle is 16/9 */
-            clkc = (uint32_t)(pclk1/(clkspeed*25U));
-            I2C_CKCFG(i2c_periph) |= I2C_CKCFG_DTCY;
-        }
-        /* enable fast mode */
-        I2C_CKCFG(i2c_periph) |= I2C_CKCFG_FAST;
-        I2C_CKCFG(i2c_periph) |= clkc;
-        /* enable I2C fast mode plus */
-        I2C_FMPCFG(i2c_periph) = I2C_FMPCFG_FMPEN;
-    }
+	/* check the clkspeed value */
+	if (0U == clkspeed) {
+		I2C_ERROR_HANDLE("the parameter can not be 0 \r\n");
+	}
+
+	pclk1 = rcu_clock_freq_get(CK_APB1);
+	/* I2C peripheral clock frequency */
+	freq = (uint32_t)(pclk1 / 1000000U);
+	if (freq >= I2CCLK_MAX) {
+		freq = I2CCLK_MAX;
+	}
+	temp = I2C_CTL1(i2c_periph);
+	temp &= ~I2C_CTL1_I2CCLK;
+	temp |= freq;
+
+	I2C_CTL1(i2c_periph) = temp;
+
+	if (100000U >= clkspeed) {
+		/* the maximum SCL rise time is 1000ns in standard mode */
+		risetime = (uint32_t)((pclk1 / 1000000U) + 1U);
+		if (risetime >= I2CCLK_MAX) {
+			I2C_RT(i2c_periph) = I2CCLK_MAX;
+		} else if (risetime <= I2CCLK_MIN) {
+			I2C_RT(i2c_periph) = I2CCLK_MIN;
+		} else {
+			I2C_RT(i2c_periph) = risetime;
+		}
+		clkc = (uint32_t)(pclk1 / (clkspeed * 2U));
+		if (clkc < 0x04U) {
+			/* the CLKC in standard mode minmum value is 4 */
+			clkc = 0x04U;
+		}
+		I2C_CKCFG(i2c_periph) |= (I2C_CKCFG_CLKC & clkc);
+
+	} else if (400000U >= clkspeed) {
+		/* the maximum SCL rise time is 300ns in fast mode */
+		I2C_RT(i2c_periph) = (uint32_t)(((freq * (uint32_t)300U) / (uint32_t)1000U) + (uint32_t)1U);
+		if (I2C_DTCY_2 == dutycyc) {
+			/* I2C duty cycle is 2 */
+			clkc = (uint32_t)(pclk1 / (clkspeed * 3U));
+			I2C_CKCFG(i2c_periph) &= ~I2C_CKCFG_DTCY;
+		} else {
+			/* I2C duty cycle is 16/9 */
+			clkc = (uint32_t)(pclk1 / (clkspeed * 25U));
+			I2C_CKCFG(i2c_periph) |= I2C_CKCFG_DTCY;
+		}
+		if (0U == (clkc & I2C_CKCFG_CLKC)) {
+			/* the CLKC in fast mode minmum value is 1 */
+			clkc |= 0x0001U;
+		}
+		I2C_CKCFG(i2c_periph) |= I2C_CKCFG_FAST;
+		I2C_CKCFG(i2c_periph) |= clkc;
+	} else {
+		/* fast mode plus, the maximum SCL rise time is 120ns */
+		I2C_RT(i2c_periph) = (uint32_t)(((freq * (uint32_t)120U) / (uint32_t)1000U) + (uint32_t)1U);
+		if (I2C_DTCY_2 == dutycyc) {
+			/* I2C duty cycle is 2 */
+			clkc = (uint32_t)(pclk1 / (clkspeed * 3U));
+			I2C_CKCFG(i2c_periph) &= ~I2C_CKCFG_DTCY;
+		} else {
+			/* I2C duty cycle is 16/9 */
+			clkc = (uint32_t)(pclk1 / (clkspeed * 25U));
+			I2C_CKCFG(i2c_periph) |= I2C_CKCFG_DTCY;
+		}
+		/* enable fast mode */
+		I2C_CKCFG(i2c_periph) |= I2C_CKCFG_FAST;
+		I2C_CKCFG(i2c_periph) |= clkc;
+		/* enable I2C fast mode plus */
+		I2C_FMPCFG(i2c_periph) = I2C_FMPCFG_FMPEN;
+	}
 }
 
 /*!
@@ -175,16 +177,16 @@ void i2c_clock_config(uint32_t i2c_periph, uint32_t clkspeed, uint32_t dutycyc)
 */
 void i2c_mode_addr_config(uint32_t i2c_periph, uint32_t mode, uint32_t addformat, uint32_t addr)
 {
-    /* SMBus/I2C mode selected */
-    uint32_t ctl = 0U;
+	/* SMBus/I2C mode selected */
+	uint32_t ctl = 0U;
 
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_SMBEN); 
-    ctl |= mode;
-    I2C_CTL0(i2c_periph) = ctl;
-    /* configure address */
-    addr = addr & I2C_ADDRESS_MASK;
-    I2C_SADDR0(i2c_periph) = (addformat | addr);
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_SMBEN);
+	ctl |= mode;
+	I2C_CTL0(i2c_periph) = ctl;
+	/* configure address */
+	addr = addr & I2C_ADDRESS_MASK;
+	I2C_SADDR0(i2c_periph) = (addformat | addr);
 }
 
 /*!
@@ -199,11 +201,11 @@ void i2c_mode_addr_config(uint32_t i2c_periph, uint32_t mode, uint32_t addformat
 */
 void i2c_smbus_type_config(uint32_t i2c_periph, uint32_t type)
 {
-    if(I2C_SMBUS_HOST == type){
-        I2C_CTL0(i2c_periph) |= I2C_CTL0_SMBSEL;
-    }else{
-        I2C_CTL0(i2c_periph) &= ~(I2C_CTL0_SMBSEL);
-    }
+	if (I2C_SMBUS_HOST == type) {
+		I2C_CTL0(i2c_periph) |= I2C_CTL0_SMBSEL;
+	} else {
+		I2C_CTL0(i2c_periph) &= ~(I2C_CTL0_SMBSEL);
+	}
 }
 
 /*!
@@ -218,12 +220,12 @@ void i2c_smbus_type_config(uint32_t i2c_periph, uint32_t type)
 */
 void i2c_ack_config(uint32_t i2c_periph, uint32_t ack)
 {
-    uint32_t ctl = 0U;
+	uint32_t ctl = 0U;
 
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_ACKEN);
-    ctl |= ack;
-    I2C_CTL0(i2c_periph) = ctl;
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_ACKEN);
+	ctl |= ack;
+	I2C_CTL0(i2c_periph) = ctl;
 }
 
 /*!
@@ -238,12 +240,12 @@ void i2c_ack_config(uint32_t i2c_periph, uint32_t ack)
 */
 void i2c_ackpos_config(uint32_t i2c_periph, uint32_t pos)
 {
-    uint32_t ctl = 0U;
-    /* configure I2C POAP position */
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_POAP);
-    ctl |= pos;
-    I2C_CTL0(i2c_periph) = ctl;
+	uint32_t ctl = 0U;
+	/* configure I2C POAP position */
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_POAP);
+	ctl |= pos;
+	I2C_CTL0(i2c_periph) = ctl;
 }
 
 /*!
@@ -259,14 +261,14 @@ void i2c_ackpos_config(uint32_t i2c_periph, uint32_t pos)
 */
 void i2c_master_addressing(uint32_t i2c_periph, uint32_t addr, uint32_t trandirection)
 {
-    /* master is a transmitter or a receiver */
-    if(I2C_TRANSMITTER == trandirection){
-        addr = addr & I2C_TRANSMITTER;
-    }else{
-        addr = addr | I2C_RECEIVER;
-    }
-    /* send slave address */
-    I2C_DATA(i2c_periph) = addr;
+	/* master is a transmitter or a receiver */
+	if (I2C_TRANSMITTER == trandirection) {
+		addr = addr & I2C_TRANSMITTER;
+	} else {
+		addr = addr | I2C_RECEIVER;
+	}
+	/* send slave address */
+	I2C_DATA(i2c_periph) = addr;
 }
 
 /*!
@@ -278,9 +280,9 @@ void i2c_master_addressing(uint32_t i2c_periph, uint32_t addr, uint32_t trandire
 */
 void i2c_dualaddr_enable(uint32_t i2c_periph, uint32_t dualaddr)
 {
-    /* configure address */
-    dualaddr = dualaddr & I2C_ADDRESS2_MASK;
-    I2C_SADDR1(i2c_periph) = (I2C_SADDR1_DUADEN | dualaddr);
+	/* configure address */
+	dualaddr = dualaddr & I2C_ADDRESS2_MASK;
+	I2C_SADDR1(i2c_periph) = (I2C_SADDR1_DUADEN | dualaddr);
 }
 
 /*!
@@ -291,7 +293,7 @@ void i2c_dualaddr_enable(uint32_t i2c_periph, uint32_t dualaddr)
 */
 void i2c_dualaddr_disable(uint32_t i2c_periph)
 {
-    I2C_SADDR1(i2c_periph) &= ~(I2C_SADDR1_DUADEN);
+	I2C_SADDR1(i2c_periph) &= ~(I2C_SADDR1_DUADEN);
 }
 
 /*!
@@ -302,7 +304,7 @@ void i2c_dualaddr_disable(uint32_t i2c_periph)
 */
 void i2c_enable(uint32_t i2c_periph)
 {
-    I2C_CTL0(i2c_periph) |= I2C_CTL0_I2CEN;
+	I2C_CTL0(i2c_periph) |= I2C_CTL0_I2CEN;
 }
 
 /*!
@@ -313,7 +315,7 @@ void i2c_enable(uint32_t i2c_periph)
 */
 void i2c_disable(uint32_t i2c_periph)
 {
-    I2C_CTL0(i2c_periph) &= ~(I2C_CTL0_I2CEN);
+	I2C_CTL0(i2c_periph) &= ~(I2C_CTL0_I2CEN);
 }
 
 /*!
@@ -324,7 +326,7 @@ void i2c_disable(uint32_t i2c_periph)
 */
 void i2c_start_on_bus(uint32_t i2c_periph)
 {
-    I2C_CTL0(i2c_periph) |= I2C_CTL0_START;
+	I2C_CTL0(i2c_periph) |= I2C_CTL0_START;
 }
 
 /*!
@@ -335,7 +337,7 @@ void i2c_start_on_bus(uint32_t i2c_periph)
 */
 void i2c_stop_on_bus(uint32_t i2c_periph)
 {
-    I2C_CTL0(i2c_periph) |= I2C_CTL0_STOP;
+	I2C_CTL0(i2c_periph) |= I2C_CTL0_STOP;
 }
 
 /*!
@@ -347,7 +349,7 @@ void i2c_stop_on_bus(uint32_t i2c_periph)
 */
 void i2c_data_transmit(uint32_t i2c_periph, uint8_t data)
 {
-    I2C_DATA(i2c_periph) = DATA_TRANS(data);
+	I2C_DATA(i2c_periph) = DATA_TRANS(data);
 }
 
 /*!
@@ -358,7 +360,7 @@ void i2c_data_transmit(uint32_t i2c_periph, uint8_t data)
 */
 uint8_t i2c_data_receive(uint32_t i2c_periph)
 {
-    return (uint8_t)DATA_RECV(I2C_DATA(i2c_periph));
+	return (uint8_t)DATA_RECV(I2C_DATA(i2c_periph));
 }
 
 /*!
@@ -373,13 +375,13 @@ uint8_t i2c_data_receive(uint32_t i2c_periph)
 */
 void i2c_dma_config(uint32_t i2c_periph, uint32_t dmastate)
 {
-    /* configure I2C DMA function */
-    uint32_t ctl = 0U;
+	/* configure I2C DMA function */
+	uint32_t ctl = 0U;
 
-    ctl = I2C_CTL1(i2c_periph);
-    ctl &= ~(I2C_CTL1_DMAON); 
-    ctl |= dmastate;
-    I2C_CTL1(i2c_periph) = ctl;
+	ctl = I2C_CTL1(i2c_periph);
+	ctl &= ~(I2C_CTL1_DMAON);
+	ctl |= dmastate;
+	I2C_CTL1(i2c_periph) = ctl;
 }
 
 /*!
@@ -394,13 +396,13 @@ void i2c_dma_config(uint32_t i2c_periph, uint32_t dmastate)
 */
 void i2c_dma_last_transfer_config(uint32_t i2c_periph, uint32_t dmalast)
 {
-    /* configure DMA last transfer */
-    uint32_t ctl = 0U;
-    
-    ctl = I2C_CTL1(i2c_periph);
-    ctl &= ~(I2C_CTL1_DMALST); 
-    ctl |= dmalast;
-    I2C_CTL1(i2c_periph) = ctl;
+	/* configure DMA last transfer */
+	uint32_t ctl = 0U;
+
+	ctl = I2C_CTL1(i2c_periph);
+	ctl &= ~(I2C_CTL1_DMALST);
+	ctl |= dmalast;
+	I2C_CTL1(i2c_periph) = ctl;
 }
 
 /*!
@@ -415,13 +417,13 @@ void i2c_dma_last_transfer_config(uint32_t i2c_periph, uint32_t dmalast)
 */
 void i2c_stretch_scl_low_config(uint32_t i2c_periph, uint32_t stretchpara)
 {
-    /* configure I2C SCL strerching */
-    uint32_t ctl = 0U;
-    
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_SS); 
-    ctl |= stretchpara;
-    I2C_CTL0(i2c_periph) = ctl;
+	/* configure I2C SCL strerching */
+	uint32_t ctl = 0U;
+
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_SS);
+	ctl |= stretchpara;
+	I2C_CTL0(i2c_periph) = ctl;
 }
 
 /*!
@@ -436,13 +438,13 @@ void i2c_stretch_scl_low_config(uint32_t i2c_periph, uint32_t stretchpara)
 */
 void i2c_slave_response_to_gcall_config(uint32_t i2c_periph, uint32_t gcallpara)
 {
-    /* configure slave response to a general call enable or disable */
-    uint32_t ctl = 0U;
-    
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_GCEN); 
-    ctl |= gcallpara;
-    I2C_CTL0(i2c_periph) = ctl;
+	/* configure slave response to a general call enable or disable */
+	uint32_t ctl = 0U;
+
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_GCEN);
+	ctl |= gcallpara;
+	I2C_CTL0(i2c_periph) = ctl;
 }
 
 /*!
@@ -457,13 +459,13 @@ void i2c_slave_response_to_gcall_config(uint32_t i2c_periph, uint32_t gcallpara)
 */
 void i2c_software_reset_config(uint32_t i2c_periph, uint32_t sreset)
 {
-    /* modify CTL0 and configure software reset I2C state */
-    uint32_t ctl = 0U;
-    
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_SRESET); 
-    ctl |= sreset;
-    I2C_CTL0(i2c_periph) = ctl;
+	/* modify CTL0 and configure software reset I2C state */
+	uint32_t ctl = 0U;
+
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_SRESET);
+	ctl |= sreset;
+	I2C_CTL0(i2c_periph) = ctl;
 }
 
 /*!
@@ -478,13 +480,13 @@ void i2c_software_reset_config(uint32_t i2c_periph, uint32_t sreset)
 */
 void i2c_pec_config(uint32_t i2c_periph, uint32_t pecstate)
 {
-    /* on/off PEC calculation */
-    uint32_t ctl = 0U;
-    
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_PECEN);
-    ctl |= pecstate;
-    I2C_CTL0(i2c_periph) = ctl;
+	/* on/off PEC calculation */
+	uint32_t ctl = 0U;
+
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_PECEN);
+	ctl |= pecstate;
+	I2C_CTL0(i2c_periph) = ctl;
 }
 
 /*!
@@ -499,13 +501,13 @@ void i2c_pec_config(uint32_t i2c_periph, uint32_t pecstate)
 */
 void i2c_pec_transfer_config(uint32_t i2c_periph, uint32_t pecpara)
 {
-    /* whether to transfer PEC */
-    uint32_t ctl = 0U;
-    
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_PECTRANS);
-    ctl |= pecpara;
-    I2C_CTL0(i2c_periph) = ctl;
+	/* whether to transfer PEC */
+	uint32_t ctl = 0U;
+
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_PECTRANS);
+	ctl |= pecpara;
+	I2C_CTL0(i2c_periph) = ctl;
 }
 
 /*!
@@ -516,7 +518,7 @@ void i2c_pec_transfer_config(uint32_t i2c_periph, uint32_t pecpara)
 */
 uint8_t i2c_pec_value_get(uint32_t i2c_periph)
 {
-    return (uint8_t)((I2C_STAT1(i2c_periph) & I2C_STAT1_PECV)>>STAT1_PECV_OFFSET);
+	return (uint8_t)((I2C_STAT1(i2c_periph) & I2C_STAT1_PECV) >> STAT1_PECV_OFFSET);
 }
 
 /*!
@@ -531,13 +533,13 @@ uint8_t i2c_pec_value_get(uint32_t i2c_periph)
 */
 void i2c_smbus_alert_config(uint32_t i2c_periph, uint32_t smbuspara)
 {
-    /* issue alert through SMBA pin configure*/
-    uint32_t ctl = 0U;
-    
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_SALT);
-    ctl |= smbuspara;
-    I2C_CTL0(i2c_periph) = ctl;
+	/* issue alert through SMBA pin configure*/
+	uint32_t ctl = 0U;
+
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_SALT);
+	ctl |= smbuspara;
+	I2C_CTL0(i2c_periph) = ctl;
 }
 
 /*!
@@ -552,13 +554,13 @@ void i2c_smbus_alert_config(uint32_t i2c_periph, uint32_t smbuspara)
 */
 void i2c_smbus_arp_config(uint32_t i2c_periph, uint32_t arpstate)
 {
-    /* enable or disable I2C ARP protocol*/
-    uint32_t ctl = 0U;
-    
-    ctl = I2C_CTL0(i2c_periph);
-    ctl &= ~(I2C_CTL0_ARPEN);
-    ctl |= arpstate;
-    I2C_CTL0(i2c_periph) = ctl;
+	/* enable or disable I2C ARP protocol*/
+	uint32_t ctl = 0U;
+
+	ctl = I2C_CTL0(i2c_periph);
+	ctl &= ~(I2C_CTL0_ARPEN);
+	ctl |= arpstate;
+	I2C_CTL0(i2c_periph) = ctl;
 }
 
 /*!
@@ -592,11 +594,11 @@ void i2c_smbus_arp_config(uint32_t i2c_periph, uint32_t arpstate)
 */
 FlagStatus i2c_flag_get(uint32_t i2c_periph, i2c_flag_enum flag)
 {
-    if(RESET != (I2C_REG_VAL(i2c_periph, flag) & BIT(I2C_BIT_POS(flag)))){
-        return SET;
-    }else{
-        return RESET;
-    }
+	if (RESET != (I2C_REG_VAL(i2c_periph, flag) & BIT(I2C_BIT_POS(flag)))) {
+		return SET;
+	} else {
+		return RESET;
+	}
 }
 
 /*!
@@ -617,13 +619,13 @@ FlagStatus i2c_flag_get(uint32_t i2c_periph, i2c_flag_enum flag)
 */
 void i2c_flag_clear(uint32_t i2c_periph, i2c_flag_enum flag)
 {
-    if(I2C_FLAG_ADDSEND == flag){
-        /* read I2C_STAT0 and then read I2C_STAT1 to clear ADDSEND */
-        I2C_STAT0(i2c_periph);
-        I2C_STAT1(i2c_periph);
-    }else{
-        I2C_REG_VAL(i2c_periph, flag) &= ~BIT(I2C_BIT_POS(flag));
-    }
+	if (I2C_FLAG_ADDSEND == flag) {
+		/* read I2C_STAT0 and then read I2C_STAT1 to clear ADDSEND */
+		I2C_STAT0(i2c_periph);
+		I2C_STAT1(i2c_periph);
+	} else {
+		I2C_REG_VAL(i2c_periph, flag) &= ~BIT(I2C_BIT_POS(flag));
+	}
 }
 
 /*!
@@ -639,7 +641,7 @@ void i2c_flag_clear(uint32_t i2c_periph, i2c_flag_enum flag)
 */
 void i2c_interrupt_enable(uint32_t i2c_periph, i2c_interrupt_enum interrupt)
 {
-    I2C_REG_VAL(i2c_periph, interrupt) |= BIT(I2C_BIT_POS(interrupt));
+	I2C_REG_VAL(i2c_periph, interrupt) |= BIT(I2C_BIT_POS(interrupt));
 }
 
 /*!
@@ -655,7 +657,7 @@ void i2c_interrupt_enable(uint32_t i2c_periph, i2c_interrupt_enum interrupt)
 */
 void i2c_interrupt_disable(uint32_t i2c_periph, i2c_interrupt_enum interrupt)
 {
-    I2C_REG_VAL(i2c_periph, interrupt) &= ~BIT(I2C_BIT_POS(interrupt));
+	I2C_REG_VAL(i2c_periph, interrupt) &= ~BIT(I2C_BIT_POS(interrupt));
 }
 
 /*!
@@ -682,28 +684,28 @@ void i2c_interrupt_disable(uint32_t i2c_periph, i2c_interrupt_enum interrupt)
 */
 FlagStatus i2c_interrupt_flag_get(uint32_t i2c_periph, i2c_interrupt_flag_enum int_flag)
 {
-    uint32_t intenable = 0U, flagstatus = 0U, bufie;
-    
-    /* check BUFIE */
-    bufie = I2C_CTL1(i2c_periph)&I2C_CTL1_BUFIE;
-    
-    /* get the interrupt enable bit status */
-    intenable = (I2C_REG_VAL(i2c_periph, int_flag) & BIT(I2C_BIT_POS(int_flag)));
-    /* get the corresponding flag bit status */
-    flagstatus = (I2C_REG_VAL2(i2c_periph, int_flag) & BIT(I2C_BIT_POS2(int_flag)));
+	uint32_t intenable = 0U, flagstatus = 0U, bufie;
 
-    if((I2C_INT_FLAG_RBNE == int_flag) || (I2C_INT_FLAG_TBE == int_flag)){
-        if(intenable && bufie){
-            intenable = 1U;                       
-        }else{
-            intenable = 0U;
-        }
-    }
-    if((0U != flagstatus) && (0U != intenable)){
-        return SET;
-    }else{
-        return RESET; 
-    }
+	/* check BUFIE */
+	bufie = I2C_CTL1(i2c_periph) & I2C_CTL1_BUFIE;
+
+	/* get the interrupt enable bit status */
+	intenable = (I2C_REG_VAL(i2c_periph, int_flag) & BIT(I2C_BIT_POS(int_flag)));
+	/* get the corresponding flag bit status */
+	flagstatus = (I2C_REG_VAL2(i2c_periph, int_flag) & BIT(I2C_BIT_POS2(int_flag)));
+
+	if ((I2C_INT_FLAG_RBNE == int_flag) || (I2C_INT_FLAG_TBE == int_flag)) {
+		if (intenable && bufie) {
+			intenable = 1U;
+		} else {
+			intenable = 0U;
+		}
+	}
+	if ((0U != flagstatus) && (0U != intenable)) {
+		return SET;
+	} else {
+		return RESET;
+	}
 }
 
 /*!
@@ -724,11 +726,11 @@ FlagStatus i2c_interrupt_flag_get(uint32_t i2c_periph, i2c_interrupt_flag_enum i
 */
 void i2c_interrupt_flag_clear(uint32_t i2c_periph, i2c_interrupt_flag_enum int_flag)
 {
-    if(I2C_INT_FLAG_ADDSEND == int_flag){
-        /* read I2C_STAT0 and then read I2C_STAT1 to clear ADDSEND */
-        I2C_STAT0(i2c_periph);
-        I2C_STAT1(i2c_periph);
-    }else{
-        I2C_REG_VAL2(i2c_periph, int_flag) = ~BIT(I2C_BIT_POS2(int_flag));
-    }
+	if (I2C_INT_FLAG_ADDSEND == int_flag) {
+		/* read I2C_STAT0 and then read I2C_STAT1 to clear ADDSEND */
+		I2C_STAT0(i2c_periph);
+		I2C_STAT1(i2c_periph);
+	} else {
+		I2C_REG_VAL2(i2c_periph, int_flag) = ~BIT(I2C_BIT_POS2(int_flag));
+	}
 }
