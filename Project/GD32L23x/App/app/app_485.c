@@ -31,15 +31,18 @@
 
 #define APP_485_DEVICE_NAME "/dev/serial_485"
 
-static uint16_t recv_size = 0;
+static uint16_t recv_size = 0; //接受的数据长度在这
 
 void app_485_init(void)
 {
-	dal_ioctrl(APP_485_DEVICE_NAME, 0, &recv_size);
-    dal_open(APP_485_DEVICE_NAME);
+	dal_open(APP_485_DEVICE_NAME); //打开设备
 }
 
 void app_485_task(void)
 {
-    dal_write(APP_485_DEVICE_NAME,APP_485_DEVICE_NAME,sizeof(APP_485_DEVICE_NAME));
+	uint8_t recv_buf[64] = { 0 };
+	int ret = dal_read(APP_485_DEVICE_NAME, recv_buf, 64);
+	if (ret)
+		dal_write(APP_485_DEVICE_NAME, recv_buf, ret);
+	// dal_write(APP_485_DEVICE_NAME,APP_485_DEVICE_NAME,sizeof(APP_485_DEVICE_NAME));
 }

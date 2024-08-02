@@ -30,10 +30,8 @@
 #ifndef _VIRTUAL_OS_DAL_INIT_H
 #define _VIRTUAL_OS_DAL_INIT_H
 
-//导出驱动宏,在main函数之前初始化
 #define EXPORT_DIRVER(_func) \
     void _func(void) __attribute__((constructor));
-
 
 void dml_init(void);
 

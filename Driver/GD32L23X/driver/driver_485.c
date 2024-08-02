@@ -53,34 +53,43 @@ uint16_t *recv_size = NULL;
 
 static void usart_init(void)
 {
-	usart_deinit(USART1);
+	
+	dma_deinit(DMA_CH0);
+	dma_deinit(DMA_CH1);
 
 	rcu_periph_clock_enable(RCU_GPIOD);
 	rcu_periph_clock_enable(RCU_GPIOC);
-	rcu_periph_clock_enable(RCU_USART1);
-	rcu_periph_clock_enable(RCU_DMA);
 
 	gpio_af_set(GPIOD, GPIO_AF_7, GPIO_PIN_5); //Tx
 	gpio_mode_set(GPIOD, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_5);
-	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, GPIO_PIN_5);
+	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_5);
 
 	gpio_af_set(GPIOD, GPIO_AF_7, GPIO_PIN_6); //Rx
 	gpio_mode_set(GPIOD, GPIO_MODE_AF, GPIO_PUPD_PULLUP, GPIO_PIN_6);
-	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_10MHZ, GPIO_PIN_6);
+	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_6);
 
-	gpio_af_set(GPIOD, GPIO_AF_0, GPIO_PIN_5); //Tx
-	gpio_mode_set(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_11); //Enable
+	gpio_af_set(GPIOC, GPIO_AF_0, GPIO_PIN_11); //Enable
+	gpio_mode_set(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_11);
 	gpio_output_options_set(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_11);
+	gpio_bit_write(GPIOC, GPIO_PIN_11, RESET); //接收状态
 
-	usart_word_length_set(USART1, USART_WL_8BIT);
-	usart_stop_bit_set(USART1, USART_STB_1BIT);
-	usart_parity_config(USART1, USART_PM_NONE);
+	rcu_periph_clock_enable(RCU_USART1);
+	
+	usart_deinit(USART1);
 	usart_baudrate_set(USART1, 115200);
+	usart_receive_config(USART1, USART_RECEIVE_ENABLE); //RX_DMA
+	usart_dma_receive_config(USART1, USART_RECEIVE_DMA_ENABLE);
+	nvic_irq_enable(USART1_IRQn, 0);
+	usart_interrupt_enable(USART1, USART_INT_IDLE);
+
+	usart_transmit_config(USART1, USART_TRANSMIT_ENABLE); //TX_DMA
+	usart_dma_transmit_config(USART1, USART_TRANSMIT_DMA_ENABLE);
+	usart_enable(USART1);
 
 	queue_init(&recv_q, 1, rx_fifo, RX_FIFO_SIZE);
 
-	usart_receive_config(USART1, USART_RECEIVE_ENABLE); //RX_DMA
-	dma_deinit(DMA_CH0);
+	rcu_periph_clock_enable(RCU_DMA);
+
 	dma_parameter_struct rx_dma_param;
 	rx_dma_param.direction = DMA_PERIPHERAL_TO_MEMORY;
 	rx_dma_param.memory_addr = (uint32_t)rx_fifo;
@@ -94,13 +103,8 @@ static void usart_init(void)
 	rx_dma_param.request = DMA_REQUEST_USART1_RX;
 	dma_circulation_enable(DMA_CH0);
 	dma_init(DMA_CH0, &rx_dma_param);
-	usart_dma_receive_config(USART1, USART_RECEIVE_DMA_ENABLE);
 	dma_channel_enable(DMA_CH0);
-	nvic_irq_enable(USART1_IRQn, 0);
-	usart_interrupt_enable(USART1, USART_INT_IDLE);
 
-	usart_transmit_config(USART1, USART_TRANSMIT_ENABLE); //TX_DMA
-	dma_deinit(DMA_CH1);
 	dma_parameter_struct tx_dma_param;
 	tx_dma_param.direction = DMA_MEMORY_TO_PERIPHERAL;
 	tx_dma_param.memory_addr = (uint32_t)tx_buf;
@@ -113,40 +117,40 @@ static void usart_init(void)
 	tx_dma_param.priority = DMA_PRIORITY_HIGH;
 	tx_dma_param.request = DMA_REQUEST_USART1_TX;
 	dma_init(DMA_CH1, &tx_dma_param);
-	usart_dma_transmit_config(USART1, USART_TRANSMIT_DMA_ENABLE);
-	nvic_irq_enable(DMA_Channel1_IRQn, 0);
+	dma_circulation_disable(DMA_CH1);
+    dma_memory_to_memory_disable(DMA_CH1);
+	nvic_irq_enable(DMA_Channel1_IRQn, 1);
 	dma_interrupt_enable(DMA_CH1, DMA_INT_FTF);
-
-	usart_enable(USART1);
-	gpio_bit_write(GPIOC, GPIO_PIN_11, RESET); //接受状态
+	dma_channel_enable(DMA_CH1);
 }
 
 //空闲中断
 static uint16_t pre_recv = 0;
-static uint16_t cur_recv = 0;
 void USART1_IRQHandler(void)
 {
 	if (usart_interrupt_flag_get(USART1, USART_INT_FLAG_IDLE) != RESET) {
-		uint16_t cur_data = RX_FIFO_SIZE - dma_transfer_number_get(DMA_CH0);
-		cur_recv = pre_recv & (RX_FIFO_SIZE - 1);
+		uint16_t cur_index = RX_FIFO_SIZE - dma_transfer_number_get(DMA_CH0);
+		uint16_t cur_recv = (cur_index - pre_recv) & (RX_FIFO_SIZE - 1);
+		pre_recv = cur_index;
 		queue_advance_wr(&recv_q, cur_recv);
-		pre_recv = cur_data;
+
 		if (recv_size)
 			*recv_size = cur_recv;
+
 		usart_interrupt_flag_clear(USART1, USART_INT_FLAG_IDLE);
 	}
 }
 
-void tx_cb(void)
+void into_recieve(void)
 {
-	gpio_bit_write(GPIOC, GPIO_PIN_11, RESET); //延迟1ms拉低引脚,转为接受状态
+	gpio_bit_write(GPIOC, GPIO_PIN_11, RESET);
 }
 
 //DMA发送完成中断
 void DMA_Channel1_IRQHandler(void)
 {
 	if (RESET != dma_interrupt_flag_get(DMA_CH1, DMA_INT_FLAG_FTF)) {
-		defer_task_add(tx_cb, 1);
+		defer_task_add(into_recieve, 1); //延迟1ms拉低引脚,转为接受状态
 		dma_interrupt_flag_clear(DMA_CH1, DMA_INT_FLAG_FTF);
 	}
 }
@@ -155,6 +159,7 @@ static dml_dev_err_e serial_485_open(void)
 {
 	if (is_serial_opened)
 		return DML_DEV_ERR_OCCUPIED;
+
 	is_serial_opened = true;
 
 	usart_init();
@@ -168,15 +173,9 @@ static dml_dev_err_e serial_485_close(void)
 	return DML_DEV_ERR_NONE;
 }
 
-typedef enum { SERIAL_IOCTRL_CMD_SET_RX_SIZE } serial_ioctrl_cmd_e;
-
 static dml_dev_err_e serial_485_ioctrl(int cmd, void *arg)
 {
 	switch (cmd) {
-	case SERIAL_IOCTRL_CMD_SET_RX_SIZE:
-		recv_size = arg;
-		break;
-
 	default:
 		break;
 	}
@@ -200,6 +199,7 @@ static int serial_485_write(const uint8_t *buf, size_t len)
 
 	dma_channel_disable(DMA_CH1);
 	dma_flag_clear(DMA_CH1, DMA_FLAG_FTF);
+	dma_periph_address_config(DMA_CH1, (uint32_t)(&(USART_TDATA(USART1))));
 	dma_memory_address_config(DMA_CH1, (uint32_t)buf);
 	dma_transfer_number_config(DMA_CH1, len);
 	dma_channel_enable(DMA_CH1);
