@@ -78,7 +78,7 @@ int dal_read(const char *dev_name, uint8_t *buf, size_t len)
 }
 
 /**
- * @brief 写入数据的设备
+ * @brief 写入数据到设备
  * 
  * @param dev_name 设备名
  * @param buf 写入缓冲区
