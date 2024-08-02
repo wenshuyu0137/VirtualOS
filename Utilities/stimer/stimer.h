@@ -73,13 +73,8 @@ typedef struct stimer_task {
 #define STIMER_TASK_CTOR(_entry, _PERIOD, _type)                                                                                                               \
 	(TASK_T)                                                                                                                                               \
 	{                                                                                                                                                      \
-		.f_entry = (_entry), .period = (_PERIOD), .arrive = 0, .item.next = LIST_NULL, .item.pre = LIST_NULL, .carry_type = (_type), .id = 0,          \
-	}
-
-#define DEFER_INIT_HELPER(_id)                                                                                                                                 \
-	(TASK_T)                                                                                                                                               \
-	{                                                                                                                                                      \
-		.f_entry = LIST_NULL, .period = 0, .arrive = 0, .item.next = LIST_NULL, .item.pre = LIST_NULL, .defer_type = UNUSE_DEFER, .id = _id,           \
+		.f_entry = (_entry), .period = (_PERIOD), .arrive = 0, .item.next = LIST_NULL, .item.pre = LIST_NULL, .defer_type = UNUSE_DEFER,               \
+		.carry_type = (_type), .id = 0,                                                                                                                \
 	}
 
 int stimer_init(struct timer_port *port);

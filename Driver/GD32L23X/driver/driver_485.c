@@ -118,7 +118,7 @@ static void usart_init(void)
 	usart_enable(USART1);
 }
 
-void into_recieve(void)
+void into_recieve_mode(void)
 {
 	gpio_bit_write(GPIOC, GPIO_PIN_11, RESET);
 }
@@ -127,7 +127,7 @@ void into_recieve(void)
 void DMA_Channel0_IRQHandler(void)
 {
 	if (RESET != dma_interrupt_flag_get(DMA_CH0, DMA_INT_FLAG_FTF)) {
-		defer_task_add(into_recieve, 1); //延迟1ms拉低引脚,转为接受状态
+		defer_task_add(into_recieve_mode, 2); //延迟2ms拉低引脚,转为接收状态
 		memset(tx_buf, 0, TX_BUF_SIZE);
 		dma_interrupt_flag_clear(DMA_CH0, DMA_INT_FLAG_FTF);
 	}
