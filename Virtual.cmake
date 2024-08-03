@@ -79,12 +79,7 @@ file(GLOB_RECURSE BASE_SOURCES
 # 导入交叉编译工具链
 set(CMAKE_TOOLCHAIN_FILE ${FRAMEWORK_ROOT_DIR}/toolchain.cmake)
 
-# 将所有源文件添加到目标中
-if(USE_ARMGCC)
-    file(GLOB_RECURSE SHARED_SOURCES ${BASE_SOURCES} ${FRAMEWORK_ROOT_DIR}/Driver/syscall/syscall.c)
-else()
-    file(GLOB_RECURSE SHARED_SOURCES ${BASE_SOURCES})
-endif()
+file(GLOB_RECURSE SHARED_SOURCES ${BASE_SOURCES} ${FRAMEWORK_ROOT_DIR}/Driver/syscall/syscall.c)
 
 # 包含目录
 include_directories(${FRAMEWORK_INCLUDE_DIRS})

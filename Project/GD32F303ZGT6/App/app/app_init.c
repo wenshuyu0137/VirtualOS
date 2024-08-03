@@ -2,9 +2,11 @@
 
 static TASK_T m_led_task = STIMER_TASK_CTOR(app_led_task, Period_to_Tick(APP_LED_TASK_PERIOD), STIMER_TYPE_PERIODIC);
 static TASK_T m_beep_task = STIMER_TASK_CTOR(app_beep_task, Period_to_Tick(APP_BEEP_TASK_PERIOD), STIMER_TYPE_PERIODIC);
+static TASK_T m_pwm_led_task = STIMER_TASK_CTOR(app_pwm_led_task, Period_to_Tick(APP_PWM_LED_TASK_PERIOD), STIMER_TYPE_PERIODIC);
 
 void app_task_init(void)
 {
+	app_pwdm_led_init();
 }
 
 void task_dispatch_looper(void)
@@ -15,6 +17,7 @@ void task_dispatch_looper(void)
 
 	stimer_task_add(&m_led_task);
 	stimer_task_add(&m_beep_task);
+	stimer_task_add(&m_pwm_led_task);
 
 	stimer_start();
 
