@@ -93,7 +93,7 @@ static dml_file_opts_t led_red_dev = {
 
 void led_green_init(void)
 {
-	dml_register_device(&led_red_dev,led_name);
+	dml_register_device(&led_red_dev, led_name);
 }
 
 EXPORT_DIRVER(led_green_init) //注册驱动

@@ -80,7 +80,7 @@ static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout)
 	task_timer.clockdivision = TIMER_CKDIV_DIV1;
 	task_timer.counterdirection = TIMER_COUNTER_UP;
 	task_timer.period = (period * 10 - 1);
-	task_timer.prescaler = 64 * 100 -1; //64M
+	task_timer.prescaler = 64 * 100 - 1; //64M
 	timer_init(TIMER1, &task_timer);
 	timer_flag_clear(TIMER1, TIMER_INT_UP);
 	timer_interrupt_enable(TIMER1, TIMER_INT_UP);
