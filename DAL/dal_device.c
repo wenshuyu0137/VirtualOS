@@ -1,5 +1,5 @@
 /**
- * @file dal_char_dev.c
+ * @file dal_device.c
  * @brief 设备抽象层字符设备接口
  * @version 0.1
  * @date 2024-07-31
@@ -28,13 +28,13 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "dal_char_dev.h"
+#include "dal_device.h"
 
 /**
  * 小于0错误码 -6 非法文件描述符
  * 小于0错误码 -5 设备不存在
  * 小于0错误码 -4 设备被占用
- * 小于0错误码 -3 操作异常 例如只读的进行写操作
+ * 小于0错误码 -3 操作异常 例如只读的进行写操作,或空指针
  * 小于0错误码 -2 不可使用(例如没打开)
  * 小于0错误码 -1 打开设备过多
  * 
@@ -46,20 +46,20 @@ typedef struct {
 	int fd;
 } fd_t;
 
+#define RESERVED_FD_NUM 3
 #define FD_SIZE 64
-#define RESERVED_FD_SIZE 3
 static fd_t fds[FD_SIZE] = { 0 };
 
 static int alloc_fd(void)
 {
-	for (uint16_t i = RESERVED_FD_SIZE; i < FD_SIZE; i++) {
+	for (uint16_t i = RESERVED_FD_NUM; i < FD_SIZE; i++) {
 		if (!fds[i].is_used) {
 			fds[i].is_used = true;
 			fds[i].opts = NULL;
 			return fds[i].fd;
 		}
 	}
-	return -1; // 没有可用的文件描述符
+	return -1;
 }
 
 static void free_fd(int fd)
@@ -73,10 +73,10 @@ static void free_fd(int fd)
 static int check_fd(int fd, dml_file_opts_t **opts)
 {
 	if (fd < 0 || fd >= FD_SIZE)
-		return -6; // 非法文件描述符
+		return -6;
 
 	if (!fds[fd].opts || !opts)
-		return -3; // 操作异常
+		return -3;
 
 	*opts = fds[fd].opts;
 	return 0;
@@ -94,15 +94,15 @@ int dal_open(const char *dev_name)
 {
 	dml_dev_t *dev = dml_find_device(dev_name);
 	if (!dev)
-		return -5; // 设备不存在
+		return -5;
 
 	int new_fd = alloc_fd();
 	if (new_fd == -1)
-		return -1; // 打开设备过多
+		return -1;
 
 	if (!dev->opts || !dev->opts->open) {
 		free_fd(new_fd);
-		return -3; // 操作异常
+		return -3;
 	}
 
 	dml_dev_err_e ret = dev->opts->open();
@@ -131,7 +131,7 @@ int dal_close(int fd)
 		return err;
 
 	if (!opts->close)
-		return -3; // 操作异常
+		return -3;
 
 	dml_dev_err_e ret = opts->close();
 	if (ret < 0)
@@ -159,7 +159,7 @@ int dal_read(int fd, uint8_t *buf, size_t len)
 		return err;
 
 	if (!opts->read)
-		return -3; // 操作异常
+		return -3;
 
 	return opts->read(buf, len);
 }
@@ -182,7 +182,7 @@ int dal_write(int fd, const uint8_t *buf, size_t len)
 		return err;
 
 	if (!opts->write)
-		return -3; // 操作异常
+		return -3;
 
 	return opts->write(buf, len);
 }
@@ -205,22 +205,22 @@ int dal_ioctrl(int fd, int cmd, void *argc)
 		return err;
 
 	if (!opts->ioctrl)
-		return -3; // 操作异常
+		return -3;
 
 	return opts->ioctrl(cmd, argc);
 }
 
-void fd_init(void) __attribute__((constructor(102))); // 第二优先级构造
+void fd_init(void) __attribute__((constructor(102)));
 void fd_init(void)
 {
-	for (uint16_t i = 0; i < RESERVED_FD_SIZE; i++) {
-		fds[i].fd = i; //前三个文件描述符保留
+	for (uint16_t i = 0; i < RESERVED_FD_NUM; i++) {
+		fds[i].fd = i;
 		fds[i].opts = NULL;
 		fds[i].is_used = true;
 	}
 
-	for (uint16_t i = RESERVED_FD_SIZE; i < FD_SIZE; i++) {
-		fds[i].fd = i; //前三个文件描述符保留
+	for (uint16_t i = RESERVED_FD_NUM; i < FD_SIZE; i++) {
+		fds[i].fd = i;
 		fds[i].opts = NULL;
 		fds[i].is_used = false;
 	}

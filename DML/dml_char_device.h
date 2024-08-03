@@ -45,7 +45,6 @@ typedef enum {
 } dml_dev_err_e;
 
 typedef struct {
-	const char *name;
 	dml_dev_err_e (*open)(void);
 	dml_dev_err_e (*close)(void);
 	dml_dev_err_e (*ioctrl)(int cmd, void *arg);
@@ -54,14 +53,13 @@ typedef struct {
 } dml_file_opts_t;
 
 typedef struct {
+	const char *name;
 	dml_file_opts_t *opts;
-
-	//TODO
 } dml_dev_t;
 
 void dml_dev_table_init(void);
 dml_dev_t *dml_find_device(const char *name);
-bool dml_register_device(dml_file_opts_t *device);
+bool dml_register_device(dml_file_opts_t *device, const char *name);
 bool dml_unregister_device(const char *name);
 bool dml_list_all_devices(char ***device_names, size_t *num_devices);
 void free_device_names(char **device_names, size_t num_devices);

@@ -1,6 +1,6 @@
 #include "app_beep.h"
 #include "stdint.h"
-#include "dal_char_dev.h"
+#include "dal_device.h"
 
 void app_beep_task(void)
 {

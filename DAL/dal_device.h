@@ -1,5 +1,5 @@
 /**
- * @file dal_char_dev.h
+ * @file dal_device.h
  * @author wenshuyu (wsy2161826815@163.com)
  * @brief 
  * @version 0.1

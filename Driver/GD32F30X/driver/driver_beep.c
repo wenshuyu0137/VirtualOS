@@ -87,7 +87,6 @@ static int beep_write(const uint8_t *buf, size_t len)
 static dml_file_opts_t beep_dev = {
 	.close = beep_close,
 	.ioctrl = beep_ioctrl,
-	.name = beep_name,
 	.open = beep_open,
 	.read = beep_read,
 	.write = beep_write,
@@ -95,7 +94,7 @@ static dml_file_opts_t beep_dev = {
 
 void beep_init(void)
 {
-	dml_register_device(&beep_dev);
+	dml_register_device(&beep_dev, beep_name);
 }
 
 EXPORT_DIRVER(beep_init) //注册驱动

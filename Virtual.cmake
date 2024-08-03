@@ -55,8 +55,9 @@ set(FRAMEWORK_INCLUDE_DIRS
 file(GLOB_RECURSE BASE_SOURCES
     # ${FRAMEWORK_ROOT_DIR}/Component/FAL/*.c
     # ${FRAMEWORK_ROOT_DIR}/Component/FlashDB/*.c
-    ${FRAMEWORK_ROOT_DIR}/Component/LittleFs/*.c
+    # ${FRAMEWORK_ROOT_DIR}/Component/LittleFs/*.c
     ${FRAMEWORK_ROOT_DIR}/Component/RTT/*.c
+    ${FRAMEWORK_ROOT_DIR}/Driver/platform_schedule.c
     ${FRAMEWORK_ROOT_DIR}/DAL/*.c
     ${FRAMEWORK_ROOT_DIR}/DML/*.c
     ${FRAMEWORK_ROOT_DIR}/HAL/*.c

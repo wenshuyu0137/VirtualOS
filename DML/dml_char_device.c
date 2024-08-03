@@ -80,19 +80,20 @@ dml_dev_t *dml_find_device(const char *name)
  * @return true 
  * @return false 
  */
-bool dml_register_device(dml_file_opts_t *opts)
+bool dml_register_device(dml_file_opts_t *opts, const char *name)
 {
-	if (!is_dev_table_initialized || !opts || !opts->name)
+	if (!is_dev_table_initialized || !opts || !name)
 		return false;
 
 	// 设备已存在
-	if (dml_find_device(opts->name))
+	if (dml_find_device(name))
 		return false;
 
 	dml_dev_t *dev = (dml_dev_t *)malloc(sizeof(dml_dev_t));
 	dev->opts = opts;
+	dev->name = name;
 
-	return hash_insert(&dev_table, opts->name, (void *)dev) == HASH_SUCCESS;
+	return hash_insert(&dev_table, name, (void *)dev) == HASH_SUCCESS;
 }
 
 /**

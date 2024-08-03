@@ -86,7 +86,6 @@ static int led_write(const uint8_t *buf, size_t len)
 static dml_file_opts_t led_red_dev = {
 	.close = led_close,
 	.ioctrl = led_ioctrl,
-	.name = led_name,
 	.open = led_open,
 	.read = led_read,
 	.write = led_write,
@@ -94,7 +93,7 @@ static dml_file_opts_t led_red_dev = {
 
 void led_green_init(void)
 {
-	dml_register_device(&led_red_dev);
+	dml_register_device(&led_red_dev,led_name);
 }
 
 EXPORT_DIRVER(led_green_init) //注册驱动
