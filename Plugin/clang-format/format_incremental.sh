@@ -48,7 +48,13 @@ for FILE_PATH in "${CHANGED_FILES[@]}"; do
     fi
 done
 
-# 合并格式化后的更改到先前的提交中
-git commit --amend -m "$LAST_COMMIT_MSG"
+# 检查是否有新的修改
+NEW_CHANGED_FILES=($(git diff --name-only --cached --diff-filter=ACM | grep -E "\.(cpp|hpp|c|h)$"))
+
+# 如果有新的修改，则再次添加并提交
+if [ ${#NEW_CHANGED_FILES[@]} -gt 0 ]; then
+    git commit --amend -m "$LAST_COMMIT_MSG"
+    echo "新的修改已合并到上一次的提交。"
+fi
 
 echo "增量格式化和提交合并完成。"
