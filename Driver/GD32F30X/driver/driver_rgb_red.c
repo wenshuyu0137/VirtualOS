@@ -50,7 +50,7 @@ static dml_dev_err_e pwm_red_open(void)
 
 	is_pwm_red_opened = true;
 
-	rcu_periph_clock_enable(RCU_GPIOA); 
+	rcu_periph_clock_enable(RCU_GPIOA);
 	gpio_init(GPIOA, GPIO_MODE_AF_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_9);
 
 	/* TIMER0 configuration: generate PWM signals with different duty cycles:
@@ -70,19 +70,19 @@ static dml_dev_err_e pwm_red_open(void)
 	timer_init(TIMER0, &timer_initpara);
 
 	timer_ocintpara.outputstate = TIMER_CCX_ENABLE;
-	timer_ocintpara.outputnstate = TIMER_CCXN_DISABLE; 
+	timer_ocintpara.outputnstate = TIMER_CCXN_DISABLE;
 	timer_ocintpara.ocpolarity = TIMER_OC_POLARITY_HIGH;
 	timer_ocintpara.ocnpolarity = TIMER_OCN_POLARITY_HIGH;
 	timer_ocintpara.ocidlestate = TIMER_OC_IDLE_STATE_HIGH;
 	timer_ocintpara.ocnidlestate = TIMER_OCN_IDLE_STATE_LOW;
 	timer_channel_output_config(TIMER0, TIMER_CH_2, &timer_ocintpara);
 
-	timer_channel_output_pulse_value_config(TIMER0, TIMER_CH_2, 0); 
-	timer_channel_output_mode_config(TIMER0, TIMER_CH_2, TIMER_OC_MODE_PWM0); 
-	timer_channel_output_shadow_config(TIMER0, TIMER_CH_2, TIMER_OC_SHADOW_DISABLE); 
+	timer_channel_output_pulse_value_config(TIMER0, TIMER_CH_2, 0);
+	timer_channel_output_mode_config(TIMER0, TIMER_CH_2, TIMER_OC_MODE_PWM0);
+	timer_channel_output_shadow_config(TIMER0, TIMER_CH_2, TIMER_OC_SHADOW_DISABLE);
 
 	timer_primary_output_config(TIMER0, ENABLE);
-	timer_auto_reload_shadow_enable(TIMER0); 
+	timer_auto_reload_shadow_enable(TIMER0);
 	timer_enable(TIMER0);
 
 	return DML_DEV_ERR_NONE;
@@ -90,15 +90,15 @@ static dml_dev_err_e pwm_red_open(void)
 
 static dml_dev_err_e pwm_red_close(void)
 {
-	timer_channel_output_pulse_value_config(TIMER0, TIMER_CH_2, TIMER_PERIOD + 1); 
+	timer_channel_output_pulse_value_config(TIMER0, TIMER_CH_2, TIMER_PERIOD + 1);
 
 	is_pwm_red_opened = false;
 	return DML_DEV_ERR_NONE;
 }
 
 typedef enum {
-	PWM_LED_CMD_E_SET_PERIOD, 
-	PWM_LED_CMD_E_SET_DUTY, 
+	PWM_LED_CMD_E_SET_PERIOD,
+	PWM_LED_CMD_E_SET_DUTY,
 } PWM_LED_CMD_E;
 
 static dml_dev_err_e pwm_red_ioctrl(int cmd, void *arg)
@@ -145,4 +145,4 @@ void rgb_pwm_red_init(void)
 	dml_register_device(&rgb_pwm_red_dev, pwm_red_name);
 }
 
-EXPORT_DIRVER(rgb_pwm_red_init) 
+EXPORT_DIRVER(rgb_pwm_red_init)

@@ -20,6 +20,9 @@ if [ ${#CHANGED_FILES[@]} -eq 0 ]; then
     exit 0
 fi
 
+# 获取最近一次提交的消息
+LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+
 # 遍历每个暂存的文件，并在必要时格式化
 for FILE_PATH in "${CHANGED_FILES[@]}"; do
     FILE_PATH_ABS="$ROOT_DIR/$FILE_PATH"
@@ -39,8 +42,13 @@ for FILE_PATH in "${CHANGED_FILES[@]}"; do
         "$CLANG_FORMAT_PATH" -style=file -i "$FILE_PATH"
         if [ $? -ne 0 ]; then
             echo "格式化 $FILE_PATH 失败"
+        else
+            git add "$FILE_PATH"
         fi
     fi
 done
 
-echo "增量格式化完成。"
+# 合并格式化后的更改到先前的提交中
+git commit --amend -m "$LAST_COMMIT_MSG"
+
+echo "增量格式化和提交合并完成。"
