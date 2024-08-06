@@ -57,8 +57,8 @@ EXPORT_DIRVER(platform_stimer_init);
 #error "实现后请手动关闭这条错误警告"
 #endif
 
-// #define GD32L23x
-#define GD32F30x
+#define GD32L23x
+// #define GD32F30x
 
 #ifdef GD32L23x
 
@@ -84,7 +84,7 @@ static void _stimer_base_init(uint32_t period, stimer_timeout_process f_timeout)
 	timer_init(TIMER1, &task_timer);
 	timer_flag_clear(TIMER1, TIMER_INT_UP);
 	timer_interrupt_enable(TIMER1, TIMER_INT_UP);
-	nvic_irq_enable(TIMER1_IRQn, 0, 0);
+	nvic_irq_enable(TIMER1_IRQn, 0);
 
 	stimer_cb = f_timeout;
 }

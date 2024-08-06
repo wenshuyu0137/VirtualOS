@@ -29,19 +29,21 @@
 
 #include "app_485.h"
 
-int fd = -1;
+static int fd = -1;
 
 void app_485_init(void)
 {
-	fd = dal_open("/dev/serial_485"); //打开设备
+	fd = dal_open("/dev/serial_485");
 }
+
+static uint8_t vol_pdu[256] = { 0 };
 
 void app_485_task(void)
 {
-	uint8_t recv_buf[64] = { 0 };
-	if (fd) {
-		int ret = dal_read(fd, recv_buf, 64);
-		if (ret)
-			dal_write(fd, recv_buf, 3);
-	}
+	if (!fd)
+		return;
+
+	int ret = dal_read(fd, vol_pdu, 256);
+	if (ret)
+		dal_write(fd, vol_pdu, ret);
 }

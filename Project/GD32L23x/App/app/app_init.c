@@ -5,6 +5,7 @@ static TASK_T m_485_task = STIMER_TASK_CTOR(app_485_task, Period_to_Tick(APP_485
 
 void app_task_init(void)
 {
+	app_led_init();
 	app_485_init();
 }
 

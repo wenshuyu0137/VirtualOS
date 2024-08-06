@@ -30,7 +30,7 @@
 #ifndef _VIRTUAL_OS_APP_485_H
 #define _VIRTUAL_OS_APP_485_H
 
-#include "dal_char_dev.h"
+#include "dal_device.h"
 
 #define APP_485_TASK_PERIOD 10
 
