@@ -35,8 +35,8 @@ file(GLOB_RECURSE SUBPROJECT_SOURCES
     ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/GD32L23x_standard_peripheral/Source/*.c
     ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/CMSIS/GD32L23x/Source/*.c
     ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/driver/*.c
+    ${FRAMEWORK_ROOT_DIR}/Protocol/CloudElectricity/*.c # 云电协议
 )
-
 
 # ARM GCC 编译器的启动文件和链接脚本
 set(STARTUP_FILE ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/CMSIS/GD32L23x/Source/ARM/startup_gd32l233.S)
@@ -70,7 +70,6 @@ add_executable(${PROJECT_NAME} ${SHARED_SOURCES} ${SUBPROJECT_SOURCES} ${STARTUP
 # 设置编译选项
 target_compile_options(${PROJECT_NAME} PRIVATE ${COMPILER_FLAGS})
 
-
 # 设置生成的 HEX 和 BIN 文件路径
 set(HEX_FILE ${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.hex)
 set(BIN_FILE ${EXECUTABLE_OUTPUT_PATH}/${PROJECT_NAME}.bin)
@@ -82,7 +81,6 @@ set(HW 10)
 set(PID 149)
 set(SW 20)
 
-
 add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_OBJCOPY} -Oihex $<TARGET_FILE:${PROJECT_NAME}> ${HEX_FILE} # 生成 HEX 文件
     COMMAND ${CMAKE_OBJCOPY} -Obinary $<TARGET_FILE:${PROJECT_NAME}> ${BIN_FILE} # 生成 BIN 文件
@@ -91,4 +89,3 @@ add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
 
     # COMMAND ${CONVERT_BIN} ${VENDOR_ID} ${HW} ${PID} ${SW} ${BIN_FILE}              # 修改BIN文件名
 )
-

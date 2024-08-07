@@ -27,11 +27,22 @@ endif()
 
 # 框架头文件路径
 set(FRAMEWORK_INCLUDE_DIRS
-    ${FRAMEWORK_ROOT_DIR}/Driver/arm_core/
+
+    # #######################################################################
+
+    # 自行在自己工程CMakeLists.txt中添加想要的组件与协议,此文件只添加头文件 例如 ${FRAMEWORK_ROOT_DIR}/Component/FAL/*.c
     ${FRAMEWORK_ROOT_DIR}/Component/FAL/
     ${FRAMEWORK_ROOT_DIR}/Component/FlashDB/
     ${FRAMEWORK_ROOT_DIR}/Component/LittleFs/
     ${FRAMEWORK_ROOT_DIR}/Component/RTT/
+    ${FRAMEWORK_ROOT_DIR}/Protocol/ModBUS/
+    ${FRAMEWORK_ROOT_DIR}/Protocol/Protocol_4G/
+    ${FRAMEWORK_ROOT_DIR}/Protocol/CloudElectricity/
+    ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_client/
+    ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_server/
+
+    # #######################################################################
+    ${FRAMEWORK_ROOT_DIR}/Driver/arm_core/
     ${FRAMEWORK_ROOT_DIR}/DAL/
     ${FRAMEWORK_ROOT_DIR}/DML/
     ${FRAMEWORK_ROOT_DIR}/HAL/
@@ -44,18 +55,16 @@ set(FRAMEWORK_INCLUDE_DIRS
     ${FRAMEWORK_ROOT_DIR}/Utilities/slog/
     ${FRAMEWORK_ROOT_DIR}/Utilities/soft_iic/
     ${FRAMEWORK_ROOT_DIR}/Utilities/stimer/
-    ${FRAMEWORK_ROOT_DIR}/Protocol/ModBUS/
-    ${FRAMEWORK_ROOT_DIR}/Protocol/Protocol_4G/
-    ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_client/
-    ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_server/
     ${FRAMEWORK_ROOT_DIR}/Driver/syscall/
 )
 
 # 框架源文件
 file(GLOB_RECURSE BASE_SOURCES
+
     # ${FRAMEWORK_ROOT_DIR}/Component/FAL/*.c
     # ${FRAMEWORK_ROOT_DIR}/Component/FlashDB/*.c
     # ${FRAMEWORK_ROOT_DIR}/Component/LittleFs/*.c
+    # ${FRAMEWORK_ROOT_DIR}/Protocol/CloudElectricity/*.c
     ${FRAMEWORK_ROOT_DIR}/Component/RTT/*.c
     ${FRAMEWORK_ROOT_DIR}/Driver/platform_schedule.c
     ${FRAMEWORK_ROOT_DIR}/DAL/*.c
@@ -70,10 +79,11 @@ file(GLOB_RECURSE BASE_SOURCES
     ${FRAMEWORK_ROOT_DIR}/Utilities/slog/*.c
     ${FRAMEWORK_ROOT_DIR}/Utilities/soft_iic/*.c
     ${FRAMEWORK_ROOT_DIR}/Utilities/stimer/*.c
-    ${FRAMEWORK_ROOT_DIR}/Protocol/ModBUS/*.c
-    ${FRAMEWORK_ROOT_DIR}/Protocol/Protocol_4G/*.c
-    ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_client/*.c
-    ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_server/*.c
+
+    # ${FRAMEWORK_ROOT_DIR}/Protocol/ModBUS/*.c
+    # ${FRAMEWORK_ROOT_DIR}/Protocol/Protocol_4G/*.c
+    # ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_client/*.c
+    # ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_server/*.c
 )
 
 # 导入交叉编译工具链

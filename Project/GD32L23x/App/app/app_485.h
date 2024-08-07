@@ -31,6 +31,7 @@
 #define _VIRTUAL_OS_APP_485_H
 
 #include "dal_device.h"
+#include "cloud_electricity.h"
 
 #define APP_485_TASK_PERIOD 10
 
