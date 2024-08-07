@@ -1,9 +1,9 @@
 /**
- * @file app_485.c
+ * @file driver_power.c
  * @author wenshuyu (wsy2161826815@163.com)
  * @brief 
  * @version 0.1
- * @date 2024-08-01
+ * @date 2024-08-07
  * 
  * The MIT License (MIT)
  * 
@@ -27,22 +27,20 @@
  * 
  */
 
-#include "app_485.h"
+#include "dml_init.h"
+#include "gd32l23x.h"
 
-static int fd = -1;
-
-void app_485_init(void)
+void power_init(void)
 {
-	fd = dal_open("/dev/serial_485");
+	rcu_periph_clock_enable(RCU_GPIOC);
+	gpio_mode_set(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_13);
+	gpio_output_options_set(GPIOC, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13);
+	gpio_bit_write(GPIOC, GPIO_PIN_13, SET); //5V DCDC PC13
+
+	rcu_periph_clock_enable(RCU_GPIOD);
+	gpio_mode_set(GPIOD, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_1);
+	gpio_output_options_set(GPIOD, GPIO_OTYPE_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1);
+	gpio_bit_write(GPIOD, GPIO_PIN_1, SET); //VDD 3V3
 }
 
-static uint8_t rcv_buf[256];
-void app_485_task(void)
-{
-	if (!fd)
-		return;
-
-	int ret = dal_read(fd, rcv_buf, 256);
-	if (ret)
-		dal_write(fd, rcv_buf, ret);
-}
+EXPORT_DIRVER(power_init);

@@ -411,9 +411,9 @@
           <GroupName>dal</GroupName>
           <Files>
             <File>
-              <FileName>dal_char_dev.c</FileName>
+              <FileName>dal_device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\DAL\dal_char_dev.c</FilePath>
+              <FilePath>..\..\..\DAL\dal_device.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -601,14 +601,14 @@
               <FilePath>..\..\..\Driver\GD32L23X\driver\driver_led_green.c</FilePath>
             </File>
             <File>
-              <FileName>driver_stimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\Driver\GD32L23X\driver\driver_stimer.c</FilePath>
-            </File>
-            <File>
               <FileName>driver_485.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\Driver\GD32L23X\driver\driver_485.c</FilePath>
+            </File>
+            <File>
+              <FileName>platform_schedule.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\Driver\platform_schedule.c</FilePath>
             </File>
           </Files>
         </Group>
