@@ -33,6 +33,5 @@
 
 const at_server_cmd_t at_server_cmd[AT_SERVER_CMD_MAX] = {
 	[AT_SERVER_CMD_AT] = AT_SERVER_CMD_HELPER("", AT_SERVER_CMD_AT), // 空指令，用于测试通讯
-	[AT_SERVER_CMD_CWJAP] = AT_SERVER_CMD_HELPER("CWJAP",
-						     AT_SERVER_CMD_CWJAP), // 例如AT+CWJAP="espressif","1234567890" 只取CWJAP部分
+	[AT_SERVER_CMD_CWJAP] = AT_SERVER_CMD_HELPER("CWJAP", AT_SERVER_CMD_CWJAP), // 例如AT+CWJAP="espressif","1234567890" 只取CWJAP部分
 };

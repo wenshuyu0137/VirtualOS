@@ -37,6 +37,7 @@ file(GLOB_RECURSE SUBPROJECT_SOURCES
     ${FRAMEWORK_ROOT_DIR}/Driver/GD32L23X/driver/*.c
     ${FRAMEWORK_ROOT_DIR}/Protocol/CloudElectricity/*.c # 云电协议
     ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_client/*.c
+    ${FRAMEWORK_ROOT_DIR}/Protocol/AT/at_server/*.c
 )
 
 # ARM GCC 编译器的启动文件和链接脚本

@@ -54,7 +54,6 @@ static const char *const success_str = "OK";
 static const char *const fail_str = "ERROR";
 
 typedef enum {
-	AT_CLIENT_PARSER_STATE_START, //开始
 	AT_CLIENT_PARSER_STATE_RECIEVING, //接收中
 	AT_CLIENT_PARSER_STATE_OK, //判断OK结束
 	AT_CLIENT_PARSER_STATE_ERROR, //判断ERROR结束
@@ -96,7 +95,7 @@ static void clear_compare(void)
 
 static void reset()
 {
-	m_parser.state = AT_CLIENT_PARSER_STATE_START;
+	m_parser.state = AT_CLIENT_PARSER_STATE_RECIEVING;
 	read_q.rd = m_parser.forward;
 	m_parser.anchor = read_q.rd;
 }
@@ -106,9 +105,8 @@ static void s_dispatch(void)
 	at_client_cmd_t *cmd_content = NULL;
 	int ret = queue_get(&write_q, (uint8_t *)&cmd_content, sizeof(at_client_cmd_t *));
 
-	if (ret != sizeof(at_client_cmd_t *)) {
+	if (ret != sizeof(at_client_cmd_t *))
 		return;
-	}
 
 	size_t len = strlen(cmd_content->cmd);
 	m_at_client.opts->f_write((char *)cmd_content->cmd, len);
@@ -123,9 +121,8 @@ static void handle_response(const char *const response, size_t len, bool result)
 		return;
 
 	for (size_t i = 0; i < m_at_client.map_size; i++) {
-		if (to_handle_cmd->cmd_type == m_at_client.handle_maps[i].cmd_type && m_at_client.handle_maps[i].handle_f) {
+		if (to_handle_cmd->cmd_type == m_at_client.handle_maps[i].cmd_type && m_at_client.handle_maps[i].handle_f)
 			m_at_client.handle_maps[i].handle_f(response, len, result);
-		}
 	}
 }
 
@@ -167,33 +164,23 @@ static void _recv_parser(queue_info_t *r_q)
 		judge_index++;
 		c = get_rx_remain();
 		switch (m_parser.state) {
-		case AT_CLIENT_PARSER_STATE_START:
-			m_parser.state = AT_CLIENT_PARSER_STATE_RECIEVING;
-			break;
-
 		case AT_CLIENT_PARSER_STATE_RECIEVING:
 
 			if (will_to_suffix(&m_parser, c)) {
 				//结束符
 				m_parser.state = AT_CLIENT_PARSER_STATE_SUFFIX;
 				break;
-			}
-
-			else if (c == success_str[0]) {
+			} else if (c == success_str[0]) {
 				// O
 				m_parser.state = AT_CLIENT_PARSER_STATE_OK;
 				m_parser.compare_len = strlen(success_str);
 				m_parser.cur_len = 0;
-			}
-
-			else if (c == fail_str[0]) {
+			} else if (c == fail_str[0]) {
 				// E
 				m_parser.state = AT_CLIENT_PARSER_STATE_ERROR;
 				m_parser.compare_len = strlen(fail_str);
 				m_parser.cur_len = 0;
-			}
-
-			else {
+			} else {
 				m_parser.parser_pdu[m_parser.pdu_len++] = c;
 				++m_parser.forward;
 			}
@@ -209,16 +196,12 @@ static void _recv_parser(queue_info_t *r_q)
 				if (judge_index - 1 == result_judge) {
 					m_parser.result = true; //以OK结尾紧接着结束符 才算返回OK,否则可能是内容中的OK
 				}
-			}
-
-			else if (m_parser.cur_len < strlen(success_str) && c == success_str[m_parser.cur_len++]) {
+			} else if (m_parser.cur_len < strlen(success_str) && c == success_str[m_parser.cur_len++]) {
 				m_parser.parser_pdu[m_parser.pdu_len++] = c;
 				++m_parser.forward;
 
 				result_judge = judge_index; //记录全局的索引状态
-			}
-
-			else {
+			} else {
 				//是O 但不是OK 或者接收到OK但没有换行结束符 继续返回接收
 				clear_compare();
 				m_parser.state = AT_CLIENT_PARSER_STATE_RECIEVING;
@@ -235,16 +218,12 @@ static void _recv_parser(queue_info_t *r_q)
 				if (judge_index - 1 == result_judge) {
 					m_parser.result = false; //以ERROR结尾紧接着结束符 才算返回ERROR,否则可能是内容中的ERROR
 				}
-			}
-
-			else if (m_parser.cur_len < strlen(fail_str) && c == fail_str[m_parser.cur_len++]) {
+			} else if (m_parser.cur_len < strlen(fail_str) && c == fail_str[m_parser.cur_len++]) {
 				m_parser.parser_pdu[m_parser.pdu_len++] = c;
 				++m_parser.forward;
 
 				result_judge = judge_index; //记录全局的索引状态
-			}
-
-			else {
+			} else {
 				//是E 但不是完整的ERROR 或者接收到ERROR但没有换行结束符 继续返回接收
 				clear_compare();
 				m_parser.state = AT_CLIENT_PARSER_STATE_RECIEVING;

@@ -1,5 +1,5 @@
 /**
- * @file app_at_client.c
+ * @file app_at_server.c
  * @author wenshuyu (wsy2161826815@163.com)
  * @brief 
  * @version 0.1
@@ -27,14 +27,14 @@
  * 
  */
 
-#include "app_at_client.h"
+#include "app_at_server.h"
 
 static int fd = -1;
 
 static size_t read_f(char *buf, size_t len)
 {
 	if (fd >= 0)
-		return dal_read(fd, (uint8_t *)buf, len);
+		return (size_t)dal_read(fd, (uint8_t *)buf, len);
 
 	return 0;
 }
@@ -42,71 +42,73 @@ static size_t read_f(char *buf, size_t len)
 static size_t write_f(char *buf, size_t len)
 {
 	if (fd >= 0)
-		return dal_write(fd, (uint8_t *)buf, len);
+		return (size_t)dal_write(fd, (uint8_t *)buf, len);
 
 	return 0;
 }
 
-static void at_test(const char *const content, size_t len, bool result)
-{
-	write_f((char *)content, len); //回读
-}
-
-static void at_what(const char *const content, size_t len, bool result)
-{
-	write_f((char *)content, len); //回读
-}
-
-static at_client_opts_t opts = {
+static at_server_opts_t opts = {
 	.f_read = read_f,
 	.f_write = write_f,
 };
 
-static at_client_handle_t maps[] = {
-	[AT_CLIENT_CMD_AT] = { .cmd_type = AT_CLIENT_CMD_AT, .handle_f = at_test },
-	[AT_CLIENT_CMD_WHAT] = { .cmd_type = AT_CLIENT_CMD_WHAT, .handle_f = at_what },
+static at_server_response_e at_test_handle(at_server_msg_t *msg, char *out, size_t *out_size)
+{
+	char test[] = "hello world\n";
+
+	memcpy(out, test, sizeof(test));
+	*out_size = sizeof(test);
+
+	return AT_SERVER_RESPONSE_READY;
+}
+
+static at_server_response_e at_CWJAP_handle(at_server_msg_t *msg, char *out, size_t *out_size)
+{
+	switch (msg->handle_type) {
+	case AT_SERVER_HANDLE_QUERY: {
+		char test[] = "find cmd\n";
+
+		memcpy(out, test, sizeof(test));
+		*out_size = sizeof(test);
+	}
+
+	break;
+	case AT_SERVER_HANDLE_SET: {
+		char test[] = "set cmd\r\n";
+		*out_size = 0;
+		memcpy(out, test, sizeof(test));
+		*out_size += sizeof(test);
+
+		for (int i = 0; i < msg->argc; i++) {
+			memcpy(out + *out_size, msg->argv[i], strlen(msg->argv[i]));
+			*out_size += strlen(msg->argv[i]);
+
+			memcpy(out + *out_size, "\r\n", strlen("\r\n"));
+			*out_size += strlen("\r\n");
+		}
+	}
+
+	break;
+	default:
+		break;
+	}
+
+	return AT_SERVER_RESPONSE_READY;
+}
+
+at_server_handle_t maps[] = {
+	[AT_SERVER_CMD_AT] = { .cmd_type = AT_SERVER_CMD_AT, .handle_f = at_test_handle },
+	[AT_SERVER_CMD_CWJAP] = { .cmd_type = AT_SERVER_CMD_CWJAP, .handle_f = at_CWJAP_handle },
 };
 
-static void app_at_cmd_test_task(void)
-{
-	static uint16_t counter = 0;
-	if (counter == 1000) {
-		at_client_send(AT_CLIENT_CMD_AT);
-		counter = 0;
-	}
-	counter += APP_AT_CLIENT_TASK_PERIOD;
-}
-
-static void app_at_cmd_what_task(void)
-{
-	static uint16_t counter = 0;
-	if (counter == 1500) {
-		at_client_send(AT_CLIENT_CMD_WHAT);
-		counter = 0;
-	}
-	counter += APP_AT_CLIENT_TASK_PERIOD;
-}
-
-static void app_at_client_master(void)
-{
-	//所有主动发送发的任务
-	app_at_cmd_test_task();
-
-	app_at_cmd_what_task();
-}
-
-/***************************************API***************************************/
-
-void app_at_client_init(void)
+void app_at_server_init(void)
 {
 	fd = dal_open("/dev/serial_485");
 
-	at_client_init(&opts, maps, sizeof(maps) / sizeof(maps[0]));
+	at_server_init(&opts, maps, sizeof(maps) / sizeof(maps[0]));
 }
 
-void app_at_client_task(void)
+void app_at_server_task(void)
 {
-	at_client_dispatch();
-
-	app_at_client_master();
+	at_server_dispatch();
 }

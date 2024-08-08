@@ -44,8 +44,8 @@ typedef struct {
 } at_server_opts_t;
 
 typedef enum {
+	AT_SERVER_HANDLE_QUERY, //默认查询指令
 	AT_SERVER_HANDLE_SET, //设置指令
-	AT_SERVER_HANDLE_QUERY, //查询指令
 } at_server_handle_e;
 
 typedef enum {

@@ -1,9 +1,9 @@
 /**
- * @file dml_init.c
+ * @file app_at_server.h
  * @author wenshuyu (wsy2161826815@163.com)
- * @brief 设备管理层的初始化,在main函数启动之前进行调用
+ * @brief 
  * @version 0.1
- * @date 2024-07-31
+ * @date 2024-08-08
  * 
  * The MIT License (MIT)
  * 
@@ -27,11 +27,15 @@
  * 
  */
 
-#include "dml_init.h"
-#include "dml_char_device.h"
+#ifndef _APP_AT_SERVER_H
+#define _APP_AT_SERVER_H
 
-void dml_init(void) __attribute__((constructor(101)));
-void dml_init(void)
-{
-	dml_dev_table_init();
-}
+#include "dal_device.h"
+#include "at_server.h"
+
+#define APP_AT_SERVER_TASK_PERIOD 20
+
+void app_at_server_init(void);
+void app_at_server_task(void);
+
+#endif /*_APP_AT_SERVER_H*/
