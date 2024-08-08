@@ -30,6 +30,8 @@
 #ifndef _CLOUD_ELECTRICITY_PROTOCOL_H
 #define _CLOUD_ELECTRICITY_PROTOCOL_H
 
+//cep ---> clould electricity protocol 云电协议
+
 #include <stdint.h>
 #include "queue.h"
 

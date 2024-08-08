@@ -68,16 +68,16 @@ static at_server_response_e at_CWJAP_handle(at_server_msg_t *msg, char *out, siz
 	case AT_SERVER_HANDLE_QUERY: {
 		char test[] = "find cmd\n";
 
-		memcpy(out, test, sizeof(test));
-		*out_size = sizeof(test);
+		memcpy(out, test, strlen(test));
+		*out_size = strlen(test);
 	}
 
 	break;
 	case AT_SERVER_HANDLE_SET: {
 		char test[] = "set cmd\r\n";
 		*out_size = 0;
-		memcpy(out, test, sizeof(test));
-		*out_size += sizeof(test);
+		memcpy(out, test, strlen(test));
+		*out_size += strlen(test);
 
 		for (int i = 0; i < msg->argc; i++) {
 			memcpy(out + *out_size, msg->argv[i], strlen(msg->argv[i]));

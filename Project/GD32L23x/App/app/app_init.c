@@ -2,7 +2,7 @@
 
 static TASK_T m_led_task = STIMER_TASK_CTOR(app_led_task, Period_to_Tick(APP_LED_TASK_PERIOD), STIMER_TYPE_PERIODIC);
 // static TASK_T m_485_task = STIMER_TASK_CTOR(app_485_task, Period_to_Tick(APP_485_TASK_PERIOD), STIMER_TYPE_PERIODIC);
-static TASK_T m_at_client_task = STIMER_TASK_CTOR(app_at_client_task, Period_to_Tick(APP_AT_CLIENT_TASK_PERIOD), STIMER_TYPE_PERIODIC);
+// static TASK_T m_at_client_task = STIMER_TASK_CTOR(app_at_client_task, Period_to_Tick(APP_AT_CLIENT_TASK_PERIOD), STIMER_TYPE_PERIODIC);
 static TASK_T m_at_server_task = STIMER_TASK_CTOR(app_at_server_task, Period_to_Tick(APP_AT_SERVER_TASK_PERIOD), STIMER_TYPE_PERIODIC);
 
 void app_task_init(void)
