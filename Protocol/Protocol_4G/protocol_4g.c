@@ -340,6 +340,7 @@ void protocol_4G_dispatch(void)
 		return;
 	}
 
-	s_dispatch();
 	r_dispatch();
+
+	s_dispatch();
 }

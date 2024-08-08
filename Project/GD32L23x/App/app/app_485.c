@@ -47,21 +47,50 @@ static int write_f(const uint8_t *buf, size_t len)
 	return fd;
 }
 
-static file_opts opts = {
-	.read = read_f,
-	.write = write_f,
-};
-
-static cpe_handler_err_e index_10_test(size_t *len, uint8_t *p_in_out)
+//测试回复
+static cep_err_e index_10_test(size_t *len, uint8_t *p_in_out)
 {
 	uint8_t test[] = { 0x12, 0x34, 0x56 };
 	memcpy(p_in_out, test, sizeof(test));
 	*len = sizeof(test);
-	return CPE_HANDLER_ERR_NONE;
+	return CPE_ERR_NONE;
 }
 
-static cpe_handler_t maps[] = { { .handler = index_10_test, .index = 10 } };
+//测试不回复
+static cep_err_e index_100_test(size_t *len, uint8_t *p_in_out)
+{
+	uint8_t test[] = { 0x12, 0x34, 0x56 };
+	memcpy(p_in_out, test, sizeof(test));
+	*len = sizeof(test);
+	return CPE_ERR_EMIT;
+}
 
+static void index_32_master_task(void)
+{
+	static uint16_t counter = 0;
+	uint8_t test[] = { 0x78, 0x9A, 0xBC };
+	if (counter == 1000) {
+		cep_report(CEP_CMD_LOW_FREQ, 32, test, sizeof(test));
+		counter = 0;
+	}
+	counter += APP_485_TASK_PERIOD;
+}
+
+/**
+ * @brief 所有的主动上报任务
+ * 
+ */
+static void master_task(void)
+{
+	index_32_master_task();
+}
+
+static cpe_handler_t maps[] = { { .handler = index_10_test, .index = 10 }, { .handler = index_100_test, .index = 100 } };
+
+static file_opts opts = {
+	.read = read_f,
+	.write = write_f,
+};
 /***********************************************API***********************************************/
 
 void app_485_init(void)
@@ -73,5 +102,7 @@ void app_485_init(void)
 
 void app_485_task(void)
 {
+	master_task();
+
 	cep_dispatch();
 }
