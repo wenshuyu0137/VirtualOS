@@ -1,7 +1,7 @@
 /**
  * @file cloud_electricity.c
- * @author wenshuyu (wsy2161826815@163.com)
- * @brief 
+ * @author wenshuyu (wenshuyu991@hellobike.com)
+ * @brief 九号云电协议,支持从机与主机模式,支持粘包断包处理
  * @version 0.1
  * @date 2024-08-07
  * 

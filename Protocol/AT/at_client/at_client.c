@@ -56,33 +56,49 @@ static const char *const fail_str = "ERROR";
 typedef enum {
 	AT_CLIENT_PARSER_STATE_START, //开始
 	AT_CLIENT_PARSER_STATE_RECIEVING, //接收中
-	AT_CLIENT_PARSER_STATE_SUFFIX, //换行
 	AT_CLIENT_PARSER_STATE_OK, //判断OK结束
 	AT_CLIENT_PARSER_STATE_ERROR, //判断ERROR结束
-	AT_CLIENT_PARSER_STATE_FINISH, //一包解析完成
+	AT_CLIENT_PARSER_STATE_SUFFIX, //结束符
 } at_client_paraer_state_e;
 
 typedef struct {
+	uint16_t anchor;
 	uint16_t forward;
-	uint16_t line_index;
+
+	uint16_t line_index; //第几行
+	uint16_t pdu_len; //数据长度
 	char parser_pdu[AT_READ_BUFFER_MAX_SIZE];
 	at_client_paraer_state_e state;
+
 	uint8_t compare_len;
 	uint8_t cur_len;
+
 	bool result;
 } client_parser_t;
 
 static client_parser_t m_parser;
 
-static void rebase(client_parser_t *p)
+static q_size check_pdu_remain(void)
 {
-	p->compare_len = 0;
-	p->cur_len = 0;
+	return read_q.wr - m_parser.forward;
 }
 
-static void reset(client_parser_t *p)
+static uint8_t get_rx_remain()
 {
-	memset(p, 0, sizeof(client_parser_t));
+	return read_q.buf[m_parser.forward & (read_q.buf_size - 1)];
+}
+
+static void clear_compare(void)
+{
+	m_parser.cur_len = 0;
+	m_parser.compare_len = 0;
+}
+
+static void reset()
+{
+	m_parser.state = AT_CLIENT_PARSER_STATE_START;
+	read_q.rd = m_parser.forward;
+	m_parser.anchor = read_q.rd;
 }
 
 static void s_dispatch(void)
@@ -103,12 +119,11 @@ static void handle_response(const char *const response, size_t len, bool result)
 	at_client_cmd_t *to_handle_cmd = NULL;
 	int ret = queue_get(&sync_handle_q, (uint8_t *)&to_handle_cmd, sizeof(at_client_cmd_t *));
 
-	if (ret != sizeof(at_client_cmd_t *)) {
+	if (ret != sizeof(at_client_cmd_t *))
 		return;
-	}
 
 	for (size_t i = 0; i < m_at_client.map_size; i++) {
-		if (to_handle_cmd->cmd_type == m_at_client.handle_maps[i].cmd_type) {
+		if (to_handle_cmd->cmd_type == m_at_client.handle_maps[i].cmd_type && m_at_client.handle_maps[i].handle_f) {
 			m_at_client.handle_maps[i].handle_f(response, len, result);
 		}
 	}
@@ -120,13 +135,13 @@ static bool will_to_suffix(client_parser_t *p, char c)
 
 	if (c == AT_CLIENT_SUFFIX) {
 		p.state = AT_CLIENT_PARSER_STATE_SUFFIX;
-		rebase(p);
+		clear_compare();
 		p.compare_len = 1;
 #else
 
 	if (c == AT_CLIENT_SUFFIX[0]) {
 		p->state = AT_CLIENT_PARSER_STATE_SUFFIX;
-		rebase(p);
+		clear_compare();
 		p->compare_len = strlen(AT_CLIENT_SUFFIX);
 #endif
 		return true;
@@ -141,18 +156,22 @@ static void _recv_parser(queue_info_t *r_q)
 		return;
 	}
 
+	static uint8_t judge_index = 0;
+	static uint8_t result_judge = 0;
+
 	char c;
 	bool exit_loop = false;
 	bool is_pdu_valid = false;
 
-	while (!is_queue_empty(r_q)) {
+	while (check_pdu_remain()) {
+		judge_index++;
+		c = get_rx_remain();
 		switch (m_parser.state) {
 		case AT_CLIENT_PARSER_STATE_START:
 			m_parser.state = AT_CLIENT_PARSER_STATE_RECIEVING;
 			break;
 
 		case AT_CLIENT_PARSER_STATE_RECIEVING:
-			queue_peek(r_q, (uint8_t *)&c, 1);
 
 			if (will_to_suffix(&m_parser, c)) {
 				//结束符
@@ -175,67 +194,75 @@ static void _recv_parser(queue_info_t *r_q)
 			}
 
 			else {
-				queue_get(r_q, (uint8_t *)&c, 1);
-				m_parser.parser_pdu[m_parser.forward++] = c;
+				m_parser.parser_pdu[m_parser.pdu_len++] = c;
+				++m_parser.forward;
 			}
 
 			break;
 
 		case AT_CLIENT_PARSER_STATE_OK:
-			queue_peek(r_q, (uint8_t *)&c, 1);
 
 			if (will_to_suffix(&m_parser, c)) {
 				//结束符
 				m_parser.state = AT_CLIENT_PARSER_STATE_SUFFIX;
+
+				if (judge_index - 1 == result_judge) {
+					m_parser.result = true; //以OK结尾紧接着结束符 才算返回OK,否则可能是内容中的OK
+				}
 			}
 
-			else if (c == success_str[m_parser.cur_len]) {
-				queue_get(r_q, (uint8_t *)&c, 1);
-				m_parser.parser_pdu[m_parser.forward++] = c;
+			else if (m_parser.cur_len < strlen(success_str) && c == success_str[m_parser.cur_len++]) {
+				m_parser.parser_pdu[m_parser.pdu_len++] = c;
+				++m_parser.forward;
+
+				result_judge = judge_index; //记录全局的索引状态
 			}
 
 			else {
 				//是O 但不是OK 或者接收到OK但没有换行结束符 继续返回接收
-				rebase(&m_parser);
+				clear_compare();
 				m_parser.state = AT_CLIENT_PARSER_STATE_RECIEVING;
 			}
 
 			break;
 
 		case AT_CLIENT_PARSER_STATE_ERROR:
-			queue_peek(r_q, (uint8_t *)&c, 1);
 
 			if (will_to_suffix(&m_parser, c)) {
 				//结束符
 				m_parser.state = AT_CLIENT_PARSER_STATE_SUFFIX;
+
+				if (judge_index - 1 == result_judge) {
+					m_parser.result = false; //以ERROR结尾紧接着结束符 才算返回ERROR,否则可能是内容中的ERROR
+				}
 			}
 
-			else if (c == fail_str[m_parser.cur_len]) {
-				queue_get(r_q, (uint8_t *)&c, 1);
-				m_parser.parser_pdu[m_parser.forward++] = c;
+			else if (m_parser.cur_len < strlen(fail_str) && c == fail_str[m_parser.cur_len++]) {
+				m_parser.parser_pdu[m_parser.pdu_len++] = c;
+				++m_parser.forward;
+
+				result_judge = judge_index; //记录全局的索引状态
 			}
 
 			else {
 				//是E 但不是完整的ERROR 或者接收到ERROR但没有换行结束符 继续返回接收
-				rebase(&m_parser);
+				clear_compare();
 				m_parser.state = AT_CLIENT_PARSER_STATE_RECIEVING;
 			}
 
 			break;
 
 		case AT_CLIENT_PARSER_STATE_SUFFIX:
-			queue_get(r_q, (uint8_t *)&c, 1);
-			m_parser.parser_pdu[m_parser.forward++] = c;
+			m_parser.parser_pdu[m_parser.pdu_len++] = c;
+			++m_parser.forward;
 			m_parser.cur_len++;
 
 			if (m_parser.cur_len == m_parser.compare_len) {
-				m_parser.state = AT_CLIENT_PARSER_STATE_FINISH;
-				break;
+				exit_loop = true; //退出while
+				is_pdu_valid = true; //处理正确完整的包
+				reset();
 			}
 
-		case AT_CLIENT_PARSER_STATE_FINISH:
-			exit_loop = true; //退出while
-			is_pdu_valid = true; //处理正确完整的包
 			break;
 
 		default:
@@ -251,17 +278,15 @@ static void _recv_parser(queue_info_t *r_q)
 		return;
 	}
 
-	if (m_parser.forward < sizeof(m_parser.parser_pdu)) {
-		m_parser.parser_pdu[m_parser.forward++] = '\0';
-	}
-
-	else {
+	if (m_parser.pdu_len < sizeof(m_parser.parser_pdu)) {
+		m_parser.parser_pdu[m_parser.pdu_len++] = '\0';
+	} else {
 		m_parser.parser_pdu[sizeof(m_parser.parser_pdu) - 1] = '\0';
-		m_parser.forward = sizeof(m_parser.parser_pdu);
+		m_parser.pdu_len = sizeof(m_parser.parser_pdu);
 	}
 
-	handle_response(m_parser.parser_pdu, m_parser.forward, m_parser.result);
-	reset(&m_parser);
+	handle_response(m_parser.parser_pdu, m_parser.pdu_len, m_parser.result);
+	m_parser.pdu_len = 0;
 }
 
 static void r_dispatch(void)
@@ -295,7 +320,6 @@ bool at_client_init(at_client_opts_t *opts, at_client_handle_t *handle_maps, siz
 	queue_init(&write_q, 1, (uint8_t *)write_q_buf, AT_CLIENT_CMD_MAX * sizeof(at_client_cmd_t *));
 	queue_init(&sync_handle_q, 1, (uint8_t *)sync_handle_buf, AT_CLIENT_CMD_MAX * sizeof(at_client_cmd_t *));
 	queue_init(&read_q, 1, (uint8_t *)read_q_buf, AT_READ_BUFFER_MAX_SIZE);
-	reset(&m_parser);
 	start_magic = 0;
 	return true;
 }

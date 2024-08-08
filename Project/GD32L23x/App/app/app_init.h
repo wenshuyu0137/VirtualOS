@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include "app_led.h"
 #include "app_485.h"
+#include "app_at_client.h"
 #include "stimer.h"
 
 void task_dispatch_looper(void);

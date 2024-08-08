@@ -46,7 +46,7 @@
 // 所有的指令枚举变量，用户自定义添加
 typedef enum {
 	AT_CLIENT_CMD_AT, // 测试指令
-
+	AT_CLIENT_CMD_WHAT, // 自定义指令
 	/* Reserved */
 	AT_CLIENT_CMD_MAX,
 } at_client_cmd_type_e;
