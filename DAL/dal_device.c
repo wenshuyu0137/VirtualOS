@@ -46,7 +46,6 @@ typedef struct {
 	int fd;
 } fd_t;
 
-#define RESERVED_FD_NUM 3 //前三个文件描述符为保留值
 #define FD_SIZE 64 //支持64个文件描述符
 static fd_t fds[FD_SIZE] = { 0 };
 
@@ -208,6 +207,27 @@ int dal_ioctrl(int fd, int cmd, void *argc)
 		return -3;
 
 	return dev->opts->ioctrl(dev, cmd, argc);
+}
+
+/**
+ * @brief 文件偏移
+ * 
+ * @param fd 文件描述符
+ * @param offset 偏移值 正负表示向后与向前
+ * @param whence 基于某个位置的偏移
+ * @return int 成功返回0 失败返回1
+ */
+int dal_lseek(int fd, int offset, dal_lseek_whence_e whence)
+{
+	dml_dev_t *dev;
+	int err = check_fd(fd, &dev);
+	if (err < 0)
+		return err;
+
+	if (!dev->opts->close)
+		return -3;
+
+	return dev->opts->lseek(dev, offset, (dml_lseek_whence_e)whence);
 }
 
 void fd_init(void) __attribute__((constructor(102)));

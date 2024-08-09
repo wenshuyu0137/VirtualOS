@@ -38,14 +38,12 @@ static dml_dev_err_e led_ioctrl(dml_dev_t *file, int cmd, void *arg);
 static int led_read(dml_dev_t *file, uint8_t *buf, size_t len);
 static int led_write(dml_dev_t *file, const uint8_t *buf, size_t len);
 
-static bool is_led_opened = false;
-
 static dml_dev_err_e led_open(dml_dev_t *file)
 {
-	if (is_led_opened)
+	if (file->is_opened)
 		return DML_DEV_ERR_OCCUPIED;
 
-	is_led_opened = true;
+	file->is_opened = true;
 
 	rcu_periph_clock_enable(RCU_GPIOB);
 	gpio_mode_set(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_5);
@@ -58,7 +56,7 @@ static dml_dev_err_e led_close(dml_dev_t *file)
 {
 	gpio_mode_set(GPIOB, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO_PIN_5); //低功耗设置为输入模式
 
-	is_led_opened = false;
+	file->is_opened = false;
 	return DML_DEV_ERR_NONE;
 }
 
@@ -69,8 +67,8 @@ static dml_dev_err_e led_ioctrl(dml_dev_t *file, int cmd, void *arg)
 
 static int led_read(dml_dev_t *file, uint8_t *buf, size_t len)
 {
-	if (!is_led_opened)
-		return DML_DEV_ERR_UNAVALIABLE;
+	if (file->is_opened)
+		return DML_DEV_ERR_OCCUPIED;
 
 	gpio_input_bit_get(GPIOB, GPIO_PIN_5);
 	return 1;
@@ -78,8 +76,8 @@ static int led_read(dml_dev_t *file, uint8_t *buf, size_t len)
 
 static int led_write(dml_dev_t *file, const uint8_t *buf, size_t len)
 {
-	if (!is_led_opened)
-		return DML_DEV_ERR_UNAVALIABLE;
+	if (file->is_opened)
+		return DML_DEV_ERR_OCCUPIED;
 
 	gpio_bit_write(GPIOB, GPIO_PIN_5, (*buf ? SET : RESET));
 	return 1;

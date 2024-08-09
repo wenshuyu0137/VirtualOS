@@ -33,7 +33,7 @@ static int fd = -1;
 
 static size_t read_f(char *buf, size_t len)
 {
-	if (fd >= 0)
+	if (fd >= RESERVED_FD_NUM)
 		return dal_read(fd, (uint8_t *)buf, len);
 
 	return 0;
@@ -41,7 +41,7 @@ static size_t read_f(char *buf, size_t len)
 
 static size_t write_f(char *buf, size_t len)
 {
-	if (fd >= 0)
+	if (fd >= RESERVED_FD_NUM)
 		return dal_write(fd, (uint8_t *)buf, len);
 
 	return 0;

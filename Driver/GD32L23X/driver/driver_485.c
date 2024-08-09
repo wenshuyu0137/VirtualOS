@@ -40,8 +40,6 @@ static dml_dev_err_e serial_485_ioctrl(dml_dev_t *file, int cmd, void *arg);
 static int serial_485_read(dml_dev_t *file, uint8_t *buf, size_t len);
 static int serial_485_write(dml_dev_t *file, const uint8_t *buf, size_t len);
 
-static bool is_serial_opened = false;
-
 #define RX_FIFO_SIZE 512
 #define TX_BUF_SIZE 256
 static uint8_t rx_fifo[RX_FIFO_SIZE] = { 0 };
@@ -150,10 +148,10 @@ void USART1_IRQHandler(void)
 
 static dml_dev_err_e serial_485_open(dml_dev_t *file)
 {
-	if (is_serial_opened)
+	if (file->is_opened)
 		return DML_DEV_ERR_OCCUPIED;
 
-	is_serial_opened = true;
+	file->is_opened = true;
 
 	usart_init();
 
@@ -162,7 +160,7 @@ static dml_dev_err_e serial_485_open(dml_dev_t *file)
 
 static dml_dev_err_e serial_485_close(dml_dev_t *file)
 {
-	is_serial_opened = false;
+	file->is_opened = false;
 	return DML_DEV_ERR_NONE;
 }
 
@@ -177,8 +175,9 @@ static dml_dev_err_e serial_485_ioctrl(dml_dev_t *file, int cmd, void *arg)
 
 static int serial_485_write(dml_dev_t *file, const uint8_t *buf, size_t len)
 {
-	if (!is_serial_opened)
-		return DML_DEV_ERR_UNAVALIABLE;
+	if (file->is_opened)
+		return DML_DEV_ERR_OCCUPIED;
+
 	gpio_bit_write(GPIOC, GPIO_PIN_11, SET); //发送状态
 	memcpy(tx_buf, buf, len);
 	dma_channel_disable(DMA_CH0);
@@ -191,8 +190,8 @@ static int serial_485_write(dml_dev_t *file, const uint8_t *buf, size_t len)
 
 static int serial_485_read(dml_dev_t *file, uint8_t *buf, size_t len)
 {
-	if (!is_serial_opened)
-		return DML_DEV_ERR_UNAVALIABLE;
+	if (file->is_opened)
+		return DML_DEV_ERR_OCCUPIED;
 
 	return queue_get(&recv_q, buf, len);
 }

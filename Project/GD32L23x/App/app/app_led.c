@@ -11,7 +11,7 @@ void app_led_task(void)
 {
 	static uint8_t level = 1;
 
-	if (fd >= 3)
+	if (fd >= RESERVED_FD_NUM)
 		dal_write(fd, &level, 1);
 
 	level ^= 1;

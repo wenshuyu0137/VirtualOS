@@ -32,6 +32,8 @@
 
 #include "dml_char_device.h"
 
+#define RESERVED_FD_NUM 3 //前三个文件描述符为内部保留值
+
 /**
  * 小于0错误码 -6 非法文件描述符
  * 小于0错误码 -5 设备不存在
@@ -86,16 +88,20 @@ int dal_read(int fd, uint8_t *buf, size_t len);
  */
 int dal_write(int fd, const uint8_t *buf, size_t len);
 
+typedef enum {
+	DAL_LSEEK_WHENCE_HEAD, //将指针设置到0地址
+	DAL_LSEEK_WHENCE_CUR, //将指针设置到上一次地址
+	DAL_LSEEK_WHENCE_TAIL, //将指针设置到末尾地址
+} dal_lseek_whence_e;
+
 /**
- * @brief 实现除读写之外的设备操作
+ * @brief 文件偏移
  * 
  * @param fd 文件描述符
- * @param cmd 指令 参考dal_reserved_cmd_e 保留指令
- * @param argc 通用参数指针
- * @return int 参考枚举变量
- * @return 小于0 参考错误码
- * @return >=0 成功，返回操作结果
+ * @param offset 偏移值 正负表示向后与向前
+ * @param whence 基于某个位置的偏移
+ * @return int 成功返回0 失败返回1
  */
-int dal_ioctrl(int fd, int cmd, void *argc);
+int dal_lseek(int fd, int offset, dal_lseek_whence_e whence);
 
 #endif

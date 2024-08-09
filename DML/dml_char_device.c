@@ -92,6 +92,8 @@ bool dml_register_device(dml_file_opts_t *opts, const char *name)
 	dml_dev_t *dev = (dml_dev_t *)malloc(sizeof(dml_dev_t));
 	dev->opts = opts;
 	dev->name = name;
+	dev->is_opened = false;
+	dev->private_data = NULL;
 
 	return hash_insert(&dev_table, name, (void *)dev) == HASH_SUCCESS;
 }

@@ -51,16 +51,25 @@ typedef struct dml_file_opts_t dml_file_opts_t;
 typedef struct {
 	const char *name; // 设备的名称或标识符
 	dml_file_opts_t *opts; // 指向设备操作函数的指针
-	void *private_data; // 设备的私有数据或上下文信息
+	bool is_opened; //设别是否打开标志
+	void *private_data; // 设备的私有数据或上下文信息,例如存一个结构体,当中保存FLASH当前操作的地址偏移,使用时,自己强转类型
 } dml_dev_t;
 
+typedef enum {
+	DML_LSEEK_WHENCE_HEAD, //将指针设置到0地址
+	DML_LSEEK_WHENCE_CUR, //将指针设置到上一次地址
+	DML_LSEEK_WHENCE_TAIL, //将指针设置到末尾地址
+} dml_lseek_whence_e;
+
+//根据需求自行决定要不要实现某些接口
 struct dml_file_opts_t {
 	dml_dev_err_e (*open)(dml_dev_t *file); // 打开设备
-	dml_dev_err_e (*close)(dml_dev_t *file); // 关闭设备
-	dml_dev_err_e (*ioctrl)(dml_dev_t *file, int cmd, void *arg); // 设备控制
+	dml_dev_err_e (*close)(dml_dev_t *file); // 关闭设备,注意，如果在open的时候申请了private_data的内存,记得要释放
+	dml_dev_err_e (*ioctrl)(dml_dev_t *file, int cmd, void *arg); // 除读写以外的设备控制
 	int (*read)(dml_dev_t *file, uint8_t *buf, size_t len); // 读取数据
 	int (*write)(dml_dev_t *file, const uint8_t *buf, size_t len); // 写入数据
-	int (*lseek)(dml_dev_t *file, long offset, int whence); // 修改文件偏移
+	int (*lseek)(dml_dev_t *file, int offset,
+		     dml_lseek_whence_e whence); // 基于whence的位置移动地址偏移,write或read时，可基于地址访问,具体的偏移量可以保存到file->private_data中
 };
 
 void dml_dev_table_init(void);

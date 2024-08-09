@@ -6,6 +6,7 @@
 #include "app_485.h"
 #include "app_at_client.h"
 #include "app_at_server.h"
+#include "app_ext_flash.h"
 #include "stimer.h"
 
 void task_dispatch_looper(void);
