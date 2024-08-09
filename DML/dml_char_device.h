@@ -34,28 +34,34 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+/**
+ * @brief 设备操作结果的错误码
+ */
 typedef enum {
-	DML_DEV_ERR_NOT_EXIST = -5, //设备不存在
-	DML_DEV_ERR_OCCUPIED, //设备被占用
-	DML_DEV_ERR_EXCEPTION, //操作异常 例如只读的进行写操作
-	DML_DEV_ERR_UNAVALIABLE, //不可使用(例如没打开)
-	DAL_DEV_ERR_OVERFLOW, //已经打开的设备超过最大可用设备
-	// 0
-	DML_DEV_ERR_NONE, //无错误
+	DML_DEV_ERR_NOT_EXIST = -5, // 设备不存在
+	DML_DEV_ERR_OCCUPIED, // 设备被占用
+	DML_DEV_ERR_EXCEPTION, // 操作异常，例如对只读设备进行写操作
+	DML_DEV_ERR_UNAVALIABLE, // 设备不可用（例如未打开）
+	DML_DEV_ERR_OVERFLOW, // 超过最大设备数量
+	DML_DEV_ERR_NONE, // 无错误
 } dml_dev_err_e;
 
-typedef struct {
-	dml_dev_err_e (*open)(void);
-	dml_dev_err_e (*close)(void);
-	dml_dev_err_e (*ioctrl)(int cmd, void *arg);
-	int (*read)(uint8_t *buf, size_t len);
-	int (*write)(const uint8_t *buf, size_t len);
-} dml_file_opts_t;
+typedef struct dml_file_opts_t dml_file_opts_t;
 
 typedef struct {
-	const char *name;
-	dml_file_opts_t *opts;
+	const char *name; // 设备的名称或标识符
+	dml_file_opts_t *opts; // 指向设备操作函数的指针
+	void *private_data; // 设备的私有数据或上下文信息
 } dml_dev_t;
+
+struct dml_file_opts_t {
+	dml_dev_err_e (*open)(dml_dev_t *file); // 打开设备
+	dml_dev_err_e (*close)(dml_dev_t *file); // 关闭设备
+	dml_dev_err_e (*ioctrl)(dml_dev_t *file, int cmd, void *arg); // 设备控制
+	int (*read)(dml_dev_t *file, uint8_t *buf, size_t len); // 读取数据
+	int (*write)(dml_dev_t *file, const uint8_t *buf, size_t len); // 写入数据
+	int (*lseek)(dml_dev_t *file, long offset, int whence); // 修改文件偏移
+};
 
 void dml_dev_table_init(void);
 dml_dev_t *dml_find_device(const char *name);

@@ -41,13 +41,13 @@
  */
 
 typedef struct {
-	dml_file_opts_t *opts;
+	dml_dev_t *dev;
 	bool is_used;
 	int fd;
 } fd_t;
 
-#define RESERVED_FD_NUM 3
-#define FD_SIZE 64
+#define RESERVED_FD_NUM 3 //前三个文件描述符为保留值
+#define FD_SIZE 64 //支持64个文件描述符
 static fd_t fds[FD_SIZE] = { 0 };
 
 static int alloc_fd(void)
@@ -55,7 +55,7 @@ static int alloc_fd(void)
 	for (uint16_t i = RESERVED_FD_NUM; i < FD_SIZE; i++) {
 		if (!fds[i].is_used) {
 			fds[i].is_used = true;
-			fds[i].opts = NULL;
+			fds[i].dev = NULL;
 			return fds[i].fd;
 		}
 	}
@@ -66,19 +66,19 @@ static void free_fd(int fd)
 {
 	if (fd >= 0 && fd < FD_SIZE) {
 		fds[fd].is_used = false;
-		fds[fd].opts = NULL;
+		fds[fd].dev = NULL;
 	}
 }
 
-static int check_fd(int fd, dml_file_opts_t **opts)
+static int check_fd(int fd, dml_dev_t **dev)
 {
-	if (fd < 0 || fd >= FD_SIZE)
+	if (fd < RESERVED_FD_NUM || fd >= FD_SIZE)
 		return -6;
 
-	if (!fds[fd].opts || !opts)
+	if (!fds[fd].dev || !dev)
 		return -3;
 
-	*opts = fds[fd].opts;
+	*dev = fds[fd].dev;
 	return 0;
 }
 
@@ -105,13 +105,13 @@ int dal_open(const char *dev_name)
 		return -3;
 	}
 
-	dml_dev_err_e ret = dev->opts->open();
+	dml_dev_err_e ret = dev->opts->open(dev);
 	if (ret < 0) {
 		free_fd(new_fd);
 		return ret;
 	}
 
-	fds[new_fd].opts = dev->opts;
+	fds[new_fd].dev = dev;
 	return new_fd;
 }
 
@@ -125,15 +125,15 @@ int dal_open(const char *dev_name)
  */
 int dal_close(int fd)
 {
-	dml_file_opts_t *opts;
-	int err = check_fd(fd, &opts);
+	dml_dev_t *dev;
+	int err = check_fd(fd, &dev);
 	if (err < 0)
 		return err;
 
-	if (!opts->close)
+	if (!dev->opts->close)
 		return -3;
 
-	dml_dev_err_e ret = opts->close();
+	dml_dev_err_e ret = dev->opts->close(dev);
 	if (ret < 0)
 		return ret;
 
@@ -153,15 +153,15 @@ int dal_close(int fd)
  */
 int dal_read(int fd, uint8_t *buf, size_t len)
 {
-	dml_file_opts_t *opts;
-	int err = check_fd(fd, &opts);
+	dml_dev_t *dev;
+	int err = check_fd(fd, &dev);
 	if (err < 0)
 		return err;
 
-	if (!opts->read)
+	if (!dev->opts->close)
 		return -3;
 
-	return opts->read(buf, len);
+	return dev->opts->read(dev, buf, len);
 }
 
 /**
@@ -176,15 +176,15 @@ int dal_read(int fd, uint8_t *buf, size_t len)
  */
 int dal_write(int fd, const uint8_t *buf, size_t len)
 {
-	dml_file_opts_t *opts;
-	int err = check_fd(fd, &opts);
+	dml_dev_t *dev;
+	int err = check_fd(fd, &dev);
 	if (err < 0)
 		return err;
 
-	if (!opts->write)
+	if (!dev->opts->close)
 		return -3;
 
-	return opts->write(buf, len);
+	return dev->opts->write(dev, buf, len);
 }
 
 /**
@@ -199,15 +199,15 @@ int dal_write(int fd, const uint8_t *buf, size_t len)
  */
 int dal_ioctrl(int fd, int cmd, void *argc)
 {
-	dml_file_opts_t *opts;
-	int err = check_fd(fd, &opts);
+	dml_dev_t *dev;
+	int err = check_fd(fd, &dev);
 	if (err < 0)
 		return err;
 
-	if (!opts->ioctrl)
+	if (!dev->opts->close)
 		return -3;
 
-	return opts->ioctrl(cmd, argc);
+	return dev->opts->ioctrl(dev, cmd, argc);
 }
 
 void fd_init(void) __attribute__((constructor(102)));
@@ -215,13 +215,13 @@ void fd_init(void)
 {
 	for (uint16_t i = 0; i < RESERVED_FD_NUM; i++) {
 		fds[i].fd = i;
-		fds[i].opts = NULL;
+		fds[i].dev = NULL;
 		fds[i].is_used = true;
 	}
 
 	for (uint16_t i = RESERVED_FD_NUM; i < FD_SIZE; i++) {
 		fds[i].fd = i;
-		fds[i].opts = NULL;
+		fds[i].dev = NULL;
 		fds[i].is_used = false;
 	}
 }

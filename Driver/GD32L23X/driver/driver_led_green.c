@@ -32,15 +32,15 @@
 #include "gd32l23x.h"
 
 static const char led_name[] = "/dev/led_green";
-static dml_dev_err_e led_open(void);
-static dml_dev_err_e led_close(void);
-static dml_dev_err_e led_ioctrl(int cmd, void *arg);
-static int led_read(uint8_t *buf, size_t len);
-static int led_write(const uint8_t *buf, size_t len);
+static dml_dev_err_e led_open(dml_dev_t *file);
+static dml_dev_err_e led_close(dml_dev_t *file);
+static dml_dev_err_e led_ioctrl(dml_dev_t *file, int cmd, void *arg);
+static int led_read(dml_dev_t *file, uint8_t *buf, size_t len);
+static int led_write(dml_dev_t *file, const uint8_t *buf, size_t len);
 
 static bool is_led_opened = false;
 
-static dml_dev_err_e led_open(void)
+static dml_dev_err_e led_open(dml_dev_t *file)
 {
 	if (is_led_opened)
 		return DML_DEV_ERR_OCCUPIED;
@@ -54,7 +54,7 @@ static dml_dev_err_e led_open(void)
 	return DML_DEV_ERR_NONE;
 }
 
-static dml_dev_err_e led_close(void)
+static dml_dev_err_e led_close(dml_dev_t *file)
 {
 	gpio_mode_set(GPIOB, GPIO_MODE_INPUT, GPIO_PUPD_NONE, GPIO_PIN_5); //低功耗设置为输入模式
 
@@ -62,12 +62,12 @@ static dml_dev_err_e led_close(void)
 	return DML_DEV_ERR_NONE;
 }
 
-static dml_dev_err_e led_ioctrl(int cmd, void *arg)
+static dml_dev_err_e led_ioctrl(dml_dev_t *file, int cmd, void *arg)
 {
 	return DML_DEV_ERR_NONE;
 }
 
-static int led_read(uint8_t *buf, size_t len)
+static int led_read(dml_dev_t *file, uint8_t *buf, size_t len)
 {
 	if (!is_led_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
@@ -76,7 +76,7 @@ static int led_read(uint8_t *buf, size_t len)
 	return 1;
 }
 
-static int led_write(const uint8_t *buf, size_t len)
+static int led_write(dml_dev_t *file, const uint8_t *buf, size_t len)
 {
 	if (!is_led_opened)
 		return DML_DEV_ERR_UNAVALIABLE;

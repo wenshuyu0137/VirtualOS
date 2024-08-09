@@ -34,11 +34,11 @@
 #include "stimer.h"
 
 static const char serial_485_name[] = "/dev/serial_485";
-static dml_dev_err_e serial_485_open(void);
-static dml_dev_err_e serial_485_close(void);
-static dml_dev_err_e serial_485_ioctrl(int cmd, void *arg);
-static int serial_485_read(uint8_t *buf, size_t len);
-static int serial_485_write(const uint8_t *buf, size_t len);
+static dml_dev_err_e serial_485_open(dml_dev_t *file);
+static dml_dev_err_e serial_485_close(dml_dev_t *file);
+static dml_dev_err_e serial_485_ioctrl(dml_dev_t *file, int cmd, void *arg);
+static int serial_485_read(dml_dev_t *file, uint8_t *buf, size_t len);
+static int serial_485_write(dml_dev_t *file, const uint8_t *buf, size_t len);
 
 static bool is_serial_opened = false;
 
@@ -51,7 +51,7 @@ static queue_info_t recv_q;
 
 uint16_t *recv_size = NULL;
 
-static void usart_init(void)
+static void usart_init()
 {
 	rcu_periph_clock_enable(RCU_GPIOC);
 	gpio_mode_set(GPIOC, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO_PIN_11); //使能引脚
@@ -148,7 +148,7 @@ void USART1_IRQHandler(void)
 	}
 }
 
-static dml_dev_err_e serial_485_open(void)
+static dml_dev_err_e serial_485_open(dml_dev_t *file)
 {
 	if (is_serial_opened)
 		return DML_DEV_ERR_OCCUPIED;
@@ -160,13 +160,13 @@ static dml_dev_err_e serial_485_open(void)
 	return DML_DEV_ERR_NONE;
 }
 
-static dml_dev_err_e serial_485_close(void)
+static dml_dev_err_e serial_485_close(dml_dev_t *file)
 {
 	is_serial_opened = false;
 	return DML_DEV_ERR_NONE;
 }
 
-static dml_dev_err_e serial_485_ioctrl(int cmd, void *arg)
+static dml_dev_err_e serial_485_ioctrl(dml_dev_t *file, int cmd, void *arg)
 {
 	switch (cmd) {
 	default:
@@ -175,7 +175,7 @@ static dml_dev_err_e serial_485_ioctrl(int cmd, void *arg)
 	return DML_DEV_ERR_NONE;
 }
 
-static int serial_485_write(const uint8_t *buf, size_t len)
+static int serial_485_write(dml_dev_t *file, const uint8_t *buf, size_t len)
 {
 	if (!is_serial_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
@@ -189,7 +189,7 @@ static int serial_485_write(const uint8_t *buf, size_t len)
 	return len;
 }
 
-static int serial_485_read(uint8_t *buf, size_t len)
+static int serial_485_read(dml_dev_t *file, uint8_t *buf, size_t len)
 {
 	if (!is_serial_opened)
 		return DML_DEV_ERR_UNAVALIABLE;
